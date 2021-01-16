@@ -1,6 +1,6 @@
 # Introduction 
 
-This project contains the User Service in the NodeJs version.
+This project contains a bakcend application in the NodeJs.
 
 # Getting Started
 
