@@ -1,6 +1,6 @@
 # Introduction 
 
-This project contains a bakcend application in the NodeJs.
+This project contains a bakcend application in NodeJs technology.
 
 # Getting Started
 
@@ -36,7 +36,7 @@ Not Applicable.
  
 # Authors
 
-Not Applicable.
+Wittman Gutiérrez
 
 # License
 
