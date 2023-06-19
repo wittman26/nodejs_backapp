@@ -18,7 +18,24 @@ This project contains a bakcend application in NodeJs technology.
 
         npm install
 
-# Running the tests
+## Run application
+
+```
+npm run start
+```
+
+Application will be available in port 5000 by default.
+
+If you want to set a different port, you can do it by executing the folloing command:
+
+Open a command promth (not a powershell) and execute this command to set environment variable
+```
+SET PORT=9900 && node index.js
+```
+
+Application will be available in port 5000 by dafault
+
+## Running the tests
 
 <!-- TODO -->
 
