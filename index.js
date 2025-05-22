@@ -17,6 +17,7 @@ app.server.listen(process.env.PORT || 5000);
 // authenticationEvents.on('login', ctx.populateUserInfo);
 
 module.exports = app;
+
 // module.exports = {
 //   handler: serverless(app)
 // };
