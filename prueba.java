@@ -32,17 +32,21 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
 
     private static final String ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE = "Se espera incluir originId o transferId pero no ambos";
 
+    /**
+     * Crea o actualiza una firma de operación.
+     * @param locale el locale
+     * @param entity la entidad
+     * @param request la petición de firma
+     * @return Mono con la respuesta de la firma
+     */
     @Override
     public Mono<TradeSignatureResponse> createOrUpdateSignature(Locale locale, String entity, TradeSignatureRequest request) {
-        var hasTradeSignatureId = request.getTradeSignatureId() != null;
-        var hasOriginId = request.getOriginId() != null;
+        boolean hasTradeSignatureId = request.getTradeSignatureId() != null;
+        boolean hasOriginId = request.getOriginId() != null;
 
-        if(hasTradeSignatureId == hasOriginId) {
-            log.error(ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE);
-            throw new IllegalArgumentException(ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE);
-        }
+        validateCreateOrUpdateParams(hasTradeSignatureId, hasOriginId);
 
-        if(hasTradeSignatureId) {
+        if (hasTradeSignatureId) {
             // Lógica de Actualización
             return updateTradeSignature(request.getTradeSignatureId(), request);
         } else {
@@ -53,15 +57,24 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
         }
     }
 
-    private Mono<TradeSignatureResponse> saveTradeSignature(TradeSignatureRequest request) {
+    /**
+     * Valida los parámetros de entrada para crear o actualizar una firma.
+     */
+    private void validateCreateOrUpdateParams(boolean hasTradeSignatureId, boolean hasOriginId) {
+        if (hasTradeSignatureId == hasOriginId) {
+            log.error(ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE);
+            throw new DigitalSignatureBusinessException(ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE);
+        }
+    }
 
+    private Mono<TradeSignatureResponse> saveTradeSignature(TradeSignatureRequest request) {
         return tradeSignatureRepositoryClient.save(TradeSignatureMapper.INSTANCE.toTradeSignature(request))
                 .flatMap(tradeSignature ->
-                   Flux.fromIterable(request.getSigners())
-                      .flatMap(tradeSignerRequest -> tradeSignerRepositoryClient.save(
-                              TradeSignerMapper.INSTANCE.toTradeSigner(tradeSignerRequest)
-                      ))
-                      .then(createResponse(tradeSignature.getTradeSignatureId()))
+                        Flux.fromIterable(request.getSigners())
+                                .flatMap(tradeSignerRequest -> tradeSignerRepositoryClient.save(
+                                        TradeSignerMapper.INSTANCE.toTradeSigner(tradeSignerRequest)
+                                ))
+                                .then(createResponse(tradeSignature.getTradeSignatureId()))
                 );
     }
 
@@ -72,37 +85,34 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
     }
 
     private Mono<TradeSignatureResponse> updateTradeSignature(Integer tradeSignatureId, TradeSignatureRequest request) {
-
-        var incoming = request.getSigners();
-
+        List<TradeSignerRequest> incoming = request.getSigners();
         // 1. Obtener TradeSigners por TradeSignatureId
         return tradeSignerRepositoryClient.findTradeSignersByTradeSignatureId(tradeSignatureId)
-                .flatMap(existing -> sycronizarTradeSigners(tradeSignatureId, incoming, existing)
-                .then(tradeSignatureRepositoryClient.update(
-                        tradeSignatureId, TradeSignatureMapper.INSTANCE.toTradeSignature(request)))
-                .flatMap(tradeSignature -> createResponse(tradeSignature.getTradeSignatureId()))
-        );
-
+                .flatMap(existing -> sincronizarTradeSigners(tradeSignatureId, incoming, existing)
+                        .then(tradeSignatureRepositoryClient.update(
+                                tradeSignatureId, TradeSignatureMapper.INSTANCE.toTradeSignature(request)))
+                        .flatMap(tradeSignature -> createResponse(tradeSignature.getTradeSignatureId()))
+                );
     }
 
-    private Mono<Void> sycronizarTradeSigners(Integer tradeSignatureId, List<TradeSignerRequest> incoming, List<TradeSigner> existing) {
-        var existingIds = existing.stream().map(TradeSigner::getSignerId).filter(Objects::nonNull).collect(Collectors.toSet());
-        var incomingIds = incoming.stream().map(TradeSignerRequest::getSignerId).filter(Objects::nonNull).collect(Collectors.toSet());
+    private Mono<Void> sincronizarTradeSigners(Integer tradeSignatureId, List<TradeSignerRequest> incoming, List<TradeSigner> existing) {
+        Set<String> existingIds = existing.stream().map(TradeSigner::getSignerId).filter(Objects::nonNull).collect(Collectors.toSet());
+        Set<String> incomingIds = incoming.stream().map(TradeSignerRequest::getSignerId).filter(Objects::nonNull).collect(Collectors.toSet());
 
         return Flux.concat(
                 deleteRemovedTradeSigners(existing, incomingIds),
                 insertNewTradeSigners(tradeSignatureId, incoming),
-                updateExitingTradeSigners(tradeSignatureId, incoming, existingIds)
+                updateExistingTradeSigners(tradeSignatureId, incoming, existingIds)
         ).then();
     }
 
     private Flux<Void> deleteRemovedTradeSigners(List<TradeSigner> existing, Set<String> incomingIds) {
         return Flux.fromIterable(
                 existing.stream()
-                        .filter(tradeSigner -> !incomingIds.contains(tradeSigner.getSignerId()) )
+                        .filter(tradeSigner -> !incomingIds.contains(tradeSigner.getSignerId()))
                         .map(TradeSigner::getTradeSignerId)
                         .map(tradeSignerRepositoryClient::delete)
-                        .toList()
+                        .collect(Collectors.toList())
         ).flatMap(mono -> mono);
     }
 
@@ -111,24 +121,24 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
                 incoming.stream()
                         .filter(tradeSignerRequest -> tradeSignerRequest.getSignerId() == null)
                         .map(tradeSignerRequest -> {
-                            var tradeSignerToSave = TradeSignerMapper.INSTANCE.toTradeSigner(tradeSignerRequest);
+                            TradeSigner tradeSignerToSave = TradeSignerMapper.INSTANCE.toTradeSigner(tradeSignerRequest);
                             tradeSignerToSave.setTradeSignatureId(tradeSignatureId);
                             return tradeSignerRepositoryClient.save(tradeSignerToSave);
                         })
-                        .toList()
+                        .collect(Collectors.toList())
         ).flatMap(Mono::then);
     }
 
-    private Publisher<Void> updateExitingTradeSigners(Integer tradeSignatureId, List<TradeSignerRequest> incoming, Set<String> existingIds) {
+    private Publisher<Void> updateExistingTradeSigners(Integer tradeSignatureId, List<TradeSignerRequest> incoming, Set<String> existingIds) {
         return Flux.fromIterable(
                 incoming.stream()
                         .filter(tradeSignerRequest -> tradeSignerRequest.getSignerId() != null && existingIds.contains(tradeSignerRequest.getSignerId()))
                         .map(tradeSignerRequest -> {
-                            var tradeSignerToSave = TradeSignerMapper.INSTANCE.toTradeSigner(tradeSignerRequest);
+                            TradeSigner tradeSignerToSave = TradeSignerMapper.INSTANCE.toTradeSigner(tradeSignerRequest);
                             tradeSignerToSave.setTradeSignatureId(tradeSignatureId);
                             return tradeSignerRepositoryClient.save(tradeSignerToSave);
                         })
-                        .toList()
+                        .collect(Collectors.toList())
         ).flatMap(Mono::then);
     }
 
@@ -137,4 +147,13 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
                 tradeSignatureId).build());
     }
 
+}
+
+/**
+ * Excepción personalizada para errores de negocio en firma digital.
+ */
+class DigitalSignatureBusinessException extends RuntimeException {
+    public DigitalSignatureBusinessException(String message) {
+        super(message);
+    }
 }
