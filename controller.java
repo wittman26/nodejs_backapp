@@ -122,18 +122,18 @@ public enum TypeEnum {
 
     OM("OM");
 
-    private String value;
+    private final String value;
 
     TypeEnum(String value) {
         this.value = value;
     }
 
-    @Override
-    public String toString() {
-        return String.valueOf(value);
+    @JsonValue
+    public String getValue() {
+        return value;
     }
 
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static TypeEnum fromValue(String value) {
         for (TypeEnum b : TypeEnum.values()) {
             if (b.value.equals(value)) {
@@ -143,10 +143,3 @@ public enum TypeEnum {
         throw new IllegalArgumentException("Unexpected value '" + value + "'");
     }
 }
-
-org.springframework.core.codec.DecodingException: JSON decoding error: Input mismatch reading Enum `com.acelera.fx.digitalsignature.infrastructure.response.base.TypeEnum`: properties-based `@JsonCreator` ([method com.acelera.fx.digitalsignature.infrastructure.response.base.TypeEnum#fromValue(java.lang.String)]) expects JSON Object (JsonToken.START_OBJECT), got JsonToken.VALUE_STRING; nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Input mismatch reading Enum `com.acelera.fx.digitalsignature.infrastructure.response.base.TypeEnum`: properties-based `@JsonCreator` ([method com.acelera.fx.digitalsignature.infrastructure.response.base.TypeEnum#fromValue(java.lang.String)]) expects JSON Object (JsonToken.START_OBJECT), got JsonToken.VALUE_STRING
- at [Source: UNKNOWN; byte offset: #UNKNOWN] (through reference chain: com.acelera.fx.digitalsignature.infrastructure.response.DocumentTypeResponse["type"])
-
-	at org.springframework.http.codec.json.AbstractJackson2Decoder.processException(AbstractJackson2Decoder.java:242)
-	Suppressed: The stacktrace has been enhanced by Reactor, refer to additional information below: 
-Error has been observed at the following site(s):
