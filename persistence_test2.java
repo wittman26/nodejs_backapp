@@ -53,4 +53,30 @@ public class JpaProductDocumentParametersRepositoryImplTest {
         assertFalse(optionalMarginResult.isEmpty());
 
     }
+
+    @Test
+    void testFindProductDocumentParametersJpa_returnsMappedList() {
+        List<ProductDocumentParametersModel> response = new ArrayList<>();
+        ProductDocumentParametersModel model = PODAM_FACTORY.manufacturePojo(ProductDocumentParametersModel.class);
+        response.add(model);
+        when(repository.findByEntityAndProduct(anyString(), anyString())).thenReturn(response);
+        var result = impl.findProductDocumentParameters("entity", "product");
+        assertFalse(result.isEmpty());
+        // Verifica que el mapeo se realizó correctamente
+        assertEquals(ProductDocumentParametersMapper.INSTANCE.toProductDocumentParameters(model), result.get(0));
+    }
+
+    @Test
+    void testFindProductDocumentParametersJpa_emptyList() {
+        when(repository.findByEntityAndProduct(anyString(), anyString())).thenReturn(new ArrayList<>());
+        var result = impl.findProductDocumentParameters("entity", "product");
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testFindProductDocumentParametersJpa_nullList() {
+        when(repository.findByEntityAndProduct(anyString(), anyString())).thenReturn(null);
+        var result = impl.findProductDocumentParameters("entity", "product");
+        assertTrue(result.isEmpty()); // O ajusta el método para manejar nulls si es necesario
+    }
 }
