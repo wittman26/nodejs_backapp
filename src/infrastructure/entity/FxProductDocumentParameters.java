@@ -55,11 +55,16 @@ public class FxProductDocumentParameters {
 public interface FxProductDocumentParametersRepository extends JpaRepository<FxProductDocumentParameters, Long> {
     // Buscar por el campo product
     java.util.List<FxProductDocumentParameters> findByProduct(String product);
+    // Buscar por entity y product
+    java.util.List<FxProductDocumentParameters> findByEntityAndProduct(String entity, String product);
 }
-
 
 public Flux<FxProductDocumentParameters> findByProduct(String product) {
     return Flux.fromIterable(fxProductDocumentParametersRepository.findByProduct(product));
+}
+
+public Flux<FxProductDocumentParameters> findByEntityAndProduct(String entity, String product) {
+    return Flux.fromIterable(fxProductDocumentParametersRepository.findByEntityAndProduct(entity, product));
 }
 
 public Flux<DocumentTypeResponse> findDocumentTypesByProduct(String product) {
@@ -72,6 +77,29 @@ public Flux<DocumentTypeResponse> findDocumentTypesByProduct(String product) {
     parametersFlux.map(param -> {
         if (param.getDocumentType() == null || param.getDocumentalTypeDoc() == null || param.getDocumentalCodeDoc() == null) {
             return Mono.error(new DigitalSignatureBusinessException("Invalid document type parameters for product: " + product));
+        }
+        log.info("Processing document type: {}", param.getDocumentType());
+        return Mono.just(param);
+    });
+
+    return parametersFlux.map(param -> DocumentTypeResponse.builder()
+            .documentType(param.getDocumentType())
+            .isPrecontractual(param.getIsPrecontractual())
+            .documentalTypeDoc(param.getDocumentalTypeDoc())
+            .documentalCodeDoc(param.getDocumentalCodeDoc())
+            .build());
+}
+
+public Flux<DocumentTypeResponse> findDocumentTypesByEntityAndProduct(String entity, String product) {
+    Flux<FxProductDocumentParameters> parametersFlux = findByEntityAndProduct(entity, product);
+
+    parametersFlux = parametersFlux.switchIfEmpty(
+            Flux.error(new DigitalSignatureBusinessException("No document types found for entity: " + entity + ", product: " + product))
+    );
+
+    parametersFlux.map(param -> {
+        if (param.getDocumentType() == null || param.getDocumentalTypeDoc() == null || param.getDocumentalCodeDoc() == null) {
+            return Mono.error(new DigitalSignatureBusinessException("Invalid document type parameters for entity: " + entity + ", product: " + product));
         }
         log.info("Processing document type: {}", param.getDocumentType());
         return Mono.just(param);
