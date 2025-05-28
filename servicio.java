@@ -40,17 +40,45 @@ public class ProductDocumentsServiceImplTest {
     private static final PodamFactoryImpl PODAM_FACTORY = new PodamFactoryImpl();
 
     @Test
-    void testFind() {
+    void testFindProductDocumentType_ok() {
         var productId = "FW";
-
         ProductDocumentParameters response = PODAM_FACTORY.manufacturePojo(ProductDocumentParameters.class);
-
+        // Aseguramos que el documentType sea válido para el enum
+        response.setDocumentType("KD");
         when(client.findProductDocumentParameters(productId)).thenReturn(Flux.just(response));
 
         var flux = impl.findProductDocumentType(
                 LocaleConstants.ENTITY_HEADER,
                 LocaleConstants.DEFAULT_LOCALE,
                 productId);
-        StepVerifier.create(flux).expectNext(response).verifyComplete();
+        StepVerifier.create(flux)
+                .expectNextMatches(dto -> dto.getType() != null && dto.getType().name().equals(response.getDocumentType()))
+                .verifyComplete();
+    }
+
+    @Test
+    void testFindProductDocumentType_empty() {
+        var productId = "FW";
+        when(client.findProductDocumentParameters(productId)).thenReturn(Flux.empty());
+        var flux = impl.findProductDocumentType(
+                LocaleConstants.ENTITY_HEADER,
+                LocaleConstants.DEFAULT_LOCALE,
+                productId);
+        StepVerifier.create(flux).verifyComplete();
+    }
+
+    @Test
+    void testFindProductDocumentType_invalidEnum() {
+        var productId = "FW";
+        ProductDocumentParameters response = PODAM_FACTORY.manufacturePojo(ProductDocumentParameters.class);
+        response.setDocumentType("INVALID");
+        when(client.findProductDocumentParameters(productId)).thenReturn(Flux.just(response));
+        var flux = impl.findProductDocumentType(
+                LocaleConstants.ENTITY_HEADER,
+                LocaleConstants.DEFAULT_LOCALE,
+                productId);
+        StepVerifier.create(flux)
+                .expectError(IllegalArgumentException.class)
+                .verify();
     }
 }
