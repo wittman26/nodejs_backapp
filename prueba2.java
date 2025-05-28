@@ -67,11 +67,11 @@ public class ProductDocumentParameters {
     private String documentalTypeCode;
 }
 
-@Mapper
+@Mapper(imports = {com.acelera.fx.digitalsignature.infrastructure.entity.TypeEnum.class})
 public interface ProductDocumentsMapper {
     ProductDocumentsMapper INSTANCE = Mappers.getMapper(ProductDocumentsMapper.class);
 
-    @Mapping(target = "type", source = "documentType")
+    @Mapping(target = "type", expression = "java(com.acelera.fx.digitalsignature.infrastructure.entity.TypeEnum.valueOf(productDocumentParameters.getDocumentType()))")
     DocumentTypeResponse toDocumentTypeResponse(ProductDocumentParameters productDocumentParameters);
 }
 
@@ -96,5 +96,19 @@ public class ProductDocumentsMapperTest {
 
         assertThat(result).as("ProductDocumentParameters").isNotNull().usingRecursiveComparison().isEqualTo(expected);
 
+    }
+
+    @Test
+    void testMapper_invalidEnumValue() {
+        ProductDocumentParameters input = ProductDocumentParameters.builder()
+                .documentType("INVALID")
+                .isPrecontractual(true)
+                .documentalType("TYPE")
+                .documentalTypeCode("CODE")
+                .build();
+        // Espera que lance IllegalArgumentException
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> MAPPER.toDocumentTypeResponse(input))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Unexpected value");
     }
 }
