@@ -85,3 +85,14 @@ public class ProductDocumentParametersRSocketControllerTest {
     }
 
 }
+
+
+2025-05-28 15:54:53.665  INFO [conac-springboot-test-db,,] 18208 --- [           main] o.s.b.rsocket.netty.NettyRSocketServer   : Netty RSocket started on port(s): 3119
+2025-05-28 15:54:53.676  INFO [conac-springboot-test-db,,] 18208 --- [           main] tDocumentParametersRSocketControllerTest : Started ProductDocumentParametersRSocketControllerTest in 5.506 seconds (JVM running for 8.652)
+2025-05-28 15:54:53.986  INFO [conac-springboot-test-db,,] 18208 --- [oundedElastic-1] com.acelera.util.ReactorUtils            : -------> INI: Calling to ProductDocumentParametersRepositoryClient.findProductDocumentParameters
+2025-05-28 15:54:54.380  INFO [conac-springboot-test-db,,] 18208 --- [actor-tcp-nio-2] c.a.b.shared.domain.RSocketProxyLogs     : client: {"correlationId":1748440494329918081,"route":"product-documents.findProductDocumentParameters","messageType":"request","rsocketType":"requestStream","payload":{"entity":"2TdBTYWKKm","productId":"Zx87Ewo6uQ"},"metadata":{"acelera.ctx":{"entity":"0049","locale":"es_ES"}}}
+2025-05-28 15:54:54.460  INFO [conac-springboot-test-db,,] 18208 --- [actor-tcp-nio-2] com.acelera.util.ReactorUtils            : <------- END: Calling to ProductDocumentParametersRepositoryClient.findProductDocumentParameters
+
+java.lang.AssertionError: expectation "expectNext(ProductDocumentParameters(documentType=JGSb99ujUb, isPrecontractual=true, documentalType=6YCPdgWoh6, documentalTypeCode=DfzAEsSFvq))" failed (expected: onNext(ProductDocumentParameters(documentType=JGSb99ujUb, isPrecontractual=true, documentalType=6YCPdgWoh6, documentalTypeCode=DfzAEsSFvq)); actual: onComplete())
+
+	at reactor.test.MessageFormatter.assertionError(MessageFormatter.java:115)
