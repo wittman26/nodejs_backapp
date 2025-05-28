@@ -1,0 +1,71 @@
+import com.acelera.fx.digitalsignature.infrastructure.response.DocumentTypeResponse;
+import com.acelera.locale.LocaleConstants;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+
+import java.util.Locale;
+
+@Validated
+public interface ProductDocumentsRestControllerUI {
+    @GetMapping("/v1/products/{productId}/documents")
+    @Operation(summary = "Find type of documents by product")
+    @ResponseStatus(HttpStatus.OK)
+    Flux<DocumentTypeResponse> findProductDocumentType(@RequestHeader(name = LocaleConstants.ENTITY_HEADER, defaultValue = LocaleConstants.ENTITY_0049) String entity,
+            Locale locale, @PathVariable("productId") String productId
+    );
+}
+
+
+import com.acelera.fx.digitalsignature.domain.port.service.ProductDocumentsService;
+import com.acelera.fx.digitalsignature.infrastructure.response.DocumentTypeResponse;
+import com.acelera.fx.digitalsignature.infrastructure.ui.ProductDocumentsRestControllerUI;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+
+import java.util.Locale;
+
+@RestController
+@RequiredArgsConstructor
+public class ProductDocumentsRestController implements ProductDocumentsRestControllerUI {
+
+    private final ProductDocumentsService productDocumentsService;
+
+    @Override
+    public Flux<DocumentTypeResponse> findProductDocumentType(String entity, Locale locale, String productId) {
+        return productDocumentsService.findProductDocumentType(entity, locale, productId);
+    }
+}
+
+@WebFluxTest(ProductDocumentsRestController.class)
+@Import({ LocaleAutoConfig.class, WebSecurityAutoConfig.class })
+@WithMockUser(username = "x1103878")
+public class ProductDocumentsRestControllerTest {
+    @Autowired
+    private WebTestClient webClient;
+
+    @MockBean
+    private ProductDocumentsService service;
+
+    private static final PodamFactoryImpl PODAM_FACTORY = new PodamFactoryImpl();
+
+    private static final String PRODUCT_ID = "FW";
+
+    @Test
+    void testFindProductDocumentType_ok() throws JsonProcessingException{
+        DocumentTypeResponse response = PODAM_FACTORY.manufacturePojo(DocumentTypeResponse.class);
+
+        when(service.findProductDocumentType(LocaleConstants.ENTITY_HEADER, LocaleConstants.DEFAULT_LOCALE, PRODUCT_ID))
+                .thenReturn(Flux.just(response));
+
+        webClient.get()
+                .uri(builder -> builder.path("/v1/products/{productId}/documents").build(PRODUCT_ID))
+                .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
+                .acceptCharset(StandardCharsets.UTF_8).exchange().expectStatus().isOk()
+                .expectBody(DocumentTypeResponse.class)
+                .value(x -> assertThat(x).usingRecursiveComparison().isEqualTo(response));
+    }
+}
