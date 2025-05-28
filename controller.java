@@ -63,6 +63,7 @@ public class ProductDocumentsRestControllerTest {
         webClient.get()
                 .uri(builder -> builder.path("/v1/products/{productId}/documents").build(PRODUCT_ID))
                 .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
+                .header("Accept-Language", "es-ES")
                 .acceptCharset(StandardCharsets.UTF_8)
                 .exchange()
                 .expectStatus().isOk()
@@ -81,6 +82,7 @@ public class ProductDocumentsRestControllerTest {
         webClient.get()
                 .uri(builder -> builder.path("/v1/products/{productId}/documents").build(PRODUCT_ID))
                 .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
+                .header("Accept-Language", "es-ES")
                 .acceptCharset(StandardCharsets.UTF_8)
                 .exchange()
                 .expectStatus().isOk()
@@ -96,6 +98,7 @@ public class ProductDocumentsRestControllerTest {
         webClient.get()
                 .uri(builder -> builder.path("/v1/products/{productId}/documents").build(PRODUCT_ID))
                 .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
+                .header("Accept-Language", "es-ES")
                 .acceptCharset(StandardCharsets.UTF_8)
                 .exchange()
                 .expectStatus().is5xxServerError();
