@@ -55,17 +55,49 @@ public class ProductDocumentsRestControllerTest {
     private static final String PRODUCT_ID = "FW";
 
     @Test
-    void testFindProductDocumentType_ok() throws JsonProcessingException{
+    void testFindProductDocumentType_ok() throws JsonProcessingException {
         DocumentTypeResponse response = PODAM_FACTORY.manufacturePojo(DocumentTypeResponse.class);
-
         when(service.findProductDocumentType(LocaleConstants.ENTITY_HEADER, LocaleConstants.DEFAULT_LOCALE, PRODUCT_ID))
                 .thenReturn(Flux.just(response));
 
         webClient.get()
                 .uri(builder -> builder.path("/v1/products/{productId}/documents").build(PRODUCT_ID))
                 .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
-                .acceptCharset(StandardCharsets.UTF_8).exchange().expectStatus().isOk()
-                .expectBody(DocumentTypeResponse.class)
-                .value(x -> assertThat(x).usingRecursiveComparison().isEqualTo(response));
+                .acceptCharset(StandardCharsets.UTF_8)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(DocumentTypeResponse.class)
+                .value(list -> {
+                    assertThat(list).hasSize(1);
+                    assertThat(list.get(0)).usingRecursiveComparison().isEqualTo(response);
+                });
+    }
+
+    @Test
+    void testFindProductDocumentType_empty() {
+        when(service.findProductDocumentType(LocaleConstants.ENTITY_HEADER, LocaleConstants.DEFAULT_LOCALE, PRODUCT_ID))
+                .thenReturn(Flux.empty());
+
+        webClient.get()
+                .uri(builder -> builder.path("/v1/products/{productId}/documents").build(PRODUCT_ID))
+                .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
+                .acceptCharset(StandardCharsets.UTF_8)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(DocumentTypeResponse.class)
+                .value(list -> assertThat(list).isEmpty());
+    }
+
+    @Test
+    void testFindProductDocumentType_error() {
+        when(service.findProductDocumentType(LocaleConstants.ENTITY_HEADER, LocaleConstants.DEFAULT_LOCALE, PRODUCT_ID))
+                .thenReturn(Flux.error(new RuntimeException("error")));
+
+        webClient.get()
+                .uri(builder -> builder.path("/v1/products/{productId}/documents").build(PRODUCT_ID))
+                .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
+                .acceptCharset(StandardCharsets.UTF_8)
+                .exchange()
+                .expectStatus().is5xxServerError();
     }
 }
