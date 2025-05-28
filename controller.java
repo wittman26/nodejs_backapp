@@ -40,6 +40,7 @@ public class ProductDocumentsRestController implements ProductDocumentsRestContr
     }
 }
 
+
 @WebFluxTest(ProductDocumentsRestController.class)
 @Import({ LocaleAutoConfig.class, WebSecurityAutoConfig.class })
 @WithMockUser(username = "x1103878")
@@ -104,3 +105,48 @@ public class ProductDocumentsRestControllerTest {
                 .expectStatus().is5xxServerError();
     }
 }
+
+
+/**
+ * Document type
+ */
+@Getter
+public enum TypeEnum {
+    KD("KD"),
+
+    CO("CO"),
+
+    KE("KE"),
+
+    EV("EV"),
+
+    OM("OM");
+
+    private String value;
+
+    TypeEnum(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static TypeEnum fromValue(String value) {
+        for (TypeEnum b : TypeEnum.values()) {
+            if (b.value.equals(value)) {
+                return b;
+            }
+        }
+        throw new IllegalArgumentException("Unexpected value '" + value + "'");
+    }
+}
+
+org.springframework.core.codec.DecodingException: JSON decoding error: Input mismatch reading Enum `com.acelera.fx.digitalsignature.infrastructure.response.base.TypeEnum`: properties-based `@JsonCreator` ([method com.acelera.fx.digitalsignature.infrastructure.response.base.TypeEnum#fromValue(java.lang.String)]) expects JSON Object (JsonToken.START_OBJECT), got JsonToken.VALUE_STRING; nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Input mismatch reading Enum `com.acelera.fx.digitalsignature.infrastructure.response.base.TypeEnum`: properties-based `@JsonCreator` ([method com.acelera.fx.digitalsignature.infrastructure.response.base.TypeEnum#fromValue(java.lang.String)]) expects JSON Object (JsonToken.START_OBJECT), got JsonToken.VALUE_STRING
+ at [Source: UNKNOWN; byte offset: #UNKNOWN] (through reference chain: com.acelera.fx.digitalsignature.infrastructure.response.DocumentTypeResponse["type"])
+
+	at org.springframework.http.codec.json.AbstractJackson2Decoder.processException(AbstractJackson2Decoder.java:242)
+	Suppressed: The stacktrace has been enhanced by Reactor, refer to additional information below: 
+Error has been observed at the following site(s):
