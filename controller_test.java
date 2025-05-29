@@ -1,4 +1,38 @@
-package com.acelera.fx.db.infrastructure.adapter.rsocket.controller;
+
+import com.acelera.broker.fx.db.domain.dto.TradeSignature;
+import com.acelera.broker.fx.db.domain.port.TradeSignatureRepositoryClient;
+import com.acelera.data.PersistWebFluxUtils;
+import com.acelera.fx.db.domain.port.persistence.TradeSignatureRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
+@Controller
+@RequiredArgsConstructor
+public class TradeSignatureRSocketController implements TradeSignatureRepositoryClient {
+
+    private TradeSignatureRepository repository;
+
+    @Override
+    public Mono<TradeSignature> save(@Payload TradeSignature tradeSignature) {
+        return PersistWebFluxUtils.save(() -> repository.save(tradeSignature))
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Override
+    public Mono<TradeSignature> findByParams(String entity, Integer originId, String productId) {
+        return null;
+    }
+
+    @Override
+    public Mono<TradeSignature> update(Integer tradeSignatureId, TradeSignature tradeSignature) {
+        return null;
+    }
+}
+
+
 
 import com.acelera.broker.fx.db.FxDbBrokerConfig;
 import com.acelera.broker.fx.db.domain.dto.TradeSignature;
