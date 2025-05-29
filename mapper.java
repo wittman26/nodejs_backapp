@@ -25,7 +25,7 @@ public class TradeSignatureModel extends BaseAuditorJpa {
     private String entity;
 
     @Column(name = "ORIGIN_ID", nullable = false)
-    private BigDecimal originId;
+    private Long originId;
 
     @Column(name = "ORIGIN", nullable = false, length = 20)
     private String origin;
@@ -43,7 +43,7 @@ public class TradeSignatureModel extends BaseAuditorJpa {
     private String validatedBo;
 
     @Column(name = "EXPEDIENT_ID")
-    private BigDecimal expedientId;
+    private Long expedientId;
 }
 
 @MappedSuperclass
@@ -87,7 +87,6 @@ public abstract class BaseAuditorSuperclass {
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TradeSignature extends AuditZonedFields {
-
     private Integer tradeSignatureId;
     private String entity;
     private Long originId;
@@ -123,13 +122,13 @@ public interface TradeSignatureMapper {
 
     @Mapping(target = "tradeSignatureId", source = "tradeSignatureId")
     @Mapping(target = "entity", source = "entity")
-    @Mapping(target = "originId", expression = "java(tradeSignature.getOriginId() != null ? java.math.BigDecimal.valueOf(tradeSignature.getOriginId()) : null)")
+    @Mapping(target = "originId", source = "originId")
     @Mapping(target = "origin", source = "origin")
     @Mapping(target = "productId", source = "productId")
     @Mapping(target = "signatureType", source = "signatureType")
     @Mapping(target = "indicatorSscc", source = "indicatorSSCC")
     @Mapping(target = "validatedBo", source = "validatedBo")
-    @Mapping(target = "expedientId", expression = "java(tradeSignature.getExpedientId() != null ? java.math.BigDecimal.valueOf(tradeSignature.getExpedientId()) : null)")
+    @Mapping(target = "expedientId", source = "expedientId")
     // Auditoría
     @Mapping(target = "usualta", source = "usualta")
     @Mapping(target = "fecalta", expression = "java(tradeSignature.getFecalta() != null ? tradeSignature.getFecalta().toLocalDateTime() : null)")
@@ -139,13 +138,13 @@ public interface TradeSignatureMapper {
 
     @Mapping(target = "tradeSignatureId", source = "tradeSignatureId")
     @Mapping(target = "entity", source = "entity")
-    @Mapping(target = "originId", expression = "java(tradeSignatureModel.getOriginId() != null ? tradeSignatureModel.getOriginId().longValue() : null)")
+    @Mapping(target = "originId", source = "originId")
     @Mapping(target = "origin", source = "origin")
     @Mapping(target = "productId", source = "productId")
     @Mapping(target = "signatureType", source = "signatureType")
     @Mapping(target = "indicatorSSCC", source = "indicatorSscc")
     @Mapping(target = "validatedBo", source = "validatedBo")
-    @Mapping(target = "expedientId", expression = "java(tradeSignatureModel.getExpedientId() != null ? tradeSignatureModel.getExpedientId().longValue() : null)")
+    @Mapping(target = "expedientId", source = "expedientId")
     // Auditoría
     @Mapping(target = "usualta", source = "usualta")
     @Mapping(target = "fecalta", expression = "java(tradeSignatureModel.getFecalta() != null ? tradeSignatureModel.getFecalta().atZone(java.time.ZoneId.systemDefault()) : null)")
@@ -183,7 +182,3 @@ public class TradeSignatureMapperTest {
     }
 }
 
-java: Unknown property "usualta" in result type TradeSignatureModel.TradeSignatureModelBuilder. Did you mean "null"?
-java: Unknown property "fecalta" in result type TradeSignatureModel.TradeSignatureModelBuilder. Did you mean "null"?
-java: Unknown property "usumodi" in result type TradeSignatureModel.TradeSignatureModelBuilder. Did you mean "null"?
-java: Unknown property "fecmodi" in result type TradeSignatureModel.TradeSignatureModelBuilder. Did you mean "null"?
