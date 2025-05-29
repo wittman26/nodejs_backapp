@@ -76,15 +76,42 @@ package com.acelera.fx.db.infrastructure.adapter.persistence.jpa.mapper;
 import com.acelera.broker.fx.db.domain.dto.TradeSignature;
 import com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface TradeSignatureMapper {
-
     TradeSignatureMapper INSTANCE = Mappers.getMapper(TradeSignatureMapper.class);
 
+    @Mapping(target = "tradeSignatureId", source = "tradeSignatureId")
+    @Mapping(target = "entity", source = "entity")
+    @Mapping(target = "originId", expression = "java(tradeSignature.getOriginId() != null ? java.math.BigDecimal.valueOf(tradeSignature.getOriginId()) : null)")
+    @Mapping(target = "origin", source = "origin")
+    @Mapping(target = "productId", source = "productId")
+    @Mapping(target = "signatureType", source = "signatureType")
+    @Mapping(target = "indicatorSscc", source = "indicatorSSCC")
+    @Mapping(target = "validatedBo", source = "validatedBo")
+    @Mapping(target = "expedientId", expression = "java(tradeSignature.getExpedientId() != null ? java.math.BigDecimal.valueOf(tradeSignature.getExpedientId()) : null)")
+    // Auditoría
+    @Mapping(target = "usuAlta", source = "usualta")
+    @Mapping(target = "fecAlta", expression = "java(tradeSignature.getFecalta() != null ? java.time.LocalDateTime.from(tradeSignature.getFecalta()) : null)")
+    @Mapping(target = "usuModi", source = "usumodi")
+    @Mapping(target = "fecModi", expression = "java(tradeSignature.getFecmodi() != null ? java.time.LocalDateTime.from(tradeSignature.getFecmodi()) : null)")
     TradeSignatureModel fromDomain(TradeSignature tradeSignature);
 
+    @Mapping(target = "tradeSignatureId", source = "tradeSignatureId")
+    @Mapping(target = "entity", source = "entity")
+    @Mapping(target = "originId", expression = "java(tradeSignatureModel.getOriginId() != null ? tradeSignatureModel.getOriginId().longValue() : null)")
+    @Mapping(target = "origin", source = "origin")
+    @Mapping(target = "productId", source = "productId")
+    @Mapping(target = "signatureType", source = "signatureType")
+    @Mapping(target = "indicatorSSCC", source = "indicatorSscc")
+    @Mapping(target = "validatedBo", source = "validatedBo")
+    @Mapping(target = "expedientId", expression = "java(tradeSignatureModel.getExpedientId() != null ? tradeSignatureModel.getExpedientId().longValue() : null)")
+    // Auditoría
+    @Mapping(target = "usualta", source = "usuAlta")
+    @Mapping(target = "fecalta", expression = "java(tradeSignatureModel.getFecAlta() != null ? tradeSignatureModel.getFecAlta().atZone(java.time.ZoneId.systemDefault()) : null)")
+    @Mapping(target = "usumodi", source = "usuModi")
+    @Mapping(target = "fecmodi", expression = "java(tradeSignatureModel.getFecModi() != null ? tradeSignatureModel.getFecModi().atZone(java.time.ZoneId.systemDefault()) : null)")
     TradeSignature toDomain(TradeSignatureModel tradeSignatureModel);
-
 }
