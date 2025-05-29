@@ -46,6 +46,44 @@ public class TradeSignatureModel extends BaseAuditorJpa {
     private BigDecimal expedientId;
 }
 
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public abstract class BaseAuditorJpa extends BaseAuditorSuperclass {
+
+}
+@Getter
+@Setter
+@NoArgsConstructor
+@MappedSuperclass
+@JsonIgnoreProperties(value = { "fecalta", "usualta", "usumodi", "fecmodi" })
+public abstract class BaseAuditorSuperclass {
+
+    @Column(nullable = false, updatable = false, length = 30)
+    @Size(max = 30)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @CreatedBy
+    private String usualta;
+
+    @Column(nullable = false, updatable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @CreatedDate
+    private LocalDateTime fecalta;
+
+    @NotNull
+    @Column(nullable = false, length = 30)
+    @Size(max = 30)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @LastModifiedBy
+    private String usumodi;
+
+    @NotNull
+    @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @LastModifiedDate
+    private LocalDateTime fecmodi;
+}
+
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TradeSignature extends AuditZonedFields {
