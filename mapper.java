@@ -131,10 +131,10 @@ public interface TradeSignatureMapper {
     @Mapping(target = "validatedBo", source = "validatedBo")
     @Mapping(target = "expedientId", expression = "java(tradeSignature.getExpedientId() != null ? java.math.BigDecimal.valueOf(tradeSignature.getExpedientId()) : null)")
     // Auditoría
-    @Mapping(target = "usuAlta", source = "usualta")
-    @Mapping(target = "fecAlta", expression = "java(tradeSignature.getFecalta() != null ? java.time.LocalDateTime.from(tradeSignature.getFecalta()) : null)")
-    @Mapping(target = "usuModi", source = "usumodi")
-    @Mapping(target = "fecModi", expression = "java(tradeSignature.getFecmodi() != null ? java.time.LocalDateTime.from(tradeSignature.getFecmodi()) : null)")
+    @Mapping(target = "usualta", source = "usualta")
+    @Mapping(target = "fecalta", expression = "java(tradeSignature.getFecalta() != null ? tradeSignature.getFecalta().toLocalDateTime() : null)")
+    @Mapping(target = "usumodi", source = "usumodi")
+    @Mapping(target = "fecmodi", expression = "java(tradeSignature.getFecmodi() != null ? tradeSignature.getFecmodi().toLocalDateTime() : null)")
     TradeSignatureModel fromDomain(TradeSignature tradeSignature);
 
     @Mapping(target = "tradeSignatureId", source = "tradeSignatureId")
@@ -147,9 +147,9 @@ public interface TradeSignatureMapper {
     @Mapping(target = "validatedBo", source = "validatedBo")
     @Mapping(target = "expedientId", expression = "java(tradeSignatureModel.getExpedientId() != null ? tradeSignatureModel.getExpedientId().longValue() : null)")
     // Auditoría
-    @Mapping(target = "usualta", source = "usuAlta")
-    @Mapping(target = "fecalta", expression = "java(tradeSignatureModel.getFecAlta() != null ? tradeSignatureModel.getFecAlta().atZone(java.time.ZoneId.systemDefault()) : null)")
-    @Mapping(target = "usumodi", source = "usuModi")
-    @Mapping(target = "fecmodi", expression = "java(tradeSignatureModel.getFecModi() != null ? tradeSignatureModel.getFecModi().atZone(java.time.ZoneId.systemDefault()) : null)")
+    @Mapping(target = "usualta", source = "usualta")
+    @Mapping(target = "fecalta", expression = "java(tradeSignatureModel.getFecalta() != null ? tradeSignatureModel.getFecalta().atZone(java.time.ZoneId.systemDefault()) : null)")
+    @Mapping(target = "usumodi", source = "usumodi")
+    @Mapping(target = "fecmodi", expression = "java(tradeSignatureModel.getFecmodi() != null ? tradeSignatureModel.getFecmodi().atZone(java.time.ZoneId.systemDefault()) : null)")
     TradeSignature toDomain(TradeSignatureModel tradeSignatureModel);
 }
