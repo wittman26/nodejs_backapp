@@ -44,7 +44,61 @@ public class TradeSignatureModel extends BaseAuditorJpa {
 
     @Column(name = "EXPEDIENT_ID")
     private Long expedientId;
+
+    @OneToMany(mappedBy = "tradeSignature", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private java.util.List<TradeSigner> tradeSigners;  
 }
+
+@Entity
+@Table(name = "FX_TRADE_SIGNER", schema = "ACELER_FX")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class TradeSigner {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "TRADE_SIGNER_ID")
+    private Long tradeSignerId;
+
+    @Column(name = "TRADE_SIGNATURE_ID", nullable = false)
+    private Long tradeSignatureId;
+
+    @Column(name = "DOCUMENT_TYPE", nullable = false, length = 1)
+    private String documentType;
+
+    @Column(name = "DOCUMENT_NUMBER", nullable = false, length = 20)
+    private String documentNumber;
+
+    @Column(name = "SIGNER_ID", nullable = false, length = 10)
+    private String signerId;
+
+    @Column(name = "NAME", nullable = false, length = 200)
+    private String name;
+
+    @Column(name = "IS_CLIENT", nullable = false, length = 1)
+    private String isClient;
+
+    @Column(name = "INTERVENTION_TYPE", nullable = false, length = 2)
+    private String interventionType;
+
+    @Column(name = "FECALTA", nullable = false)
+    private LocalDateTime fecAlta;
+
+    @Column(name = "USUALTA", nullable = false, length = 30)
+    private String usuAlta;
+
+    @Column(name = "FECMODI", nullable = false)
+    private LocalDateTime fecModi;
+
+    @Column(name = "USUMODI", nullable = false, length = 30)
+    private String usuModi;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADE_SIGNATURE_ID", referencedColumnName = "TRADE_SIGNATURE_ID", insertable = false, updatable = false)
+    private TradeSignatureModel tradeSignatureModel;
+}
+
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
@@ -96,6 +150,7 @@ public class TradeSignature extends AuditZonedFields {
     private String indicatorSSCC;
     private String validatedBo;
     private Long expedientId;
+    private List<TradeSigner> tradeSigners;
 }
 
 @Data
@@ -106,6 +161,19 @@ public abstract class AuditZonedFields {
     private ZonedDateTime fecalta;
     private String usumodi;
     private ZonedDateTime fecmodi;
+}
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class TradeSigner extends AuditZonedFields {
+    private Long tradeSignerId;
+    private Long tradeSignatureId;
+    private String documentType;
+    private String documentNumber;
+    private String signerId;
+    private String name;
+    private String isClient;
+    private String interventionType;
 }
 
 package com.acelera.fx.db.infrastructure.adapter.persistence.jpa.mapper;
@@ -129,6 +197,7 @@ public interface TradeSignatureMapper {
     @Mapping(target = "indicatorSscc", source = "indicatorSSCC")
     @Mapping(target = "validatedBo", source = "validatedBo")
     @Mapping(target = "expedientId", source = "expedientId")
+    @Mapping(target = "tradeSigners", source = "tradeSigners")
     // Auditoría
     @Mapping(target = "usualta", source = "usualta")
     @Mapping(target = "fecalta", expression = "java(tradeSignature.getFecalta() != null ? tradeSignature.getFecalta().toLocalDateTime() : null)")
@@ -136,15 +205,7 @@ public interface TradeSignatureMapper {
     @Mapping(target = "fecmodi", expression = "java(tradeSignature.getFecmodi() != null ? tradeSignature.getFecmodi().toLocalDateTime() : null)")
     TradeSignatureModel fromDomain(TradeSignature tradeSignature);
 
-    @Mapping(target = "tradeSignatureId", source = "tradeSignatureId")
-    @Mapping(target = "entity", source = "entity")
-    @Mapping(target = "originId", source = "originId")
-    @Mapping(target = "origin", source = "origin")
-    @Mapping(target = "productId", source = "productId")
-    @Mapping(target = "signatureType", source = "signatureType")
-    @Mapping(target = "indicatorSSCC", source = "indicatorSscc")
-    @Mapping(target = "validatedBo", source = "validatedBo")
-    @Mapping(target = "expedientId", source = "expedientId")
+    @Mapping(target = "tradeSigners", source = "tradeSigners")
     // Auditoría
     @Mapping(target = "usualta", source = "usualta")
     @Mapping(target = "fecalta", expression = "java(tradeSignatureModel.getFecalta() != null ? tradeSignatureModel.getFecalta().atZone(java.time.ZoneId.systemDefault()) : null)")

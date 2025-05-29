@@ -56,4 +56,7 @@ public class FxTradeSignature {
 
     @Column(name = "USUMODI", nullable = false, length = 30)
     private String usuModi;
+
+    @OneToMany(mappedBy = "tradeSignature", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private java.util.List<FxTradeSigner> fxTradeSigners;
 }
