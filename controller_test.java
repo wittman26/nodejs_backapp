@@ -100,40 +100,59 @@ public class TradeSignatureRSocketControllerTest {
 }
 
 
-2025-05-29 17:04:37.537  INFO [conac-springboot-test-db,,] 872 --- [           main] .r.c.TradeSignatureRSocketControllerTest : Starting TradeSignatureRSocketControllerTest using Java 17.0.6 on SDSESCWEQD3EPTW with PID 872 (started by x612243 in C:\GIT_REPOS\acelera\conac-springboot-fx-db)
-2025-05-29 17:04:37.539  INFO [conac-springboot-test-db,,] 872 --- [           main] .r.c.TradeSignatureRSocketControllerTest : The following 1 profile is active: "test"
-2025-05-29 17:04:40.790  INFO [conac-springboot-test-db,,] 872 --- [           main] o.s.b.rsocket.netty.NettyRSocketServer   : Netty RSocket started on port(s): 4062
-2025-05-29 17:04:40.799  INFO [conac-springboot-test-db,,] 872 --- [           main] .r.c.TradeSignatureRSocketControllerTest : Started TradeSignatureRSocketControllerTest in 5.219 seconds (JVM running for 8.246)
-2025-05-29 17:04:41.116  INFO [conac-springboot-test-db,,] 872 --- [oundedElastic-1] com.acelera.util.ReactorUtils            : -------> INI: Calling to TradeSignatureRepositoryClient.save
-2025-05-29 17:04:41.485  INFO [conac-springboot-test-db,,] 872 --- [actor-tcp-nio-2] c.a.b.shared.domain.RSocketProxyLogs     : client: {"correlationId":1748531081451276461,"route":"trade-signature.save","messageType":"request","rsocketType":"requestResponse","payload":{"usualta":"REge577o9v","fecalta":"2025-05-29T17:04:40.9813255+02:00","usumodi":"YZdXzZUuKR","fecmodi":"2025-05-29T17:04:40.9813255+02:00","tradeSignatureId":866164123392000,"entity":"lLjTJIcYol","originId":866164096727700,"origin":"y06Xfxufzd","productId":"Tzu63J9dgo","signatureType":"8chCTolj6q","indicatorSSCC":"fFlyCzO2x4","validatedBo":"iUJMADkMUF","expedientId":866164096578300,"tradeSignerList":[{"usualta":"67fhAv6KFf","fecalta":"2025-05-29T17:04:40.9608312+02:00","usumodi":"Bht5CXOcbg","fecmodi":"2025-05-29T17:04:40.9608312+02:00","tradeSignerId":866164108216400,"tradeSignatureId":1594284466,"documentType":"mifxppoGmU","documentNumber":"hAP3XojcDw","signerId":"G5a9EkOU_H","name":"V5ixhhLN5H","isClient":"2nOYTeUZ3b","interventionType":"0EnW_qlXBi"},{"usualta":"QurGt5T4zu","fecalta":"2025-05-29T17:04:40.9711967+02:00","usumodi":"mxvro2br9x","fecmodi":"2025-05-29T17:04:40.9711967+02:00","tradeSignerId":866164111717000,"tradeSignatureId":186029698,"documentType":"VXFjTGk3uM","documentNumber":"2f801dHWw3","signerId":"w05oKyayfJ","name":"0L35SgzSTk","isClient":"L6FL8xOWqh","interventionType":"dlnT5m1zjz"},{"usualta":"uhiZ48wU2V","fecalta":"2025-05-29T17:04:40.9742751+02:00","usumodi":"acPHDuwZW_","fecmodi":"2025-05-29T17:04:40.9742751+02:00","tradeSignerId":866164114784300,"tradeSignatureId":735128738,"documentType":"K7LxjXYfpM","documentNumber":"u0QjKNcCB4","signerId":"zpEq8GdiOh","name":"gCGIFy6cJi","isClient":"sz8FraWvEP","interventionType":"eui1PNDQ4o"},{"usualta":"Hr7HKj5q1v","fecalta":"2025-05-29T17:04:40.9742751+02:00","usumodi":"ndBbr4iPdf","fecmodi":"2025-05-29T17:04:40.9742751+02:00","tradeSignerId":866164117702700,"tradeSignatureId":560510020,"documentType":"zibkxD8KCj","documentNumber":"M4r3aLP8Y5","signerId":"F_dRhLoO05","name":"y3NkykewtR","isClient":"mt2Oj4_ydC","interventionType":"XYH94eHOT3"},{"usualta":"Ldgx5G6OOS","fecalta":"2025-05-29T17:04:40.9813255+02:00","usumodi":"iGJ77VFMk_","fecmodi":"2025-05-29T17:04:40.9813255+02:00","tradeSignerId":866164121462500,"tradeSignatureId":47922809,"documentType":"lKg4sg4XwE","documentNumber":"WVC7zS74oC","signerId":"mvXhJ4xKMy","name":"5w9rlymixE","isClient":"b7IEa9Sv2c","interventionType":"4WWAPHrF3b"}]},"metadata":{"acelera.ctx":{"entity":"0049","locale":"es_ES"}}}
-2025-05-29 17:04:41.557 ERROR [conac-springboot-test-db,,] 872 --- [oundedElastic-2] o.s.m.h.i.reactive.InvocableHelper       : No exception handling method
+2025-05-29 17:10:10.181  INFO [conac-springboot-test-db,,] 18916 --- [actor-tcp-nio-2] com.acelera.util.ReactorUtils            : <------- END: Calling to TradeSignatureRepositoryClient.save
 
-java.lang.NullPointerException: Cannot invoke "com.acelera.fx.db.domain.port.persistence.TradeSignatureRepository.save(com.acelera.broker.fx.db.domain.dto.TradeSignature)" because "this.repository" is null
-	at com.acelera.fx.db.infrastructure.adapter.rsocket.controller.TradeSignatureRSocketController.lambda$save$0(TradeSignatureRSocketController.java:21) ~[classes/:na]
-	at com.acelera.data.PersistWebFluxUtils.lambda$save$1(PersistWebFluxUtils.java:29) ~[classes/:na]
-	at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:106) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onNext(FluxSwitchIfEmpty.java:74) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.Operators$MonoSubscriber.complete(Operators.java:1839) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:151) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.FluxFilterFuseable$FilterFuseableSubscriber.onNext(FluxFilterFuseable.java:118) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.Operators$ScalarSubscription.request(Operators.java:2400) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.FluxFilterFuseable$FilterFuseableSubscriber.request(FluxFilterFuseable.java:191) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.MonoFlatMap$FlatMapMain.onSubscribe(MonoFlatMap.java:110) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.FluxFilterFuseable$FilterFuseableSubscriber.onSubscribe(FluxFilterFuseable.java:87) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.MonoCurrentContext.subscribe(MonoCurrentContext.java:36) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.Mono.subscribe(Mono.java:4490) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.publisher.MonoSubscribeOn$SubscribeOnSubscriber.run(MonoSubscribeOn.java:126) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.scheduler.WorkerTask.call(WorkerTask.java:84) ~[reactor-core-3.4.34.jar:3.4.34]
-	at reactor.core.scheduler.WorkerTask.call(WorkerTask.java:37) ~[reactor-core-3.4.34.jar:3.4.34]
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
-	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304) ~[na:na]
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136) ~[na:na]
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) ~[na:na]
-	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na]
+java.lang.AssertionError: [save tradeSignature] 
+Expecting actual:
+  TradeSignature(tradeSignatureId=866492556922500, entity=1V05uoq_0A, originId=866492528107100, origin=v9Naye9egO, productId=yYMS7q9011, signatureType=aUzalBMbnP, indicatorSSCC=V5pw9p8BFM, validatedBo=VyD86oTq7t, expedientId=866492527894700, tradeSignerList=[TradeSigner(tradeSignerId=866492540526200, tradeSignatureId=1359942194, documentType=xeLDTZp_iH, documentNumber=2zuNaCRpdS, signerId=AzbXRbPlHA, name=ZS8UMSgvtw, isClient=qvetfd_0b4, interventionType=rJ7nicKvGb), TradeSigner(tradeSignerId=866492544298300, tradeSignatureId=1023835544, documentType=AGnFhG5_k1, documentNumber=4CGSxeHmgC, signerId=s3wynjDOXk, name=oinirZ7D5g, isClient=JTvR_jbOPT, interventionType=sH_O0RYsDT), TradeSigner(tradeSignerId=866492547730800, tradeSignatureId=535804325, documentType=qMSiiJbXTU, documentNumber=gte70CG9_q, signerId=ENVg4a4vOg, name=FmUzbM3JAu, isClient=VHcSxbOdLB, interventionType=HmwPpOtsvx), TradeSigner(tradeSignerId=866492550486800, tradeSignatureId=1508202090, documentType=lbMTMKhmW0, documentNumber=iD8vgUC9Yy, signerId=7ca7dOBRbI, name=b8wBNxlN1V, isClient=4pPwUOJnj5, interventionType=X_4mOuELh5), TradeSigner(tradeSignerId=866492554738200, tradeSignatureId=1652018833, documentType=nFc8gXpNY_, documentNumber=PVHSQ1J9kz, signerId=hMIRSstjZc, name=Fzqdiq5zPa, isClient=pXlR24kcLJ, interventionType=wlDtRDRq_L)])
+to be equal to:
+  TradeSignature(tradeSignatureId=866492556922500, entity=1V05uoq_0A, originId=866492528107100, origin=v9Naye9egO, productId=yYMS7q9011, signatureType=aUzalBMbnP, indicatorSSCC=V5pw9p8BFM, validatedBo=VyD86oTq7t, expedientId=866492527894700, tradeSignerList=[TradeSigner(tradeSignerId=866492540526200, tradeSignatureId=1359942194, documentType=xeLDTZp_iH, documentNumber=2zuNaCRpdS, signerId=AzbXRbPlHA, name=ZS8UMSgvtw, isClient=qvetfd_0b4, interventionType=rJ7nicKvGb), TradeSigner(tradeSignerId=866492544298300, tradeSignatureId=1023835544, documentType=AGnFhG5_k1, documentNumber=4CGSxeHmgC, signerId=s3wynjDOXk, name=oinirZ7D5g, isClient=JTvR_jbOPT, interventionType=sH_O0RYsDT), TradeSigner(tradeSignerId=866492547730800, tradeSignatureId=535804325, documentType=qMSiiJbXTU, documentNumber=gte70CG9_q, signerId=ENVg4a4vOg, name=FmUzbM3JAu, isClient=VHcSxbOdLB, interventionType=HmwPpOtsvx), TradeSigner(tradeSignerId=866492550486800, tradeSignatureId=1508202090, documentType=lbMTMKhmW0, documentNumber=iD8vgUC9Yy, signerId=7ca7dOBRbI, name=b8wBNxlN1V, isClient=4pPwUOJnj5, interventionType=X_4mOuELh5), TradeSigner(tradeSignerId=866492554738200, tradeSignatureId=1652018833, documentType=nFc8gXpNY_, documentNumber=PVHSQ1J9kz, signerId=hMIRSstjZc, name=Fzqdiq5zPa, isClient=pXlR24kcLJ, interventionType=wlDtRDRq_L)])
+when recursively comparing field by field, but found the following 12 differences:
 
-2025-05-29 17:04:41.563 ERROR [conac-springboot-test-db,,] 872 --- [actor-tcp-nio-2] c.a.b.shared.domain.RSocketProxyLogs     : <------- RSocket client error of correlation 1748531081451276461:
+field/property 'fecalta' differ:
+- actual value  : 2025-05-29T15:10:09.417991200Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.417991200+02:00[Europe/Madrid] (java.time.ZonedDateTime)
 
-io.rsocket.exceptions.ApplicationErrorException: Cannot invoke "com.acelera.fx.db.domain.port.persistence.TradeSignatureRepository.save(com.acelera.broker.fx.db.domain.dto.TradeSignature)" because "this.repository" is null
-	at io.rsocket.exceptions.Exceptions.from(Exceptions.java:76) ~[rsocket-core-1.1.3.jar:na]
-	at io.rsocket.core.RSocketRequester.handleFrame(RSocketRequester.java:261) ~[rsocket-core-1.1.3.jar:na]
-	at io.rs
+field/property 'fecmodi' differ:
+- actual value  : 2025-05-29T15:10:09.417991200Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.417991200+02:00[Europe/Madrid] (java.time.ZonedDateTime)
+
+field/property 'tradeSignerList[0].fecalta' differ:
+- actual value  : 2025-05-29T15:10:09.402257500Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.402257500+02:00[Europe/Madrid] (java.time.ZonedDateTime)
+
+field/property 'tradeSignerList[0].fecmodi' differ:
+- actual value  : 2025-05-29T15:10:09.402257500Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.402257500+02:00[Europe/Madrid] (java.time.ZonedDateTime)
+
+field/property 'tradeSignerList[1].fecalta' differ:
+- actual value  : 2025-05-29T15:10:09.402257500Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.402257500+02:00[Europe/Madrid] (java.time.ZonedDateTime)
+
+field/property 'tradeSignerList[1].fecmodi' differ:
+- actual value  : 2025-05-29T15:10:09.402257500Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.402257500+02:00[Europe/Madrid] (java.time.ZonedDateTime)
+
+field/property 'tradeSignerList[2].fecalta' differ:
+- actual value  : 2025-05-29T15:10:09.402257500Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.402257500+02:00[Europe/Madrid] (java.time.ZonedDateTime)
+
+field/property 'tradeSignerList[2].fecmodi' differ:
+- actual value  : 2025-05-29T15:10:09.402257500Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.402257500+02:00[Europe/Madrid] (java.time.ZonedDateTime)
+
+field/property 'tradeSignerList[3].fecalta' differ:
+- actual value  : 2025-05-29T15:10:09.402257500Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.402257500+02:00[Europe/Madrid] (java.time.ZonedDateTime)
+
+field/property 'tradeSignerList[3].fecmodi' differ:
+- actual value  : 2025-05-29T15:10:09.402257500Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.402257500+02:00[Europe/Madrid] (java.time.ZonedDateTime)
+
+field/property 'tradeSignerList[4].fecalta' differ:
+- actual value  : 2025-05-29T15:10:09.414934500Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.414934500+02:00[Europe/Madrid] (java.time.ZonedDateTime)
+
+field/property 'tradeSignerList[4].fecmodi' differ:
+- actual value  : 2025-05-29T15:10:09.417991200Z[UTC] (java.time.ZonedDateTime)
+- expected value: 2025-05-29T17:10:09.417991200+02:00[Europe/Madrid] (java.time.ZonedDateTime)
