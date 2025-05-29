@@ -153,3 +153,37 @@ public interface TradeSignatureMapper {
     @Mapping(target = "fecmodi", expression = "java(tradeSignatureModel.getFecmodi() != null ? tradeSignatureModel.getFecmodi().atZone(java.time.ZoneId.systemDefault()) : null)")
     TradeSignature toDomain(TradeSignatureModel tradeSignatureModel);
 }
+
+
+public class TradeSignatureMapperTest {
+    private final TradeSignatureMapper MAPPER = TradeSignatureMapper.INSTANCE;
+
+    private static final PodamFactoryImpl PODAM_FACTORY = new PodamFactoryImpl();
+
+    @Test
+    void testMapper() {
+
+        TradeSignatureModel input = PODAM_FACTORY.manufacturePojo(TradeSignatureModel.class);
+
+        TradeSignature expected = TradeSignature.builder()
+                .tradeSignatureId(input.getTradeSignatureId().intValue())
+                .entity(input.getEntity())
+                .originId(input.getOriginId().longValue())
+                .origin(input.getOrigin())
+                .productId(input.getProductId())
+                .signatureType(input.getSignatureType())
+                .indicatorSSCC(input.getIndicatorSSCC())
+                .validatedBo(input.getValidatedBo())
+                .expedientId(input.getExpedientId().longValue())
+                .build();
+
+        TradeSignature result = MAPPER.toDomain(input);
+
+        assertThat(result).as("TradeSignature").isNotNull().usingRecursiveComparison().isEqualTo(expected);
+    }
+}
+
+java: Unknown property "usualta" in result type TradeSignatureModel.TradeSignatureModelBuilder. Did you mean "null"?
+java: Unknown property "fecalta" in result type TradeSignatureModel.TradeSignatureModelBuilder. Did you mean "null"?
+java: Unknown property "usumodi" in result type TradeSignatureModel.TradeSignatureModelBuilder. Did you mean "null"?
+java: Unknown property "fecmodi" in result type TradeSignatureModel.TradeSignatureModelBuilder. Did you mean "null"?
