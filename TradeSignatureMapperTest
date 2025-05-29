@@ -1,0 +1,56 @@
+import com.acelera.broker.fx.db.domain.dto.TradeSignature;
+import com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel;
+import org.junit.jupiter.api.Test;
+import uk.co.jemos.podam.api.PodamFactoryImpl;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+public class TradeSignatureMapperTest {
+    private final TradeSignatureMapper MAPPER = TradeSignatureMapper.INSTANCE;
+
+    private static final PodamFactoryImpl PODAM_FACTORY = new PodamFactoryImpl();
+
+    @Test
+    void testMapper_toDomain() {
+
+        TradeSignatureModel input = PODAM_FACTORY.manufacturePojo(TradeSignatureModel.class);
+
+        TradeSignature expected = TradeSignature.builder()
+                .tradeSignatureId(input.getTradeSignatureId())
+                .entity(input.getEntity())
+                .originId(input.getOriginId())
+                .origin(input.getOrigin())
+                .productId(input.getProductId())
+                .signatureType(input.getSignatureType())
+                .indicatorSSCC(input.getIndicatorSSCC())
+                .validatedBo(input.getValidatedBo())
+                .expedientId(input.getExpedientId())
+                .build();
+
+        TradeSignature result = MAPPER.toDomain(input);
+
+        assertThat(result).as("TradeSignature").isNotNull().usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
+    void testMapper_fromDomain() {
+
+        TradeSignature input = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+
+        TradeSignatureModel expected = TradeSignatureModel.builder()
+                .tradeSignatureId(input.getTradeSignatureId())
+                .entity(input.getEntity())
+                .originId(input.getOriginId())
+                .origin(input.getOrigin())
+                .productId(input.getProductId())
+                .signatureType(input.getSignatureType())
+                .indicatorSSCC(input.getIndicatorSSCC())
+                .validatedBo(input.getValidatedBo())
+                .expedientId(input.getExpedientId())
+                .build();
+
+        TradeSignatureModel result = MAPPER.fromDomain(input);
+
+        assertThat(result).as("TradeSignatureModel").isNotNull().usingRecursiveComparison().isEqualTo(expected);
+    }
+}
