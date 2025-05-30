@@ -1,0 +1,36 @@
+public interface SpringJpaTradeSignatureRepository extends CrudRepository<TradeSignatureModel, Long> {
+    // @formatter:off
+    @Query(nativeQuery = true, value = "SELECT *"
+            + "    FROM ACELER_FX.FX_TRADE_SIGNATURE"
+            + "    WHERE (ENTITY = :#{#filter.entity} AND ORIGIN_ID = :#{#filter.originId} AND PRODUCT_ID = :#{#filter.productId})"
+            + "    OR TRADE_SIGNATURE_ID = :#{#filter.tradeSignatureId}"
+    )
+    // @formatter:on
+            Optional<TradeSignatureModel> find(TradeSignatureFindRequest filter);
+}
+
+
+2025-05-30 13:36:03.037  INFO [conac-springboot-fx-db,578b6e79736393df,b66377a828dc2a2f] 17888 --- [ctor-http-nio-4] c.a.b.shared.domain.RSocketProxyLogs     : server: {"correlationId":1748604962976135098,"route":"trade-signature.find","messageType":"request","rsocketType":"requestResponse","payload":{"tradeSignatureId":32,"entity":null,"originId":null,"productId":null},"metadata":{"acelera.ctx":{"entity":"0049","locale":"es_ES"}}}
+2025-05-30 13:36:09.584 DEBUG [conac-springboot-fx-db,578b6e79736393df,b66377a828dc2a2f] 17888 --- [oundedElastic-1] org.hibernate.SQL                        : 
+    SELECT
+        *    
+    FROM
+        ACELER_FX.FX_TRADE_SIGNATURE    
+    WHERE
+        (
+            ENTITY = ? 
+            AND ORIGIN_ID = ? 
+            AND PRODUCT_ID = ?
+        )    
+        OR TRADE_SIGNATURE_ID = ?
+2025-05-30 13:36:09.634 TRACE [conac-springboot-fx-db,578b6e79736393df,b66377a828dc2a2f] 17888 --- [oundedElastic-1] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARBINARY] - [null]
+2025-05-30 13:36:09.636 TRACE [conac-springboot-fx-db,578b6e79736393df,b66377a828dc2a2f] 17888 --- [oundedElastic-1] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [VARBINARY] - [null]
+2025-05-30 13:36:09.636 TRACE [conac-springboot-fx-db,578b6e79736393df,b66377a828dc2a2f] 17888 --- [oundedElastic-1] o.h.type.descriptor.sql.BasicBinder      : binding parameter [3] as [VARBINARY] - [null]
+2025-05-30 13:36:09.637 TRACE [conac-springboot-fx-db,578b6e79736393df,b66377a828dc2a2f] 17888 --- [oundedElastic-1] o.h.type.descriptor.sql.BasicBinder      : binding parameter [4] as [BIGINT] - [32]
+2025-05-30 13:36:09.739  WARN [conac-springboot-fx-db,578b6e79736393df,b66377a828dc2a2f] 17888 --- [oundedElastic-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 932, SQLState: 42000
+2025-05-30 13:36:09.739 ERROR [conac-springboot-fx-db,578b6e79736393df,b66377a828dc2a2f] 17888 --- [oundedElastic-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : ORA-00932: tipos de dato inconsistentes: se esperaba NUMBER se ha obtenido BINARY
+
+2025-05-30 13:36:09.757 ERROR [conac-springboot-fx-db,578b6e79736393df,b66377a828dc2a2f] 17888 --- [oundedElastic-1] o.s.m.h.i.reactive.InvocableHelper       : No exception handling method
+
+org.springframework.dao.InvalidDataAccessResourceUsageException: could not extract ResultSet; SQL [n/a]; nested exception is org.hibernate.exception.SQLGrammarException: could not extract ResultSet
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:259) ~[spring-orm-5.3.31.jar:5.3.31]
