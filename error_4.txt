@@ -151,29 +151,181 @@ public interface SpringJpaTradeSignatureRepository extends CrudRepository<TradeS
     @NotNull Optional<TradeSignatureModel> findById(@NotNull Long id);
 }
 
-2025-05-30 14:48:35.445  INFO [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [ctor-http-nio-4] c.a.b.shared.domain.RSocketProxyLogs     : server: {"correlationId":1748609315443967459,"route":"trade-signature.find","messageType":"request","rsocketType":"requestResponse","payload":{"tradeSignatureId":null,"entity":"0049","originId":123450,"productId":"FW"},"metadata":{"acelera.ctx":{"entity":"0049","locale":"es_ES"}}}
-2025-05-30 14:48:51.099 DEBUG [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] org.hibernate.SQL                        : 
+//////////////////
+
+Mis datos en BD
+
+-------------------
+
     SELECT
-        *    
+        * 
     FROM
-        ACELER_FX.FX_TRADE_SIGNATURE    
+        ACELER_FX.FX_TRADE_SIGNATURE      
     WHERE
-        ? IS NULL 
-        OR ENTITY = ? 
-        AND          ? IS NULL 
-        OR ORIGIN_ID = ? 
-        AND          ? IS NULL 
-        OR PRODUCT_ID = ?
-)
-2025-05-30 14:48:51.559 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARCHAR] - [0049]
-2025-05-30 14:48:51.561 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [VARCHAR] - [0049]
-2025-05-30 14:48:51.563 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [3] as [INTEGER] - [123450]
-2025-05-30 14:48:51.565 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [4] as [INTEGER] - [123450]
-2025-05-30 14:48:51.565 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [5] as [VARCHAR] - [FW]
-2025-05-30 14:48:51.565 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [6] as [VARCHAR] - [FW]
-2025-05-30 14:48:51.648  WARN [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 933, SQLState: 42000
-2025-05-30 14:48:51.648 ERROR [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.engine.jdbc.spi.SqlExceptionHelper   : ORA-00933: comando SQL no terminado correctamente
+        (
+            '0049' IS NULL OR ENTITY = '0049'
+        ) 
+        AND      (
+            123450 IS NULL OR ORIGIN_ID = 123450
+        ) 
+        AND      (
+            'AW' IS NULL OR PRODUCT_ID = 'AW'
+        )  
 
-2025-05-30 14:48:51.649 ERROR [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.s.m.h.i.reactive.InvocableHelper       : No exception handling method
+TRADE_SIGNATURE_ID ENTI  ORIGIN_ID ORIGIN               PR SIGNATURE_ I VALIDATED_ EXPEDIENT_ID FECALTA                     USUALTA                        FECMODI                     USUMODI                       
+------------------ ---- ---------- -------------------- -- ---------- - ---------- ------------ --------------------------- ------------------------------ --------------------------- ------------------------------
+                32 0049     123450 TRADE                AW DIGITAL    N PENDING                 30/05/25 12:09:42,867158000 uid:n11111                     30/05/25 12:17:48,415170000 uid:n11111                 
 
-org.springframework.dao.InvalidDataAccessResourceUsageException: could not extract ResultSet; SQL [n/a]; nested exception is org.hibernate.exception.SQLGrammarException: could not extract ResultSet
+SELECT
+        * 
+    FROM
+        ACELER_FX.FX_TRADE_SIGNER
+    WHERE TRADE_SIGNATURE_ID IN (
+    SELECT
+        TRADE_SIGNATURE_ID
+    FROM
+        ACELER_FX.FX_TRADE_SIGNATURE      
+    WHERE
+        (
+            '0049' IS NULL OR ENTITY = '0049'
+        ) 
+        AND      (
+            123450 IS NULL OR ORIGIN_ID = 123450
+        ) 
+        AND      (
+            'AW' IS NULL OR PRODUCT_ID = 'AW'
+        )     
+    )
+
+TRADE_SIGNER_ID TRADE_SIGNATURE_ID D DOCUMENT_NUMBER      SIGNER_ID  NAME                                                                                                                                                                                                     I IN FECALTA                     USUALTA                        FECMODI                     USUMODI                       
+--------------- ------------------ - -------------------- ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- - -- --------------------------- ------------------------------ --------------------------- ------------------------------
+             32                 32 N 12345678R            F000000583 RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 30/05/25 12:09:43,011980000 uid:n11111                     30/05/25 12:09:43,011980000 uid:n11111                    
+             37                 32 N 12345678R            F000000583 RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 30/05/25 12:16:39,557219000 uid:n11111                     30/05/25 12:16:39,557219000 uid:n11111                    
+             38                 32 N 12345999R            F000000999 RMV VALORES - ALANA GUTIERREZ                                                                                                                                                                            Y 01 30/05/25 12:16:39,640830000 uid:n11111                     30/05/25 12:16:39,640830000 uid:n11111                    
+             34                 32 N 12345678R            F000000583 RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 30/05/25 12:13:59,420304000 uid:n11111                     30/05/25 12:13:59,420304000 uid:n11111                    
+             35                 32 N 12345678R            F000000583 RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 30/05/25 12:15:25,480072000 uid:n11111                     30/05/25 12:15:25,480072000 uid:n11111                    
+             36                 32 N 12345999R            F000000999 RMV VALORES DE ALANA                                                                                                                                                                                     Y 01 30/05/25 12:15:25,553236000 uid:n11111                     30/05/25 12:15:25,553236000 uid:n11111                    
+             39                 32 N 12345678R            F000000583 RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 30/05/25 12:17:48,237764000 uid:n11111                     30/05/25 12:17:48,237764000 uid:n11111                    
+             40                 32 N 12345999R            F000000999 RMV VALORES - ALANA GUTIERREZ                                                                                                                                                                            Y 01 30/05/25 12:17:48,332940000 uid:n11111                     30/05/25 12:17:48,332940000 uid:n11111                    
+
+8 filas seleccionadas. 
+
+/////////////////
+
+Frame => Stream ID: 0 Type: KEEPALIVE Flags: 0b0 Length: 14
+Data:
+
+2025-05-30 15:01:09.595 DEBUG [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] org.hibernate.SQL                        : 
+    SELECT
+        * 
+    FROM
+        ACELER_FX.FX_TRADE_SIGNATURE      
+    WHERE
+        (
+            ? IS NULL 
+            OR ENTITY = ?
+        ) 
+        AND      (
+            ? IS NULL 
+            OR ORIGIN_ID = ?
+        ) 
+        AND      (
+            ? IS NULL 
+            OR PRODUCT_ID = ?
+        )
+2025-05-30 15:01:09.644 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARCHAR] - [0049]
+2025-05-30 15:01:09.644 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [VARCHAR] - [0049]
+2025-05-30 15:01:09.644 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [3] as [INTEGER] - [123450]
+2025-05-30 15:01:09.644 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [4] as [INTEGER] - [123450]
+2025-05-30 15:01:09.644 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [5] as [VARCHAR] - [FW]
+2025-05-30 15:01:09.644 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [6] as [VARCHAR] - [FW]
+2025-05-30 15:01:09.693 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([trade_signature_id] : [BIGINT]) - [26]
+2025-05-30 15:01:09.693 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecalta] : [TIMESTAMP]) - [2025-05-30T10:16:20.065928]
+2025-05-30 15:01:09.693 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecmodi] : [TIMESTAMP]) - [2025-05-30T10:16:20.065928]
+2025-05-30 15:01:09.693 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usualta] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.693 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usumodi] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.693 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([entity] : [VARCHAR]) - [0049]
+2025-05-30 15:01:09.693 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([expedient_id] : [BIGINT]) - [null]
+2025-05-30 15:01:09.694 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([indicator_sscc] : [VARCHAR]) - [N]
+2025-05-30 15:01:09.694 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin] : [VARCHAR]) - [TRADE]
+2025-05-30 15:01:09.694 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin_id] : [BIGINT]) - [123450]
+2025-05-30 15:01:09.694 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([product_id] : [VARCHAR]) - [FW]
+2025-05-30 15:01:09.694 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([signature_type] : [VARCHAR]) - [DIGITAL]
+2025-05-30 15:01:09.694 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([validated_bo] : [VARCHAR]) - [null]
+2025-05-30 15:01:09.694 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([trade_signature_id] : [BIGINT]) - [28]
+2025-05-30 15:01:09.694 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecalta] : [TIMESTAMP]) - [2025-05-30T10:46:30.321784]
+2025-05-30 15:01:09.694 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecmodi] : [TIMESTAMP]) - [2025-05-30T10:46:30.321784]
+2025-05-30 15:01:09.694 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usualta] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usumodi] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([entity] : [VARCHAR]) - [0049]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([expedient_id] : [BIGINT]) - [null]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([indicator_sscc] : [VARCHAR]) - [N]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin] : [VARCHAR]) - [TRADE]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin_id] : [BIGINT]) - [123450]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([product_id] : [VARCHAR]) - [FW]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([signature_type] : [VARCHAR]) - [DIGITAL]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([validated_bo] : [VARCHAR]) - [null]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([trade_signature_id] : [BIGINT]) - [30]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecalta] : [TIMESTAMP]) - [2025-05-30T10:53:26.611907]
+2025-05-30 15:01:09.695 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecmodi] : [TIMESTAMP]) - [2025-05-30T10:53:26.611907]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usualta] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usumodi] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([entity] : [VARCHAR]) - [0049]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([expedient_id] : [BIGINT]) - [null]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([indicator_sscc] : [VARCHAR]) - [N]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin] : [VARCHAR]) - [TRADE]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin_id] : [BIGINT]) - [123450]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([product_id] : [VARCHAR]) - [FW]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([signature_type] : [VARCHAR]) - [DIGITAL]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([validated_bo] : [VARCHAR]) - [null]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([trade_signature_id] : [BIGINT]) - [27]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecalta] : [TIMESTAMP]) - [2025-05-30T10:18:13.678948]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecmodi] : [TIMESTAMP]) - [2025-05-30T10:18:13.678948]
+2025-05-30 15:01:09.696 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usualta] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usumodi] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([entity] : [VARCHAR]) - [0049]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([expedient_id] : [BIGINT]) - [null]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([indicator_sscc] : [VARCHAR]) - [N]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin] : [VARCHAR]) - [TRADE]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin_id] : [BIGINT]) - [123450]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([product_id] : [VARCHAR]) - [FW]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([signature_type] : [VARCHAR]) - [DIGITAL]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([validated_bo] : [VARCHAR]) - [null]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([trade_signature_id] : [BIGINT]) - [29]
+2025-05-30 15:01:09.697 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecalta] : [TIMESTAMP]) - [2025-05-30T10:46:52.059540]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecmodi] : [TIMESTAMP]) - [2025-05-30T10:46:52.059540]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usualta] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usumodi] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([entity] : [VARCHAR]) - [0049]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([expedient_id] : [BIGINT]) - [null]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([indicator_sscc] : [VARCHAR]) - [N]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin] : [VARCHAR]) - [TRADE]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin_id] : [BIGINT]) - [123450]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([product_id] : [VARCHAR]) - [FW]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([signature_type] : [VARCHAR]) - [DIGITAL]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([validated_bo] : [VARCHAR]) - [null]
+2025-05-30 15:01:09.698 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([trade_signature_id] : [BIGINT]) - [31]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecalta] : [TIMESTAMP]) - [2025-05-30T10:56:10.267359]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecmodi] : [TIMESTAMP]) - [2025-05-30T10:56:10.267359]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usualta] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usumodi] : [VARCHAR]) - [uid:n11111]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([entity] : [VARCHAR]) - [0049]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([expedient_id] : [BIGINT]) - [null]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([indicator_sscc] : [VARCHAR]) - [N]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin] : [VARCHAR]) - [TRADE]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin_id] : [BIGINT]) - [123450]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([product_id] : [VARCHAR]) - [FW]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([signature_type] : [VARCHAR]) - [DIGITAL]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([validated_bo] : [VARCHAR]) - [null]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] org.hibernate.type.CollectionType        : Created collection wrapper: [com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel.tradeSignerList#26]
+2025-05-30 15:01:09.699 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] org.hibernate.type.CollectionType        : Created collection wrapper: [com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel.tradeSignerList#28]
+2025-05-30 15:01:09.700 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] org.hibernate.type.CollectionType        : Created collection wrapper: [com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel.tradeSignerList#30]
+2025-05-30 15:01:09.700 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] org.hibernate.type.CollectionType        : Created collection wrapper: [com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel.tradeSignerList#27]
+2025-05-30 15:01:09.700 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] org.hibernate.type.CollectionType        : Created collection wrapper: [com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel.tradeSignerList#29]
+2025-05-30 15:01:09.700 TRACE [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] org.hibernate.type.CollectionType        : Created collection wrapper: [com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel.tradeSignerList#31]
+2025-05-30 15:01:09.701 ERROR [conac-springboot-fx-db,3cf4672da345f629,b91e281deed6a943] 4508 --- [oundedElastic-2] o.s.m.h.i.reactive.InvocableHelper       : No exception handling method
+
+org.springframework.dao.IncorrectResultSizeDataAccessException: query did not return a unique result: 6; nested exception is javax.persistence.NonUniqueResultException: query did not return a unique result: 6
+
+
+                    
