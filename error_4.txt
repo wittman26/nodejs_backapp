@@ -135,52 +135,45 @@ public class JpaTradeSignatureRepositoryImpl implements TradeSignatureRepository
     }
 }
 
-2025-05-30 13:54:15.117  INFO [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [ctor-http-nio-3] c.a.b.shared.domain.RSocketProxyLogs     : server: {"correlationId":1748606055117326431,"route":"trade-signature.find","messageType":"request","rsocketType":"requestResponse","payload":{"tradeSignatureId":32,"entity":null,"originId":null,"productId":null},"metadata":{"acelera.ctx":{"entity":"0049","locale":"es_ES"}}}
-2025-05-30 13:54:19.125 DEBUG [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] org.hibernate.SQL                        : 
-    select
-        tradesigna0_.trade_signature_id as trade_signature_id1_8_0_,
-        tradesigna0_.fecalta as fecalta2_8_0_,
-        tradesigna0_.fecmodi as fecmodi3_8_0_,
-        tradesigna0_.usualta as usualta4_8_0_,
-        tradesigna0_.usumodi as usumodi5_8_0_,
-        tradesigna0_.entity as entity6_8_0_,
-        tradesigna0_.expedient_id as expedient_id7_8_0_,
-        tradesigna0_.indicator_sscc as indicator_sscc8_8_0_,
-        tradesigna0_.origin as origin9_8_0_,
-        tradesigna0_.origin_id as origin_id10_8_0_,
-        tradesigna0_.product_id as product_id11_8_0_,
-        tradesigna0_.signature_type as signature_type12_8_0_,
-        tradesigna0_.validated_bo as validated_bo13_8_0_ 
-    from
-        ACELER_FX.fx_trade_signature tradesigna0_ 
-    where
-        tradesigna0_.trade_signature_id=?
-2025-05-30 13:54:19.126 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [BIGINT] - [32]
-2025-05-30 13:54:19.169 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecalta2_8_0_] : [TIMESTAMP]) - [2025-05-30T12:09:42.867158]
-2025-05-30 13:54:19.169 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([fecmodi3_8_0_] : [TIMESTAMP]) - [2025-05-30T12:17:48.415170]
-2025-05-30 13:54:19.169 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usualta4_8_0_] : [VARCHAR]) - [uid:n11111]
-2025-05-30 13:54:19.169 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([usumodi5_8_0_] : [VARCHAR]) - [uid:n11111]
-2025-05-30 13:54:19.170 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([entity6_8_0_] : [VARCHAR]) - [0049]
-2025-05-30 13:54:19.170 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([expedient_id7_8_0_] : [BIGINT]) - [null]
-2025-05-30 13:54:19.170 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([indicator_sscc8_8_0_] : [VARCHAR]) - [N]
-2025-05-30 13:54:19.170 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin9_8_0_] : [VARCHAR]) - [TRADE]
-2025-05-30 13:54:19.170 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([origin_id10_8_0_] : [BIGINT]) - [123450]
-2025-05-30 13:54:19.170 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([product_id11_8_0_] : [VARCHAR]) - [AW]
-2025-05-30 13:54:19.170 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([signature_type12_8_0_] : [VARCHAR]) - [DIGITAL]
-2025-05-30 13:54:19.170 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([validated_bo13_8_0_] : [VARCHAR]) - [PENDING]
-2025-05-30 13:54:19.171 TRACE [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] org.hibernate.type.CollectionType        : Created collection wrapper: [com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel.tradeSignerList#32]
-2025-05-30 13:54:49.311 DEBUG [conac-springboot-fx-db,,] 11608 --- [     parallel-1] io.rsocket.FrameLogger                   : sending -> 
-Frame => Stream ID: 0 Type: KEEPALIVE Flags: 0b10000000 Length: 14
-Data:
+public interface SpringJpaTradeSignatureRepository extends CrudRepository<TradeSignatureModel, Long> {
+    // @formatter:off
+    @Query(nativeQuery = true, value = "SELECT *"
+            + "    FROM ACELER_FX.FX_TRADE_SIGNATURE"
+            + "    WHERE "
+            + "         :#{#filter.entity} IS NULL OR ENTITY = :#{#filter.entity} AND "
+            + "         :#{#filter.originId} IS NULL OR ORIGIN_ID = :#{#filter.originId} AND "
+            + "         :#{#filter.productId} IS NULL OR PRODUCT_ID = :#{#filter.productId})"
+    )
+    // @formatter:on
+            Optional<TradeSignatureModel> find(TradeSignatureFindRequest filter);
 
-2025-05-30 13:54:49.317 DEBUG [conac-springboot-fx-db,,] 11608 --- [     parallel-1] io.rsocket.FrameLogger                   : sending -> 
-Frame => Stream ID: 0 Type: KEEPALIVE Flags: 0b10000000 Length: 14
-Data:
+    @EntityGraph(attributePaths = "tradeSignerList")
+    @NotNull Optional<TradeSignatureModel> findById(@NotNull Long id);
+}
 
-2025-05-30 13:54:49.313  WARN [conac-springboot-fx-db,,] 11608 --- [onMonitorThread] c.h.s.i.o.impl.InvocationMonitor         : [10.0.0.38]:5702 [dev] [3.12.12] MonitorInvocationsTask delayed 29242 ms
-2025-05-30 13:54:49.318  WARN [conac-springboot-fx-db,,] 11608 --- [onMonitorThread] c.h.s.i.o.impl.InvocationMonitor         : [10.0.0.38]:5702 [dev] [3.12.12] BroadcastOperationControlTask delayed 25600 ms
-2025-05-30 13:54:49.320 ERROR [conac-springboot-fx-db,f07ef0eb015d25ae,96874cf4bf856d37] 11608 --- [oundedElastic-2] o.s.m.h.i.reactive.InvocableHelper       : No exception handling method
+2025-05-30 14:48:35.445  INFO [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [ctor-http-nio-4] c.a.b.shared.domain.RSocketProxyLogs     : server: {"correlationId":1748609315443967459,"route":"trade-signature.find","messageType":"request","rsocketType":"requestResponse","payload":{"tradeSignatureId":null,"entity":"0049","originId":123450,"productId":"FW"},"metadata":{"acelera.ctx":{"entity":"0049","locale":"es_ES"}}}
+2025-05-30 14:48:51.099 DEBUG [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] org.hibernate.SQL                        : 
+    SELECT
+        *    
+    FROM
+        ACELER_FX.FX_TRADE_SIGNATURE    
+    WHERE
+        ? IS NULL 
+        OR ENTITY = ? 
+        AND          ? IS NULL 
+        OR ORIGIN_ID = ? 
+        AND          ? IS NULL 
+        OR PRODUCT_ID = ?
+)
+2025-05-30 14:48:51.559 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARCHAR] - [0049]
+2025-05-30 14:48:51.561 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [VARCHAR] - [0049]
+2025-05-30 14:48:51.563 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [3] as [INTEGER] - [123450]
+2025-05-30 14:48:51.565 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [4] as [INTEGER] - [123450]
+2025-05-30 14:48:51.565 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [5] as [VARCHAR] - [FW]
+2025-05-30 14:48:51.565 TRACE [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.type.descriptor.sql.BasicBinder      : binding parameter [6] as [VARCHAR] - [FW]
+2025-05-30 14:48:51.648  WARN [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 933, SQLState: 42000
+2025-05-30 14:48:51.648 ERROR [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.h.engine.jdbc.spi.SqlExceptionHelper   : ORA-00933: comando SQL no terminado correctamente
 
-org.springframework.orm.jpa.JpaSystemException: failed to lazily initialize a collection of role: com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel.tradeSignerList, could not initialize proxy - no Session; nested exception is org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel.tradeSignerList, could not initialize proxy - no Session
-	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:331) ~[spring-orm-5.3.31.jar:5.3.31]
-	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:230) ~[spring-orm-5.3.31.jar:5.3.31]
+2025-05-30 14:48:51.649 ERROR [conac-springboot-fx-db,6eaa583053f15f8a,78e3d36a61342d68] 16248 --- [oundedElastic-5] o.s.m.h.i.reactive.InvocableHelper       : No exception handling method
+
+org.springframework.dao.InvalidDataAccessResourceUsageException: could not extract ResultSet; SQL [n/a]; nested exception is org.hibernate.exception.SQLGrammarException: could not extract ResultSet
