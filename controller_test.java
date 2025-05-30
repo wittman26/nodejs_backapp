@@ -13,7 +13,7 @@ import reactor.core.scheduler.Schedulers;
 @RequiredArgsConstructor
 public class TradeSignatureRSocketController implements TradeSignatureRepositoryClient {
 
-    private TradeSignatureRepository repository;
+    private final TradeSignatureRepository repository;
 
     @Override
     public Mono<TradeSignature> save(@Payload TradeSignature tradeSignature) {
