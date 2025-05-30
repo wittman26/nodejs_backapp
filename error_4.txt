@@ -137,12 +137,12 @@ public class JpaTradeSignatureRepositoryImpl implements TradeSignatureRepository
 
 public interface SpringJpaTradeSignatureRepository extends CrudRepository<TradeSignatureModel, Long> {
     // @formatter:off
-    @Query(nativeQuery = true, value = "SELECT *"
-            + "    FROM ACELER_FX.FX_TRADE_SIGNATURE"
-            + "    WHERE "
-            + "         :#{#filter.entity} IS NULL OR ENTITY = :#{#filter.entity} AND "
-            + "         :#{#filter.originId} IS NULL OR ORIGIN_ID = :#{#filter.originId} AND "
-            + "         :#{#filter.productId} IS NULL OR PRODUCT_ID = :#{#filter.productId})"
+    @Query(nativeQuery = true, value = "SELECT * "
+            + "FROM ACELER_FX.FX_TRADE_SIGNATURE "
+            + "WHERE "
+            + "(:#{#filter.entity} IS NULL OR ENTITY = :#{#filter.entity}) AND "
+            + "(:#{#filter.originId} IS NULL OR ORIGIN_ID = :#{#filter.originId}) AND "
+            + "(:#{#filter.productId} IS NULL OR PRODUCT_ID = :#{#filter.productId})"
     )
     // @formatter:on
             Optional<TradeSignatureModel> find(TradeSignatureFindRequest filter);
