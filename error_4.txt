@@ -328,4 +328,9 @@ Data:
 org.springframework.dao.IncorrectResultSizeDataAccessException: query did not return a unique result: 6; nested exception is javax.persistence.NonUniqueResultException: query did not return a unique result: 6
 
 
-                    
+@EntityGraph(attributePaths = "tradeSignerList")
+@Query("SELECT t FROM TradeSignatureModel t WHERE "
+     + "(:#{#filter.entity} IS NULL OR t.entity = :#{#filter.entity}) AND "
+     + "(:#{#filter.originId} IS NULL OR t.originId = :#{#filter.originId}) AND "
+     + "(:#{#filter.productId} IS NULL OR t.productId = :#{#filter.productId})")
+Optional<TradeSignatureModel> find(TradeSignatureFindRequest filter);                    
