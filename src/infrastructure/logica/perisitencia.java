@@ -104,6 +104,19 @@ public class TradeSignerModel extends BaseAuditorJpa {
     private TradeSignatureModel tradeSignatureModel;
 }
 
+package com.acelera.fx.db.infrastructure.adapter.persistence.jpa.repository;
+
+import com.acelera.broker.fx.db.domain.dto.TradeSignature;
+import com.acelera.broker.fx.db.domain.dto.TradeSignatureFindRequest;
+import com.acelera.fx.db.domain.port.persistence.TradeSignatureRepository;
+import com.acelera.fx.db.infrastructure.adapter.persistence.jpa.crud.SpringJpaTradeSignatureRepository;
+import com.acelera.fx.db.infrastructure.adapter.persistence.jpa.mapper.TradeSignatureMapper;
+import com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class JpaTradeSignatureRepositoryImpl implements TradeSignatureRepository {
@@ -130,11 +143,23 @@ public class JpaTradeSignatureRepositoryImpl implements TradeSignatureRepository
              model = repository.findById(request.getTradeSignatureId());
         } else {
             var resul = repository.find(request);
-            model = Optional.ofNullable(resul.get(0));
+            model = resul.stream().findFirst();
         }
         return model.map(TradeSignatureMapper.INSTANCE::toDomain);
     }
 }
+
+package com.acelera.fx.db.infrastructure.adapter.persistence.jpa.crud;
+
+import com.acelera.broker.fx.db.domain.dto.TradeSignatureFindRequest;
+import com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface SpringJpaTradeSignatureRepository extends CrudRepository<TradeSignatureModel, Long> {
 
