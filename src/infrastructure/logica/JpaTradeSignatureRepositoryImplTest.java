@@ -55,4 +55,114 @@ public class JpaTradeSignatureRepositoryImplTest {
                 .ignoringFieldsMatchingRegexes(".*tradeSignatureId", ".*tradeSignerId", ".*usumodi", ".*fecmodi", ".*usualta", ".*fecalta")
                 .isEqualTo(tradeSignature);
     }
+
+    @Test
+    void testSaveWithNoSigners() {
+        TradeSignatureModel model = PODAM_FACTORY.manufacturePojo(TradeSignatureModel.class);
+        model.setTradeSignatureId(null);
+        model.setTradeSignerList(null); // Sin signers
+
+        TradeSignature tradeSignature = MAPPER.toDomain(model);
+        var response = impl.save(tradeSignature);
+
+        assertThat(response.getTradeSignatureId()).isNotNull();
+        assertThat(response.getTradeSignerList()).isNull();
+    }
+    
+    @Test
+    void testSaveAndFindById() {
+        TradeSignatureModel model = PODAM_FACTORY.manufacturePojo(TradeSignatureModel.class);
+        model.setTradeSignatureId(null);
+
+        if(model.getTradeSignerList() != null) {
+            for(TradeSignerModel signer: model.getTradeSignerList()) {
+                signer.setTradeSignerId(null);
+                signer.setTradeSignatureModel(model);
+            }
+        }
+
+        TradeSignature tradeSignature = MAPPER.toDomain(model);
+        TradeSignature saved = impl.save(tradeSignature);
+
+        var foundOpt = impl.find(TradeSignatureFindRequest.builder()
+                .tradeSignatureId(saved.getTradeSignatureId())
+                .build());
+
+        assertThat(foundOpt).isPresent();
+        assertThat(foundOpt.get()).usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*usumodi", ".*fecmodi", ".*usualta", ".*fecalta")
+                .isEqualTo(saved);
+    }
+    
+    @Test
+    void testFindByFilters() {
+        TradeSignatureModel model = PODAM_FACTORY.manufacturePojo(TradeSignatureModel.class);
+        model.setTradeSignatureId(null);
+
+        if(model.getTradeSignerList() != null) {
+            for(TradeSignerModel signer: model.getTradeSignerList()) {
+                signer.setTradeSignerId(null);
+                signer.setTradeSignatureModel(model);
+            }
+        }
+
+        em.persist(model);
+        em.flush();
+
+        var foundOpt = impl.find(TradeSignatureFindRequest.builder()
+                .entity(model.getEntity())
+                .originId(model.getOriginId())
+                .build());
+
+        assertThat(foundOpt).isPresent();
+        assertThat(foundOpt.get().getEntity()).isEqualTo(model.getEntity());
+        assertThat(foundOpt.get().getOriginId()).isEqualTo(model.getOriginId());
+    }
+    
+    @Test
+    void testSaveWithSigners() {
+        TradeSignatureModel model = PODAM_FACTORY.manufacturePojo(TradeSignatureModel.class);
+        model.setTradeSignatureId(null);
+
+        if(model.getTradeSignerList() != null) {
+            for(TradeSignerModel signer: model.getTradeSignerList()) {
+                signer.setTradeSignerId(null);
+                signer.setTradeSignatureModel(model);
+            }
+        }
+
+        TradeSignature tradeSignature = MAPPER.toDomain(model);
+        var response = impl.save(tradeSignature);
+
+        assertThat(response.getTradeSignerList()).isNotNull();
+        assertThat(response.getTradeSignerList()).allMatch(s -> s.getTradeSignatureId() != null);
+    }
+
+    @Test
+    void testSave() {
+        TradeSignatureModel model = PODAM_FACTORY.manufacturePojo(TradeSignatureModel.class);
+
+        model.setTradeSignatureId(null);
+
+        if(model.getTradeSignerList() != null) {
+            for(TradeSignerModel signer: model.getTradeSignerList()) {
+                signer.setTradeSignerId(null);
+                signer.setTradeSignatureModel(model);
+            }
+        }
+
+        TradeSignature tradeSignature = MAPPER.toDomain(model);
+        var response = impl.save(tradeSignature);
+
+        assertThat(response).as("save trade signature").usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*tradeSignatureId", ".*tradeSignerId", ".*usumodi", ".*fecmodi", ".*usualta", ".*fecalta")
+                .isEqualTo(tradeSignature);
+
+        // Verifica que los IDs fueron asignados
+        assertThat(response.getTradeSignatureId()).isNotNull();
+        if(response.getTradeSignerList() != null) {
+            assertThat(response.getTradeSignerList()).allMatch(s -> s.getTradeSignerId() != null);
+        }
+    }
+
 }
