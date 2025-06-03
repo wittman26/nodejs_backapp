@@ -2,9 +2,9 @@ package com.acelera.fx.digitalsignature.application.service;
 
 import com.acelera.broker.fx.db.domain.dto.TradeSignature;
 import com.acelera.broker.fx.db.domain.dto.TradeSignatureFindRequest;
-import com.acelera.broker.fx.db.domain.dto.TradeSigner;
 import com.acelera.broker.fx.db.domain.port.TradeSignatureRepositoryClient;
 import com.acelera.fx.digitalsignature.application.service.mapper.TradeSignatureMapper;
+import com.acelera.fx.digitalsignature.application.service.mapper.TradeSignerMapper;
 import com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureService;
 import com.acelera.fx.digitalsignature.infrastructure.request.CreateDocumentRequest;
 import com.acelera.fx.digitalsignature.infrastructure.request.TradeSignatureRequest;
@@ -18,8 +18,6 @@ import reactor.core.publisher.Mono;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,8 +26,8 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
 
     private final TradeSignatureRepositoryClient tradeSignatureRepositoryClient;
 
-    private static final String ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE =
-            "Se espera incluir originId o transferId pero no ambos";
+    private static final String ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE = "Se espera incluir originId o transferId pero no ambos";
+    private static final String ERROR_MESSAGE_NO_TRANSFER_ID_FOUND = "No se ha encontrado el Transfer Id Proporcionado";
 
     @Override
     public Mono<CreateDocumentResponse> createDocument(String originId, Locale locale, String entity, CreateDocumentRequest request) {
@@ -48,8 +46,8 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
 
         // Si es actualización, buscar y actualizar; si no, crear nueva
         return findTradeSignature(request, entity)
-                .flatMap(existing -> upsertTradeSignature(existing, request, entity))
-                .switchIfEmpty(Mono.defer(() -> upsertTradeSignature(null, request, entity)));
+                .flatMap(tradeSignatureFound -> upsertTradeSignature(tradeSignatureFound, request, entity))// Logica de actualizar
+                .switchIfEmpty(Mono.defer(() -> upsertTradeSignature(null, request, entity))); // Logica de salvar
     }
 
     /**
@@ -63,6 +61,7 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
     }
 
     private Mono<TradeSignature> findTradeSignature(TradeSignatureRequest request, String entity) {
+        // Prepara los filtros
         TradeSignatureFindRequest filters = TradeSignatureFindRequest.builder()
                 .tradeSignatureId(request.getTradeSignatureId())
                 .entity(entity)
@@ -76,15 +75,22 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
     /**
      * Crea o actualiza la entidad TradeSignature y sus hijos.
      */
-    private Mono<TradeSignatureResponse> upsertTradeSignature(TradeSignature existing, TradeSignatureRequest request, String entity) {
+    private Mono<TradeSignatureResponse> upsertTradeSignature(TradeSignature tradeSignatureFound, TradeSignatureRequest request, String entity) {
         TradeSignature tradeSignature = TradeSignatureMapper.INSTANCE.toTradeSignature(request);
         tradeSignature.setEntity(entity);
         tradeSignature.setValidatedBo("PENDING");
         tradeSignature.setOrigin(isEventProduct(tradeSignature.getProductId()) ? "EVENT" : "TRADE");
+        tradeSignature.setTradeSignerList(
+                request.getSigners().stream()
+                        .map(TradeSignerMapper.INSTANCE::toTradeSigner)
+                        .toList()
+        );
 
-        // Si es actualización, conserva el ID y limpia la lista anterior
-        if (existing != null) {
-            tradeSignature.setTradeSignatureId(existing.getTradeSignatureId());
+        // Si es actualización, conserva el ID, validatedBo, OriginID y limpia la lista anterior
+        if (tradeSignatureFound != null) {
+            tradeSignature.setValidatedBo(tradeSignatureFound.getValidatedBo());
+            tradeSignature.setOriginId(tradeSignatureFound.getOriginId());
+            tradeSignature.setTradeSignatureId(tradeSignatureFound.getTradeSignatureId());
         }
 
         // Si la lista de signers es nula, usa una lista vacía
@@ -93,8 +99,11 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
         } else {
             // Asegura que cada signer tenga el tradeSignatureId correcto
             tradeSignature.getTradeSignerList().forEach(
-                signer -> signer.setTradeSignatureId(tradeSignature.getTradeSignatureId())
+                    signer -> signer.setTradeSignatureId(tradeSignature.getTradeSignatureId())
             );
+        }
+        if (tradeSignatureFound == null && tradeSignature.getOriginId() == null) {
+            throw new IllegalArgumentException(ERROR_MESSAGE_NO_TRANSFER_ID_FOUND);
         }
 
         return tradeSignatureRepositoryClient.save(tradeSignature)
@@ -102,12 +111,12 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
     }
 
     private Mono<TradeSignatureResponse> createResponse(Long tradeSignatureId) {
-        return Mono.just(TradeSignatureResponse.builder()
-                .tradeSignatureId(tradeSignatureId != null ? tradeSignatureId.intValue() : null)
-                .build());
+        return Mono.just(TradeSignatureResponse.builder().tradeSignatureId(
+                tradeSignatureId.intValue()).build());
     }
 
     private boolean isEventProduct(String productId) {
         return Arrays.asList("AN", "IN", "PC", "PS").contains(productId);
     }
+
 }
