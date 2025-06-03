@@ -162,4 +162,79 @@ public class TradeSignatureServiceImplTest {
         assertNotNull(toSave.getTradeSignerList());
         assertTrue(toSave.getTradeSignerList().isEmpty());
     }
+
+        @Test
+        void upsertTradeSignature_shouldSyncSigners_onUpdate() {
+        // Signers existentes en base de datos (antes de la actualización)
+        TradeSigner existingSigner1 = TradeSigner.builder()
+                .signerId("S1")
+                .name("Signer Uno")
+                .documentNumber("111")
+                .build();
+        TradeSigner existingSigner2 = TradeSigner.builder()
+                .signerId("S2")
+                .name("Signer Dos")
+                .documentNumber("222")
+                .build();
+
+        TradeSignature foundSignature = TradeSignature.builder()
+                .tradeSignatureId(100L)
+                .originId(200L)
+                .validatedBo("EXISTING")
+                .tradeSignerList(List.of(existingSigner1, existingSigner2))
+                .build();
+
+        // Request con: 
+        // - S1 (modificado), 
+        // - S3 (nuevo), 
+        // - S2 eliminado (no viene en request)
+        TradeSignerRequest updatedSigner1 = TradeSignerRequest.builder()
+                .signerId("S1")
+                .name("Signer Uno Modificado")
+                .document(SignerDocument.builder().number("999").build())
+                .build();
+        TradeSignerRequest newSigner3 = TradeSignerRequest.builder()
+                .signerId("S3")
+                .name("Signer Tres")
+                .document(SignerDocument.builder().number("333").build())
+                .build();
+
+        TradeSignatureRequest request = TradeSignatureRequest.builder()
+                .tradeSignatureId(100L)
+                .signers(List.of(updatedSigner1, newSigner3))
+                .build();
+
+        // Simula búsqueda exitosa y guardado
+        when(tradeSignatureRepositoryClient.find(any(TradeSignatureFindRequest.class))).thenReturn(Mono.just(foundSignature));
+        when(tradeSignatureRepositoryClient.save(any(TradeSignature.class))).thenAnswer(invocation -> {
+                TradeSignature toSave = invocation.getArgument(0);
+                // Devuelve el mismo objeto para validación
+                return Mono.just(toSave);
+        });
+
+        TradeSignatureResponse response = tradeSignatureServiceImpl
+                .createOrUpdateSignature(Locale.getDefault(), "BANK", request)
+                .block();
+
+        assertNotNull(response);
+        ArgumentCaptor<TradeSignature> captor = ArgumentCaptor.forClass(TradeSignature.class);
+        verify(tradeSignatureRepositoryClient).save(captor.capture());
+        TradeSignature saved = captor.getValue();
+
+        // 1. Solo deben quedar los signers S1 (modificado) y S3 (nuevo)
+        assertEquals(2, saved.getTradeSignerList().size());
+        assertTrue(saved.getTradeSignerList().stream().anyMatch(s -> "S1".equals(s.getSignerId())));
+        assertTrue(saved.getTradeSignerList().stream().anyMatch(s -> "S3".equals(s.getSignerId())));
+        assertFalse(saved.getTradeSignerList().stream().anyMatch(s -> "S2".equals(s.getSignerId())));
+
+        // 2. S1 debe estar actualizado
+        TradeSigner s1 = saved.getTradeSignerList().stream().filter(s -> "S1".equals(s.getSignerId())).findFirst().orElseThrow();
+        assertEquals("Signer Uno Modificado", s1.getName());
+        assertEquals("999", s1.getDocumentNumber());
+
+        // 3. S3 debe estar insertado correctamente
+        TradeSigner s3 = saved.getTradeSignerList().stream().filter(s -> "S3".equals(s.getSignerId())).findFirst().orElseThrow();
+        assertEquals("Signer Tres", s3.getName());
+        assertEquals("333", s3.getDocumentNumber());
+        }    
 }
