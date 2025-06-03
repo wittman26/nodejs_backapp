@@ -1,0 +1,216 @@
+package com.acelera.fx.db.infrastructure.adapter.rsocket.controller;
+
+import com.acelera.broker.fx.db.FxDbBrokerConfig;
+import com.acelera.broker.fx.db.domain.dto.MarginFindRequest;
+import com.acelera.broker.fx.db.domain.dto.TradeSignature;
+import com.acelera.broker.fx.db.domain.dto.TradeSignatureFindRequest;
+import com.acelera.broker.fx.db.domain.port.TradeSignatureRepositoryClient;
+import com.acelera.broker.shared.RSocketRequesterBuilderLoggerAutoConfig;
+import com.acelera.fx.db.domain.port.persistence.TradeSignatureRepository;
+import com.acelera.rsocket.RSocketHeadersCustomizerAutoConfig;
+import com.acelera.test.WithMockCustomUser;
+import org.apache.commons.lang3.RandomUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.autoconfigure.rsocket.RSocketMessagingAutoConfiguration;
+import org.springframework.boot.autoconfigure.rsocket.RSocketRequesterAutoConfiguration;
+import org.springframework.boot.autoconfigure.rsocket.RSocketServerAutoConfiguration;
+import org.springframework.boot.autoconfigure.rsocket.RSocketStrategiesAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import reactor.test.StepVerifier;
+import uk.co.jemos.podam.api.PodamFactory;
+import uk.co.jemos.podam.api.PodamFactoryImpl;
+
+import java.math.BigDecimal;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@Execution(ExecutionMode.CONCURRENT)
+@SpringBootTest(classes = {TradeSignatureRSocketController.class,  FxDbBrokerConfig.class,
+        RSocketRequesterAutoConfiguration.class, RSocketMessagingAutoConfiguration.class, JacksonAutoConfiguration.class,
+        RSocketHeadersCustomizerAutoConfig.class, RSocketRequesterBuilderLoggerAutoConfig.class,
+        RSocketStrategiesAutoConfiguration.class, RSocketServerAutoConfiguration.class })
+@WithMockCustomUser
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+public class TradeSignatureRSocketControllerTest {
+    private static final int PORT = RandomUtils.nextInt(1111, 9999);
+    private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
+
+    private @MockBean TradeSignatureRepository repository;
+    private @Autowired
+    @Qualifier("tradeSignatureRepositoryClient") TradeSignatureRepositoryClient client;
+
+    @DynamicPropertySource
+    static void dynamicProperties(DynamicPropertyRegistry registry) {
+        registry.add("services.conac-springboot-fx-db-service.rsocket.host", () -> "localhost");
+        registry.add("services.conac-springboot-fx-db-service.rsocket.port", () -> PORT);
+        registry.add("spring.rsocket.server.port", () -> PORT);
+    }
+
+    @Test
+    void testSave() {
+        var tradeSignature = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+        when(repository.save(any(TradeSignature.class))).thenReturn(tradeSignature);
+
+        client
+                .save(tradeSignature).as(StepVerifier::create).assertNext(value -> assertThat(value)
+                        .as("save tradeSignature").usingRecursiveComparison()
+                        .ignoringFieldsMatchingRegexes(".*usumodi", ".*fecmodi", ".*usualta", ".*fecalta")
+                        .isEqualTo(tradeSignature))
+                .verifyComplete();
+    }
+
+    @Test
+    void testFind() {
+
+        var request = PODAM_FACTORY.manufacturePojo(TradeSignatureFindRequest.class);
+        var response = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+
+        when(repository.find(request)).thenReturn(Optional.of(response));
+
+        client.find(request).as(StepVerifier::create).expectNext(response).verifyComplete();
+    }
+
+    @Test
+    void testSave_shouldEmitError_whenRepositoryThrows() {
+        var tradeSignature = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+        when(repository.save(any(TradeSignature.class))).thenThrow(new RuntimeException("DB error"));
+
+        client.save(tradeSignature)
+                .as(StepVerifier::create)
+                .expectErrorMatches(e -> e instanceof RuntimeException && e.getMessage().equals("DB error"))
+                .verify();
+    }
+
+    @Test
+    void testFind_shouldReturnEmpty_whenNotFound() {
+        var request = PODAM_FACTORY.manufacturePojo(TradeSignatureFindRequest.class);
+        when(repository.find(request)).thenReturn(Optional.empty());
+
+        client.find(request)
+                .as(StepVerifier::create)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    void testSave_shouldCallRepositoryOnce() {
+        var tradeSignature = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+        when(repository.save(any(TradeSignature.class))).thenReturn(tradeSignature);
+
+        client.save(tradeSignature)
+                .as(StepVerifier::create)
+                .assertNext(value -> assertThat(value)
+                        .as("save tradeSignature").usingRecursiveComparison()
+                        .ignoringFieldsMatchingRegexes(".*usumodi", ".*fecmodi", ".*usualta", ".*fecalta")
+                        .isEqualTo(tradeSignature))
+                .verifyComplete();
+
+        verify(repository, times(1)).save(tradeSignature);
+    }
+
+}
+
+Argument(s) are different! Wanted:
+com.acelera.fx.db.domain.port.persistence.TradeSignatureRepository#0 bean.save(
+    TradeSignature(tradeSignatureId=27304756257800, entity=vZz0SwSJX6, originId=27304721265200, origin=U6JYNjLkbI, productId=XFk2VwGtTJ, signatureType=yAFDLmyekP, indicatorSSCC=6cNgtavrja, validatedBo=roAKxHwrXV, expedientId=27304721032200, tradeSignerList=[TradeSigner(tradeSignerId=27304735494200, tradeSignatureId=27304731086500, documentType=OsHgJUc1DS, documentNumber=Qg5PFyAVlF, signerId=1UMCNRtHW6, name=VffOsWBGJd, isClient=TpCf1xc4Vm, interventionType=gIrFn9W8LI), TradeSigner(tradeSignerId=27304739473400, tradeSignatureId=27304737166600, documentType=xcEfVnjlCP, documentNumber=RHzHbCXbHi, signerId=iC0kUk4lon, name=ULF3EfTVvn, isClient=yh8Ev4nvMf, interventionType=_CSH4YX5NR), TradeSigner(tradeSignerId=27304743391100, tradeSignatureId=27304740834300, documentType=9_rdDqZ5Ww, documentNumber=5BC8nzEvQy, signerId=B2ffp3bDpK, name=ne7pncpEIW, isClient=mPOfdtX793, interventionType=Lu_gQWzz7b), TradeSigner(tradeSignerId=27304747242000, tradeSignatureId=27304744989600, documentType=QfgojvLPIn, documentNumber=0ah2mcNbbj, signerId=2qjsrdJ0U3, name=64kORid58n, isClient=goO3kitgHA, interventionType=KDcePD0u_J), TradeSigner(tradeSignerId=27304754119500, tradeSignatureId=27304748535400, documentType=XQDAgjdWLi, documentNumber=DL6Xciz9IE, signerId=tgpnp_2xJR, name=FmAb3wkAIP, isClient=mllIgJ05Wi, interventionType=8xCJwsW3Ye)])
+);
+-> at com.acelera.fx.db.infrastructure.adapter.rsocket.controller.TradeSignatureRSocketControllerTest.testSave_shouldCallRepositoryOnce(TradeSignatureRSocketControllerTest.java:120)
+Actual invocations have different arguments:
+com.acelera.fx.db.domain.port.persistence.TradeSignatureRepository#0 bean.save(
+    TradeSignature(tradeSignatureId=27304756257800, entity=vZz0SwSJX6, originId=27304721265200, origin=U6JYNjLkbI, productId=XFk2VwGtTJ, signatureType=yAFDLmyekP, indicatorSSCC=6cNgtavrja, validatedBo=roAKxHwrXV, expedientId=27304721032200, tradeSignerList=[TradeSigner(tradeSignerId=27304735494200, tradeSignatureId=27304731086500, documentType=OsHgJUc1DS, documentNumber=Qg5PFyAVlF, signerId=1UMCNRtHW6, name=VffOsWBGJd, isClient=TpCf1xc4Vm, interventionType=gIrFn9W8LI), TradeSigner(tradeSignerId=27304739473400, tradeSignatureId=27304737166600, documentType=xcEfVnjlCP, documentNumber=RHzHbCXbHi, signerId=iC0kUk4lon, name=ULF3EfTVvn, isClient=yh8Ev4nvMf, interventionType=_CSH4YX5NR), TradeSigner(tradeSignerId=27304743391100, tradeSignatureId=27304740834300, documentType=9_rdDqZ5Ww, documentNumber=5BC8nzEvQy, signerId=B2ffp3bDpK, name=ne7pncpEIW, isClient=mPOfdtX793, interventionType=Lu_gQWzz7b), TradeSigner(tradeSignerId=27304747242000, tradeSignatureId=27304744989600, documentType=QfgojvLPIn, documentNumber=0ah2mcNbbj, signerId=2qjsrdJ0U3, name=64kORid58n, isClient=goO3kitgHA, interventionType=KDcePD0u_J), TradeSigner(tradeSignerId=27304754119500, tradeSignatureId=27304748535400, documentType=XQDAgjdWLi, documentNumber=DL6Xciz9IE, signerId=tgpnp_2xJR, name=FmAb3wkAIP, isClient=mllIgJ05Wi, interventionType=8xCJwsW3Ye)])
+);
+-> at com.acelera.fx.db.infrastructure.adapter.rsocket.controller.TradeSignatureRSocketController.lambda$save$0(TradeSignatureRSocketController.java:22)
+
+Argument(s) are different! Wanted:
+com.acelera.fx.db.domain.port.persistence.TradeSignatureRepository#0 bean.save(
+    TradeSignature(tradeSignatureId=27304756257800, entity=vZz0SwSJX6, originId=27304721265200, origin=U6JYNjLkbI, productId=XFk2VwGtTJ, signatureType=yAFDLmyekP, indicatorSSCC=6cNgtavrja, validatedBo=roAKxHwrXV, expedientId=27304721032200, tradeSignerList=[TradeSigner(tradeSignerId=27304735494200, tradeSignatureId=27304731086500, documentType=OsHgJUc1DS, documentNumber=Qg5PFyAVlF, signerId=1UMCNRtHW6, name=VffOsWBGJd, isClient=TpCf1xc4Vm, interventionType=gIrFn9W8LI), TradeSigner(tradeSignerId=27304739473400, tradeSignatureId=27304737166600, documentType=xcEfVnjlCP, documentNumber=RHzHbCXbHi, signerId=iC0kUk4lon, name=ULF3EfTVvn, isClient=yh8Ev4nvMf, interventionType=_CSH4YX5NR), TradeSigner(tradeSignerId=27304743391100, tradeSignatureId=27304740834300, documentType=9_rdDqZ5Ww, documentNumber=5BC8nzEvQy, signerId=B2ffp3bDpK, name=ne7pncpEIW, isClient=mPOfdtX793, interventionType=Lu_gQWzz7b), TradeSigner(tradeSignerId=27304747242000, tradeSignatureId=27304744989600, documentType=QfgojvLPIn, documentNumber=0ah2mcNbbj, signerId=2qjsrdJ0U3, name=64kORid58n, isClient=goO3kitgHA, interventionType=KDcePD0u_J), TradeSigner(tradeSignerId=27304754119500, tradeSignatureId=27304748535400, documentType=XQDAgjdWLi, documentNumber=DL6Xciz9IE, signerId=tgpnp_2xJR, name=FmAb3wkAIP, isClient=mllIgJ05Wi, interventionType=8xCJwsW3Ye)])
+);
+-> at com.acelera.fx.db.infrastructure.adapter.rsocket.controller.TradeSignatureRSocketControllerTest.testSave_shouldCallRepositoryOnce(TradeSignatureRSocketControllerTest.java:120)
+Actual invocations have different arguments:
+com.acelera.fx.db.domain.port.persistence.TradeSignatureRepository#0 bean.save(
+    TradeSignature(tradeSignatureId=27304756257800, entity=vZz0SwSJX6, originId=27304721265200, origin=U6JYNjLkbI, productId=XFk2VwGtTJ, signatureType=yAFDLmyekP, indicatorSSCC=6cNgtavrja, validatedBo=roAKxHwrXV, expedientId=27304721032200, tradeSignerList=[TradeSigner(tradeSignerId=27304735494200, tradeSignatureId=27304731086500, documentType=OsHgJUc1DS, documentNumber=Qg5PFyAVlF, signerId=1UMCNRtHW6, name=VffOsWBGJd, isClient=TpCf1xc4Vm, interventionType=gIrFn9W8LI), TradeSigner(tradeSignerId=27304739473400, tradeSignatureId=27304737166600, documentType=xcEfVnjlCP, documentNumber=RHzHbCXbHi, signerId=iC0kUk4lon, name=ULF3EfTVvn, isClient=yh8Ev4nvMf, interventionType=_CSH4YX5NR), TradeSigner(tradeSignerId=27304743391100, tradeSignatureId=27304740834300, documentType=9_rdDqZ5Ww, documentNumber=5BC8nzEvQy, signerId=B2ffp3bDpK, name=ne7pncpEIW, isClient=mPOfdtX793, interventionType=Lu_gQWzz7b), TradeSigner(tradeSignerId=27304747242000, tradeSignatureId=27304744989600, documentType=QfgojvLPIn, documentNumber=0ah2mcNbbj, signerId=2qjsrdJ0U3, name=64kORid58n, isClient=goO3kitgHA, interventionType=KDcePD0u_J), TradeSigner(tradeSignerId=27304754119500, tradeSignatureId=27304748535400, documentType=XQDAgjdWLi, documentNumber=DL6Xciz9IE, signerId=tgpnp_2xJR, name=FmAb3wkAIP, isClient=mllIgJ05Wi, interventionType=8xCJwsW3Ye)])
+);
+-> at com.acelera.fx.db.infrastructure.adapter.rsocket.controller.TradeSignatureRSocketController.lambda$save$0(TradeSignatureRSocketController.java:22)
+
+	at com.acelera.fx.db.infrastructure.adapter.rsocket.controller.TradeSignatureRSocketControllerTest.testSave_shouldCallRepositoryOnce(TradeSignatureRSocketControllerTest.java:120)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:149)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:140)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:84)
+	at org.junit.jupiter.engine.execution.ExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(ExecutableInvoker.java:115)
+	at org.junit.jupiter.engine.execution.ExecutableInvoker.lambda$invoke$0(ExecutableInvoker.java:105)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.ExecutableInvoker.invoke(ExecutableInvoker.java:104)
+	at org.junit.jupiter.engine.execution.ExecutableInvoker.invoke(ExecutableInvoker.java:98)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:214)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:210)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:135)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:66)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:107)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:88)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:67)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:52)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:53)
+	at com.intellij.junit5.JUnit5IdeaTestRunner.startRunnerWithArgs(JUnit5IdeaTestRunner.java:57)
+	at com.intellij.rt.junit.IdeaTestRunner$Repeater$1.execute(IdeaTestRunner.java:38)
+	at com.intellij.rt.execution.junit.TestsRepeater.repeat(TestsRepeater.java:11)
+	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35)
+	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:232)
+	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:55)
