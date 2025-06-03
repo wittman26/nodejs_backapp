@@ -1,0 +1,185 @@
+package com.acelera.fx.db.infrastructure.adapter.persistence.jpa.mapper;
+
+import com.acelera.broker.fx.db.domain.dto.TradeSignature;
+import com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model.TradeSignatureModel;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
+
+@Mapper
+public interface TradeSignatureMapper {
+
+    TradeSignatureMapper INSTANCE = Mappers.getMapper(TradeSignatureMapper.class);
+
+    @Mapping(target = "tradeSignerList", source = "tradeSignerList")
+    TradeSignatureModel fromDomain(TradeSignature tradeSignature);
+
+    @Mapping(target = "tradeSignerList", source = "tradeSignerList")
+    TradeSignature toDomain(TradeSignatureModel tradeSignatureModel);
+
+}
+
+package com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model;
+
+import com.acelera.data.jpa.BaseAuditorJpa;
+import lombok.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.util.List;
+
+@Entity
+@Table(name = "FX_TRADE_SIGNATURE")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Setter
+@Getter
+public class TradeSignatureModel extends BaseAuditorJpa {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "TRADE_SIGNATURE_ID")
+    private Long tradeSignatureId;
+
+    @Size(max = 4)
+    @Column(name = "ENTITY", nullable = false, length = 4)
+    private String entity;
+
+    @Column(name = "ORIGIN_ID", nullable = false)
+    private Long originId;
+
+    @Size(max = 20)
+    @Column(name = "ORIGIN", nullable = false, length = 20)
+    private String origin;
+
+    @Size(max = 2)
+    @Column(name = "PRODUCT_ID", nullable = false, length = 2)
+    private String productId;
+
+    @Size(max = 10)
+    @Column(name = "SIGNATURE_TYPE", nullable = false, length = 10)
+    private String signatureType;
+
+    @Size(max = 1)
+    @Column(name = "INDICATOR_SSCC", length = 1)
+    private String indicatorSSCC;
+
+    @Size(max = 10)
+    @Column(name = "VALIDATED_BO", length = 10)
+    private String validatedBo;
+
+    @Column(name = "EXPEDIENT_ID")
+    private Long expedientId;
+
+    @OneToMany(mappedBy = "tradeSignatureModel", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TradeSignerModel> tradeSignerList;
+}
+
+package com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model;
+
+import com.acelera.data.jpa.BaseAuditorJpa;
+import lombok.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+
+@Entity
+@Table(name = "FX_TRADE_SIGNER")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Setter
+@Getter
+public class TradeSignerModel extends BaseAuditorJpa {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "TRADE_SIGNER_ID")
+    private Long tradeSignerId;
+
+    @Size(max = 1)
+    @Column(name = "DOCUMENT_TYPE", nullable = false, length = 1)
+    private String documentType;
+
+    @Size(max = 20)
+    @Column(name = "DOCUMENT_NUMBER", nullable = false, length = 20)
+    private String documentNumber;
+
+    @Size(max = 10)
+    @Column(name = "SIGNER_ID", nullable = false, length = 10)
+    private String signerId;
+
+    @Size(max = 200)
+    @Column(name = "NAME", nullable = false, length = 200)
+    private String name;
+
+    @Size(max = 1)
+    @Column(name = "IS_CLIENT", nullable = false, length = 1)
+    private String isClient;
+
+    @Size(max = 2)
+    @Column(name = "INTERVENTION_TYPE", nullable = false, length = 2)
+    private String interventionType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADE_SIGNATURE_ID", referencedColumnName = "TRADE_SIGNATURE_ID")
+    private TradeSignatureModel tradeSignatureModel;
+}
+
+
+package com.acelera.broker.fx.db.domain.dto;
+
+import com.acelera.dto.AuditZonedFields;
+import lombok.*;
+
+import java.util.Collections;
+import java.util.List;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class TradeSignature extends AuditZonedFields {
+
+    private Long tradeSignatureId;
+    private String entity;
+    private Long originId;
+    private String origin;
+    private String productId;
+    private String signatureType;
+    private String indicatorSSCC;
+    private String validatedBo;
+    private Long expedientId;
+    @Getter(AccessLevel.NONE)
+    private List<TradeSigner> tradeSignerList;
+
+    public List<TradeSigner> getTradeSignerList() {
+        return tradeSignerList != null ? tradeSignerList : Collections.emptyList();
+    }
+}
+
+package com.acelera.broker.fx.db.domain.dto;
+
+import com.acelera.dto.AuditZonedFields;
+import lombok.*;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class TradeSigner extends AuditZonedFields {
+
+    private Long tradeSignerId;
+    private Long tradeSignatureId;
+    private String documentType;
+    private String documentNumber;
+    private String signerId;
+    private String name;
+    private String isClient;
+    private String interventionType;
+}
+
+
+        TradeSignatureModel model = repository.save(tradeSignatureModel);
+        TradeSignature tradeSignature = TradeSignatureMapper.INSTANCE.toDomain(model);
