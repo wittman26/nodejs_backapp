@@ -81,4 +81,53 @@ public class TradeSignatureRSocketControllerTest {
 
         client.find(request).as(StepVerifier::create).expectNext(response).verifyComplete();
     }
+
+@Test
+void testSave_shouldEmitError_whenRepositoryThrows() {
+    var tradeSignature = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+    when(repository.save(any(TradeSignature.class))).thenThrow(new RuntimeException("DB error"));
+
+    client.save(tradeSignature)
+            .as(StepVerifier::create)
+            .expectErrorMatches(e -> e instanceof RuntimeException && e.getMessage().equals("DB error"))
+            .verify();
+}    
+
+@Test
+void testFind_shouldReturnEmpty_whenNotFound() {
+    var request = PODAM_FACTORY.manufacturePojo(TradeSignatureFindRequest.class);
+    when(repository.find(request)).thenReturn(Optional.empty());
+
+    client.find(request)
+            .as(StepVerifier::create)
+            .expectComplete()
+            .verify();
+}
+
+@Test
+void testSave_shouldCallRepositoryOnce() {
+    var tradeSignature = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+    when(repository.save(any(TradeSignature.class))).thenReturn(tradeSignature);
+
+    client.save(tradeSignature)
+            .as(StepVerifier::create)
+            .expectNext(tradeSignature)
+            .verifyComplete();
+
+    verify(repository, times(1)).save(tradeSignature);
+}
+
+@Test
+void testFind_shouldCallRepositoryOnce() {
+    var request = PODAM_FACTORY.manufacturePojo(TradeSignatureFindRequest.class);
+    var response = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+    when(repository.find(request)).thenReturn(Optional.of(response));
+
+    client.find(request)
+            .as(StepVerifier::create)
+            .expectNext(response)
+            .verifyComplete();
+
+    verify(repository, times(1)).find(request);
+}
 }
