@@ -56,3 +56,5 @@ public class FxTradeSignerDocumentStatusView {
     @Column(name = "SIGN_DATE")
     private LocalDateTime signDate;
 }
+
+Caused by: org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: wrong column type encountered in column [indicator_precontractual] in table [fx_view_trade_signer_document_status]; found [char (Types#CHAR)], but expecting [varchar2(1 char) (Types#VARCHAR)]
