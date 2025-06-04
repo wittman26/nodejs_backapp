@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 @Slf4j
@@ -43,12 +44,35 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
                 .tradeSignatureId(request.getTradeSignatureId())
                 .build();
 
-        var responseFinal = GetTradeSignatureResponse.builder().build();
+        Mono<GetTradeSignatureResponse> cabeceraMono = tradeSignatureViewRepositoryClient.findTradeSignatureViewExpedient(filters)
+            .map(tradeSignatureExpedientView -> GetTradeSignatureResponse.builder()
+                .tradeSignatureId(tradeSignatureExpedientView.getTradeSignatureId())
+                .entity(tradeSignatureExpedientView.getEntity())
+                // Agrega aquí otros campos de cabecera si los tienes en tu DTO
+                .build()
+            )
+            .switchIfEmpty(Mono.just(GetTradeSignatureResponse.builder().build()));
 
-        return tradeSignatureViewRepositoryClient.findTradeSignerViewDocument(filters)
-                .flatMap(response -> {
-                    //TODO
-                })
-                .switchIfEmpty(Mono.empty());
+        Mono<List<TradeSignerResponse>> signersMono = tradeSignatureViewRepositoryClient.findTradeSignerViewDocument(filters)
+            .map(list -> list.stream()
+                .map(TradeSignerMapper.INSTANCE::toTradeSignerResponse)
+                .toList()
+            )
+            .switchIfEmpty(Mono.just(List.of()));
+
+        return Mono.zip(cabeceraMono, signersMono)
+            .map(tuple -> {
+                GetTradeSignatureResponse cabecera = tuple.getT1();
+                List<TradeSignerResponse> signers = tuple.getT2();
+                return GetTradeSignatureResponse.builder()
+                    .tradeSignatureId(cabecera.getTradeSignatureId())
+                    .entity(cabecera.getEntity())
+                    // Agrega aquí otros campos de cabecera si los tienes
+                    .signers(signers)
+                    .build();
+            });
+    }
 
 }
+
+
