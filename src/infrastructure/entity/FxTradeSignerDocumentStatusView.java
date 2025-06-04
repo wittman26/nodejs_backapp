@@ -58,3 +58,5 @@ public class FxTradeSignerDocumentStatusView {
 }
 
 Caused by: org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: wrong column type encountered in column [indicator_precontractual] in table [fx_view_trade_signer_document_status]; found [char (Types#CHAR)], but expecting [varchar2(1 char) (Types#VARCHAR)]
+
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'springJpaTradeSignerDocumentStatusViewRepository' defined in com.acelera.fx.db.infrastructure.adapter.persistence.jpa.crud.SpringJpaTradeSignerDocumentStatusViewRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Invocation of init method failed; nested exception is java.lang.IllegalArgumentException: Not a managed type: class com.acelera.broker.fx.db.domain.dto.TradeSignerDocumentStatusView
