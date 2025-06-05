@@ -29,3 +29,74 @@
         if (allNotSigned) return "RED";
         return "YELLOW";
     }
+
+    /*************** */
+
+    // Tests
+
+    import org.junit.jupiter.api.Test;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
+
+class LogicaColorRefactorTest {
+
+    private final logicaColorRefactor service = new logicaColorRefactor();
+
+    private TradeSignerDocumentStatusView doc(String signerId, String signedDoc) {
+        TradeSignerDocumentStatusView doc = new TradeSignerDocumentStatusView();
+        doc.setSignerId(signerId);
+        doc.setSignedDoc(signedDoc);
+        return doc;
+    }
+
+    @Test
+    void testAllSignedGreen() {
+        List<TradeSignerDocumentStatusView> docs = List.of(
+                doc("A", "Y"),
+                doc("A", "Y")
+        );
+        var result = service.mapSignersWithColour(docs);
+        assertEquals(1, result.size());
+        assertEquals("GREEN", result.get(0).getSignerColour());
+    }
+
+    @Test
+    void testAllNotSignedRed() {
+        List<TradeSignerDocumentStatusView> docs = List.of(
+                doc("B", "N"),
+                doc("B", "N")
+        );
+        var result = service.mapSignersWithColour(docs);
+        assertEquals(1, result.size());
+        assertEquals("RED", result.get(0).getSignerColour());
+    }
+
+    @Test
+    void testMixedYellow() {
+        List<TradeSignerDocumentStatusView> docs = List.of(
+                doc("C", "Y"),
+                doc("C", "N"),
+                doc("C", "Y")
+        );
+        var result = service.mapSignersWithColour(docs);
+        assertEquals(1, result.size());
+        assertEquals("YELLOW", result.get(0).getSignerColour());
+    }
+
+    @Test
+    void testMultipleSigners() {
+        List<TradeSignerDocumentStatusView> docs = List.of(
+                doc("A", "Y"),
+                doc("A", "Y"),
+                doc("B", "N"),
+                doc("B", "N"),
+                doc("C", "Y"),
+                doc("C", "N")
+        );
+        var result = service.mapSignersWithColour(docs);
+        assertEquals(3, result.size());
+        assertTrue(result.stream().anyMatch(r -> r.getSignerId().equals("A") && r.getSignerColour().equals("GREEN")));
+        assertTrue(result.stream().anyMatch(r -> r.getSignerId().equals("B") && r.getSignerColour().equals("RED")));
+        assertTrue(result.stream().anyMatch(r -> r.getSignerId().equals("C") && r.getSignerColour().equals("YELLOW")));
+    }
+}
