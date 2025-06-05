@@ -1,0 +1,37 @@
+public interface SpringJpaTradeSignerDocumentStatusViewRepository  extends
+        CrudRepository<TradeSignerDocumentStatusModel, Long> {
+    List<TradeSignerDocumentStatusModel> findByTradeSignatureId(Long tradeSignatureId);
+
+    // @formatter:off
+    @Query("select * from fx_view_trade_signer_document_status "
+            + "where trade_signature_id = :tradeSignatureId")
+    // @formatter:on
+    List<TradeSignerDocumentStatusModel> findNativeByTradeSignatureId(Long tradeSignatureId);
+}
+
+
+Caused by: org.hibernate.hql.internal.ast.QuerySyntaxException: unexpected token: * near line 1, column 8 [select * from fx_view_trade_signer_document_status where trade_signature_id = :tradeSignatureId]
+
+    select
+        tradesigne0_.trade_signature_id as trade_signature_id1_12_,
+        tradesigne0_.document_number as document_number2_12_,
+        tradesigne0_.document_type as document_type3_12_,
+        tradesigne0_.documental_type_doc as documental_type_do4_12_,
+        tradesigne0_.expedient_id as expedient_id5_12_,
+        tradesigne0_.gn_id as gn_id6_12_,
+        tradesigne0_.indicator_precontractual as indicator_precontr7_12_,
+        tradesigne0_.intervention_type as intervention_type8_12_,
+        tradesigne0_.is_client as is_client9_12_,
+        tradesigne0_.name as name10_12_,
+        tradesigne0_.sign_date as sign_date11_12_,
+        tradesigne0_.signed_doc as signed_doc12_12_,
+        tradesigne0_.signer_id as signer_id13_12_ 
+    from
+        ACELER_FX.fx_view_trade_signer_document_status tradesigne0_ 
+    where
+        tradesigne0_.trade_signature_id=61
+
+TRADE_SIGNATURE_ID EXPEDIENT_ID SIGNER_ID  D DOCUMENT_NUMBER      NAME                                                                                                                                                                                                     I IN GN_ID                                    DOCUMENTAL_TYPE_DOC            I S SIGN_DATE                  
+------------------ ------------ ---------- - -------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- - -- ---------------------------------------- ------------------------------ - - ---------------------------
+                61        32264 F000000583 N 12345678R            VALOR 1                                                                                                                                                                                                  Y 01 48e9a1fd954748a7936e5e79558d7a5b         DE_INF_PRECONTR                Y N                            
+                61        32264 F000000999 N 9999999R             UPDATE 3                                                                                                                                                                                                 Y 02 48e9a1fd954748a7936e5e79558d7a5b         DE_INF_PRECONTR                Y N                            
