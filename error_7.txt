@@ -12,6 +12,8 @@ public interface SpringJpaTradeSignerDocumentStatusViewRepository  extends
 
 Caused by: org.hibernate.hql.internal.ast.QuerySyntaxException: unexpected token: * near line 1, column 8 [select * from fx_view_trade_signer_document_status where trade_signature_id = :tradeSignatureId]
 
+/***************************/
+Consulta de JPA:
     select
         tradesigne0_.trade_signature_id as trade_signature_id1_12_,
         tradesigne0_.document_number as document_number2_12_,
@@ -29,7 +31,9 @@ Caused by: org.hibernate.hql.internal.ast.QuerySyntaxException: unexpected token
     from
         ACELER_FX.fx_view_trade_signer_document_status tradesigne0_ 
     where
-        tradesigne0_.trade_signature_id=61
+        tradesigne0_.trade_signature_id=?
+
+Registros en BD
 
 TRADE_SIGNATURE_ID EXPEDIENT_ID SIGNER_ID  D DOCUMENT_NUMBER      NAME                                                                                                                                                                                                     I IN GN_ID                                    DOCUMENTAL_TYPE_DOC            I S SIGN_DATE                  
 ------------------ ------------ ---------- - -------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- - -- ---------------------------------------- ------------------------------ - - ---------------------------
