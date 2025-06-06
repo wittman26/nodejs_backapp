@@ -1,0 +1,88 @@
+@Service
+@RequiredArgsConstructor
+public class TradeSignatureServiceImpl implements TradeSignatureService {
+
+    private final TradeSignatureRepositoryClient tradeSignatureRepositoryClient;
+    private final TradeSignatureViewRepositoryClient tradeSignatureViewRepositoryClient;
+    private final TradeSignatureDomainService tradeSignatureDomainService;
+    private final TradeSignatureMapper tradeSignatureMapper;
+
+    @Override
+    public Mono<TradeSignatureResponse> createOrUpdateSignature(Locale locale, String entity, TradeSignatureRequest request) {
+        tradeSignatureDomainService.validateCreateOrUpdateParams(request);
+
+        return tradeSignatureDomainService.findTradeSignature(request, entity)
+                .flatMap(found -> tradeSignatureDomainService.upsertTradeSignature(found, request, entity))
+                .switchIfEmpty(tradeSignatureDomainService.upsertTradeSignature(null, request, entity));
+    }
+
+    @Override
+    public Mono<GetTradeSignatureResponse> getTradeSignature(Locale locale, String entity, GetTradeSignatureRequestParameter request) {
+        tradeSignatureDomainService.validateGetParams(request);
+
+        var tradeSignatureRequest = tradeSignatureMapper.toTradeSignatureRequest(request);
+
+        return tradeSignatureDomainService.findTradeSignature(tradeSignatureRequest, entity)
+                .flatMap(found -> tradeSignatureDomainService.buildResponse(found.getTradeSignatureId()))
+                .switchIfEmpty(tradeSignatureDomainService.buildResponse(request.getTradeSignatureId()));
+    }
+}
+
+@Service
+@RequiredArgsConstructor
+public class TradeSignatureDomainService {
+
+    private final TradeSignatureRepositoryClient tradeSignatureRepositoryClient;
+    private final TradeSignatureViewRepositoryClient tradeSignatureViewRepositoryClient;
+    private final TradeSignatureMapper tradeSignatureMapper;
+
+    public void validateCreateOrUpdateParams(TradeSignatureRequest request) {
+        // Lógica de validación aquí
+    }
+
+    public void validateGetParams(GetTradeSignatureRequestParameter request) {
+        // Lógica de validación aquí
+    }
+
+    public Mono<TradeSignature> findTradeSignature(TradeSignatureRequest request, String entity) {
+        // Lógica de búsqueda
+    }
+
+    public Mono<TradeSignatureResponse> upsertTradeSignature(TradeSignature found, TradeSignatureRequest request, String entity) {
+        // Lógica de actualización/creación
+    }
+
+    public Mono<GetTradeSignatureResponse> buildResponse(Long tradeSignatureId) {
+        // Lógica de construcción de respuesta
+    }
+}
+
+@Mapper(componentModel = "spring")
+public interface TradeSignatureMapper {
+    TradeSignatureRequest toTradeSignatureRequest(GetTradeSignatureRequestParameter param);
+    // Otros métodos de mapeo
+}
+
+@Component
+public class TradeSignerHelper {
+    public String getSignerColour(List<TradeSignerDocumentStatusView> signerDocs) {
+        boolean allSigned = signerDocs.stream().allMatch(doc -> "Y".equals(doc.getSignedDoc()));
+        boolean allNotSigned = signerDocs.stream().allMatch(doc -> "N".equals(doc.getSignedDoc()));
+        if (allSigned) return "GREEN";
+        if (allNotSigned) return "RED";
+        return "YELLOW";
+    }
+}
+
+Teniendo en cuenta esta estructura de paquetes dentro de mi proyecto, cual sería la ubicación adecuada para crear TradeSignatureDomainService y TradeSignerHelper que propones
+
+application
+---service // acá viene TradeSignatureServiceImpl
+------mapper // todos los mapper TradeSignatureViewMapper y demas
+---domain
+------port
+---------service //acá la interface de TradeSignatureService
+---infrastructure
+------controller // los controller
+------request // dtos de request
+------response // dtos de response
