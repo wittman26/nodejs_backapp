@@ -77,3 +77,8 @@ public class TradeSignatureExpedientViewModel {
     private String hasClauses;
 
 }                   
+
+TRADE_SIGNATURE_ID ENTI  ORIGIN_ID PR SIGNATURE_ VALIDATED_ I EXPEDIENT_ID START_DATE                  END_DATE                    EXPEDIENT_STATUS                                   H
+------------------ ---- ---------- -- ---------- ---------- - ------------ --------------------------- --------------------------- -------------------------------------------------- -
+                61 0049     123450 FW UPDATE A1  PENDING    N       734000 07/02/24 12:23:42,972000000 07/02/24 22:55:00,000000000 PENDING                                            N
+                62 0049     123451 FW DIGITAL    PENDING    N       734000 07/02/24 12:23:42,972000000 07/02/24 22:55:00,000000000 PENDING                                            N
