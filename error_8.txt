@@ -1,0 +1,79 @@
+CREATE OR REPLACE EDITIONABLE VIEW ACELER_FX.FX_VIEW_TRADE_SIGNATURE_EXPEDIENT AS
+SELECT
+    TS.TRADE_SIGNATURE_ID,
+    TS.ENTITY,
+    TS.ORIGIN_ID,
+    TS.PRODUCT_ID,
+    TS.SIGNATURE_TYPE,
+    TS.VALIDATED_BO,
+    TS.INDICATOR_SSCC,
+    TS.EXPEDIENT_ID,
+    DE.START_DATE,
+    DE.END_DATE,
+    DE.STATUS AS EXPEDIENT_STATUS,
+    CASE WHEN DECL.ID IS NOT NULL THEN 'Y' ELSE 'N' END AS HAS_CLAUSES    --ALANA ADICION
+FROM ACELER_FX.FX_TRADE_SIGNATURE TS
+         LEFT JOIN ACELER_DFD.DFD_EXPEDIENT DE
+                   ON TS.EXPEDIENT_ID = DE.ID_EXP_SEC
+         LEFT JOIN ACELER_DFD.DFD_EXPEDIENT_CLAUSES DECL      --ALANA ADICION
+                   ON TS.EXPEDIENT_ID = DECL.ID              --ALANA ADICION   
+
+package com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model;
+
+import lombok.*;
+import org.hibernate.annotations.Immutable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
+
+@Entity
+@Immutable
+@Table(name = "FX_VIEW_TRADE_SIGNATURE_EXPEDIENT")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Setter
+@Getter
+public class TradeSignatureExpedientViewModel {
+
+    @Id
+    @Column(name = "TRADE_SIGNATURE_ID")
+    private Long tradeSignatureId;
+
+    @Column(name = "ENTITY")
+    private String entity;
+
+    @Column(name = "ORIGIN_ID")
+    private Long originId;
+
+    @Column(name = "PRODUCT_ID")
+    private String productId;
+
+    @Column(name = "SIGNATURE_TYPE")
+    private String signatureType;
+
+    @Column(name = "VALIDATED_BO")
+    private String validatedBo;
+
+    @Column(name = "INDICATOR_SSCC")
+    private String indicatorSSCC;
+
+    @Column(name = "EXPEDIENT_ID")
+    private Long expedientId;
+
+    @Column(name = "START_DATE")
+    private LocalDateTime startDate;
+
+    @Column(name = "END_DATE")
+    private LocalDateTime endDate;
+
+    @Column(name = "EXPEDIENT_STATUS")
+    private String expedientStatus;
+
+    @Column(name = "HAS_CLAUSES", columnDefinition = "CHAR(1)")
+    private String hasClauses;
+
+}                   
