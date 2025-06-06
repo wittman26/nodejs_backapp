@@ -10,7 +10,10 @@ import com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureService
 import com.acelera.fx.digitalsignature.infrastructure.request.CreateDocumentRequest;
 import com.acelera.fx.digitalsignature.infrastructure.request.GetTradeSignatureRequestParameter;
 import com.acelera.fx.digitalsignature.infrastructure.request.TradeSignatureRequest;
-import com.acelera.fx.digitalsignature.infrastructure.response.*;
+import com.acelera.fx.digitalsignature.infrastructure.response.CreateDocumentResponse;
+import com.acelera.fx.digitalsignature.infrastructure.response.GetTradeSignatureResponse;
+import com.acelera.fx.digitalsignature.infrastructure.response.TradeSignatureResponse;
+import com.acelera.fx.digitalsignature.infrastructure.response.TradeSignersResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -75,7 +78,7 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
     private Mono<GetTradeSignatureResponse> buildResponse(Long tradeSignatureId ) {
 
         // Build header
-        Mono<GetTradeSignatureResponse> cabeceraMono = tradeSignatureViewRepositoryClient.findTradeSignatureViewExpedient(tradeSignatureId)
+        Mono<GetTradeSignatureResponse> headerMono = tradeSignatureViewRepositoryClient.findTradeSignatureViewExpedient(tradeSignatureId)
                 .flatMap(response -> Mono.just(TradeSignatureViewMapper.INSTANCE.toGetTradeSignatureResponse(response)))
                 .switchIfEmpty(Mono.empty());
 
@@ -84,13 +87,13 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
                 .map(this::mapSignersWithColour)
                 .switchIfEmpty(Mono.empty());
 
-        return Mono.zip(cabeceraMono, signersMono)
+        return Mono.zip(headerMono, signersMono)
                 .map( tuple -> {
-                    GetTradeSignatureResponse cabecera = tuple.getT1();
-                    List<TradeSignersResponse> detalle = tuple.getT2();
+                    GetTradeSignatureResponse header = tuple.getT1();
+                    List<TradeSignersResponse> signers = tuple.getT2();
 
-                    cabecera.setSigners(detalle);
-                    return cabecera;
+                    header.setSigners(signers);
+                    return header;
                 });
     }
 
@@ -104,17 +107,16 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
 
                     String signerColour = getSignerColour(signerDocs);
 
-                    var resultado = TradeSignerDocumentStatusViewMapper.INSTANCE.toTradeSignersResponse(base);
-                    resultado.setSignerColour(signerColour);
-                    resultado.setDocs(signerDocs.stream().map(this::mapearDoc).toList());
-                    return resultado;
+                    var tradeSignersResponse = TradeSignerDocumentStatusViewMapper.INSTANCE.toTradeSignersResponse(base);
+                    tradeSignersResponse.setSignerColour(signerColour);
+                    tradeSignersResponse.setDocs(signerDocs.stream().map(
+                            TradeSignerDocumentStatusViewMapper.INSTANCE::toStatusDocumentPerSigner
+                    ).toList());
+
+                    return tradeSignersResponse;
                 }).toList();
     }
 
-    private StatusDocumentPerSigner mapearDoc(TradeSignerDocumentStatusView doc) {
-        // TODO
-        return StatusDocumentPerSigner.builder().build();
-    }
 
     private String getSignerColour(List<TradeSignerDocumentStatusView> signerDocs) {
         boolean allSigned = signerDocs.stream().allMatch(doc -> "Y".equals(doc.getSignedDoc()));
