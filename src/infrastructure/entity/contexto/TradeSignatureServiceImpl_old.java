@@ -76,3 +76,12 @@ public class TradeSignatureServiceImpl implements TradeSignatureService {
 }
 
 
+
+expedient → Solo si FX_VIEW_TRADE_SIGNATURE_EXPEDIENT.EXPEDIENT_ID es distinto de null
+    expedientId → FX_VIEW_TRADE_SIGNATURE_EXPEDIENT.EXPEDIENT_ID
+    isActive → Si FX_VIEW_TRADE_SIGNATURE_EXPEDIENT.END_DATE >= HOY, isActive = true; else isActive = false
+    startDate→ FX_VIEW_TRADE_SIGNATURE_EXPEDIENT.START_DATE formato ‘dd/mm/aaaa hh:mm:ss' y pasada a hora local, en BBDD está salvo error en hora UTC
+    endDate → FX_VIEW_TRADE_SIGNATURE_EXPEDIENT.END_DATE formato ‘dd/mm/aaaa hh:mm:ss' y pasada a hora local, en BBDD está salvo error en hora UTC
+    status → FX_VIEW_TRADE_SIGNATURE_EXPEDIENT.EXPEDIENT_STATUS
+    statusDescription → Si FX_VIEW_TRADE_SIGNATURE_EXPEDIENT.EXPEDIENT_STATUS = ‘PENDING’, statusDescription = ‘Pte. firma’; si EXPEDIENT_STATUS = ‘COMPLETED’, statusDescription = ‘Firmada'; si EXPEDIENT_STATUS = ‘CANCELLED’, statusDescription = ‘Cancelada'; else statusDescription = null
+    hasClauses → Si FX_VIEW_TRADE_SIGNATURE_EXPEDIENT.HAS_CLAUSES = 'Y', hasClauses = true; else hasClauses = false
