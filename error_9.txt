@@ -1,0 +1,123 @@
+package com.acelera.fx.db.infrastructure.adapter.rsocket.controller;
+
+import com.acelera.broker.fx.db.FxDbBrokerConfig;
+import com.acelera.broker.fx.db.domain.dto.TradeSignature;
+import com.acelera.broker.fx.db.domain.dto.TradeSignatureFindRequest;
+import com.acelera.broker.fx.db.domain.port.TradeSignatureRepositoryClient;
+import com.acelera.broker.shared.RSocketRequesterBuilderLoggerAutoConfig;
+import com.acelera.fx.db.domain.port.persistence.TradeSignatureRepository;
+import com.acelera.rsocket.RSocketHeadersCustomizerAutoConfig;
+import com.acelera.test.WithMockCustomUser;
+import org.apache.commons.lang3.RandomUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.autoconfigure.rsocket.RSocketMessagingAutoConfiguration;
+import org.springframework.boot.autoconfigure.rsocket.RSocketRequesterAutoConfiguration;
+import org.springframework.boot.autoconfigure.rsocket.RSocketServerAutoConfiguration;
+import org.springframework.boot.autoconfigure.rsocket.RSocketStrategiesAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import reactor.test.StepVerifier;
+import uk.co.jemos.podam.api.PodamFactory;
+import uk.co.jemos.podam.api.PodamFactoryImpl;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@Execution(ExecutionMode.CONCURRENT)
+@SpringBootTest(classes = {TradeSignatureRSocketController.class,  FxDbBrokerConfig.class,
+        RSocketRequesterAutoConfiguration.class, RSocketMessagingAutoConfiguration.class, JacksonAutoConfiguration.class,
+        RSocketHeadersCustomizerAutoConfig.class, RSocketRequesterBuilderLoggerAutoConfig.class,
+        RSocketStrategiesAutoConfiguration.class, RSocketServerAutoConfiguration.class })
+@WithMockCustomUser
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+public class TradeSignatureRSocketControllerTest {
+    private static final int PORT = RandomUtils.nextInt(1111, 9999);
+    private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
+
+    private @MockBean TradeSignatureRepository repository;
+    private @Autowired
+    @Qualifier("tradeSignatureRepositoryClient") TradeSignatureRepositoryClient client;
+
+    @DynamicPropertySource
+    static void dynamicProperties(DynamicPropertyRegistry registry) {
+        registry.add("services.conac-springboot-fx-db-service.rsocket.host", () -> "localhost");
+        registry.add("services.conac-springboot-fx-db-service.rsocket.port", () -> PORT);
+        registry.add("spring.rsocket.server.port", () -> PORT);
+    }
+
+    @Test
+    void testSave() {
+        var tradeSignature = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+        when(repository.save(any(TradeSignature.class))).thenReturn(tradeSignature);
+
+        client
+                .save(tradeSignature).as(StepVerifier::create).assertNext(value -> assertThat(value)
+                        .as("save tradeSignature").usingRecursiveComparison()
+                        .ignoringFieldsMatchingRegexes(".*usumodi", ".*fecmodi", ".*usualta", ".*fecalta")
+                        .isEqualTo(tradeSignature))
+                .verifyComplete();
+    }
+
+    @Test
+    void testFind() {
+
+        var request = PODAM_FACTORY.manufacturePojo(TradeSignatureFindRequest.class);
+        var response = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+
+        when(repository.find(request)).thenReturn(Optional.of(response));
+
+        client.find(request).as(StepVerifier::create).expectNext(response).verifyComplete();
+    }
+
+    @Test
+    void testSave_shouldEmitError_whenRepositoryThrows() {
+        var tradeSignature = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+        when(repository.save(any(TradeSignature.class))).thenThrow(new RuntimeException("DB error"));
+
+        client.save(tradeSignature)
+                .as(StepVerifier::create)
+                .expectErrorMatches(e -> e instanceof RuntimeException && e.getMessage().equals("DB error"))
+                .verify();
+    }
+
+    @Test
+    void testFind_shouldReturnEmpty_whenNotFound() {
+        var request = PODAM_FACTORY.manufacturePojo(TradeSignatureFindRequest.class);
+        when(repository.find(request)).thenReturn(Optional.empty());
+
+        client.find(request)
+                .as(StepVerifier::create)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    void testSave_shouldCallRepositoryOnce() {
+        var tradeSignature = PODAM_FACTORY.manufacturePojo(TradeSignature.class);
+        when(repository.save(any(TradeSignature.class))).thenReturn(tradeSignature);
+
+        client.save(tradeSignature)
+                .as(StepVerifier::create)
+                .assertNext(value -> assertThat(value)
+                        .as("save tradeSignature").usingRecursiveComparison()
+                        .ignoringFieldsMatchingRegexes(".*usumodi", ".*fecmodi", ".*usualta", ".*fecalta")
+                        .isEqualTo(tradeSignature))
+                .verifyComplete();
+
+        verify(repository, times(1)).save(any(TradeSignature.class));
+    }
+
+}
+
+java.lang.AssertionError: expectation "expectNext(TradeSignature(tradeSignatureId=546930581992900, entity=MYcPu7kv0Z, originId=546930522558300, origin=vj1KfO79Hc, productId=anJK5HCZ_B, signatureType=fMMI5KftR5, indicatorSSCC=dyK2Z_eUng, validatedBo=piWQ1whXJf, expedientId=546930522387200, tradeSignerList=[TradeSigner(tradeSignerId=546930555048699, tradeSignatureId=546930544978200, documentType=VdqbSCBHtQ, documentNumber=62I8Wf9Vl_, signerId=iJZcJdUm_i, name=9SklxGIueF, isClient=gHrq62K2q7, interventionType=IjySvfvNew), TradeSigner(tradeSignerId=546930563803100, tradeSignatureId=546930559205499, documentType=UumzTmHafd, documentNumber=CWNfEOMmT3, signerId=p1HrtaE1sT, name=yoVZZXRalA, isClient=n32At8ZLiZ, interventionType=pZ3dwNCYjC), TradeSigner(tradeSignerId=546930569950400, tradeSignatureId=546930566305900, documentType=pcsaGAMD5w, documentNumber=EVnA1t8JBM, signerId=CZhqf4wxh8, name=B7FShimdfW, isClient=ZXTlDOHXhG, interventionType=eb4FM_uTep), TradeSigner(tradeSignerId=546930574576400, tradeSignatureId=546930571797800, documentType=k8ICA4tNZY, documentNumber=E_TcTTTEUJ, signerId=YGdmSUawdC, name=KI3dLJUAUY, isClient=qYTcVaYphi, interventionType=hM7xsgoCQw), TradeSigner(tradeSignerId=546930578829500, tradeSignatureId=546930576151000, documentType=q0zHQ9ueBt, documentNumber=ymJPDG3Yz3, signerId=6IQpHalNLy, name=asCsTmN0mz, isClient=KRr2XcJ1mL, interventionType=WmmJGUc_zJ)]))" failed (expected value: TradeSignature(tradeSignatureId=546930581992900, entity=MYcPu7kv0Z, originId=546930522558300, origin=vj1KfO79Hc, productId=anJK5HCZ_B, signatureType=fMMI5KftR5, indicatorSSCC=dyK2Z_eUng, validatedBo=piWQ1whXJf, expedientId=546930522387200, tradeSignerList=[TradeSigner(tradeSignerId=546930555048699, tradeSignatureId=546930544978200, documentType=VdqbSCBHtQ, documentNumber=62I8Wf9Vl_, signerId=iJZcJdUm_i, name=9SklxGIueF, isClient=gHrq62K2q7, interventionType=IjySvfvNew), TradeSigner(tradeSignerId=546930563803100, tradeSignatureId=546930559205499, documentType=UumzTmHafd, documentNumber=CWNfEOMmT3, signerId=p1HrtaE1sT, name=yoVZZXRalA, isClient=n32At8ZLiZ, interventionType=pZ3dwNCYjC), TradeSigner(tradeSignerId=546930569950400, tradeSignatureId=546930566305900, documentType=pcsaGAMD5w, documentNumber=EVnA1t8JBM, signerId=CZhqf4wxh8, name=B7FShimdfW, isClient=ZXTlDOHXhG, interventionType=eb4FM_uTep), TradeSigner(tradeSignerId=546930574576400, tradeSignatureId=546930571797800, documentType=k8ICA4tNZY, documentNumber=E_TcTTTEUJ, signerId=YGdmSUawdC, name=KI3dLJUAUY, isClient=qYTcVaYphi, interventionType=hM7xsgoCQw), TradeSigner(tradeSignerId=546930578829500, tradeSignatureId=546930576151000, documentType=q0zHQ9ueBt, documentNumber=ymJPDG3Yz3, signerId=6IQpHalNLy, name=asCsTmN0mz, isClient=KRr2XcJ1mL, interventionType=WmmJGUc_zJ)]); actual value: TradeSignature(tradeSignatureId=546930581992900, entity=MYcPu7kv0Z, originId=546930522558300, origin=vj1KfO79Hc, productId=anJK5HCZ_B, signatureType=fMMI5KftR5, indicatorSSCC=dyK2Z_eUng, validatedBo=piWQ1whXJf, expedientId=546930522387200, tradeSignerList=[TradeSigner(tradeSignerId=546930555048699, tradeSignatureId=546930544978200, documentType=VdqbSCBHtQ, documentNumber=62I8Wf9Vl_, signerId=iJZcJdUm_i, name=9SklxGIueF, isClient=gHrq62K2q7, interventionType=IjySvfvNew), TradeSigner(tradeSignerId=546930563803100, tradeSignatureId=546930559205499, documentType=UumzTmHafd, documentNumber=CWNfEOMmT3, signerId=p1HrtaE1sT, name=yoVZZXRalA, isClient=n32At8ZLiZ, interventionType=pZ3dwNCYjC), TradeSigner(tradeSignerId=546930569950400, tradeSignatureId=546930566305900, documentType=pcsaGAMD5w, documentNumber=EVnA1t8JBM, signerId=CZhqf4wxh8, name=B7FShimdfW, isClient=ZXTlDOHXhG, interventionType=eb4FM_uTep), TradeSigner(tradeSignerId=546930574576400, tradeSignatureId=546930571797800, documentType=k8ICA4tNZY, documentNumber=E_TcTTTEUJ, signerId=YGdmSUawdC, name=KI3dLJUAUY, isClient=qYTcVaYphi, interventionType=hM7xsgoCQw), TradeSigner(tradeSignerId=546930578829500, tradeSignatureId=546930576151000, documentType=q0zHQ9ueBt, documentNumber=ymJPDG3Yz3, signerId=6IQpHalNLy, name=asCsTmN0mz, isClient=KRr2XcJ1mL, interventionType=WmmJGUc_zJ)]))
