@@ -223,3 +223,39 @@ public class TradeSignatureServiceImplTest {
     }
 
 }
+
+
+/*********update test */
+@ExtendWith(MockitoExtension.class)
+class TradeSignatureServiceImplTest {
+
+    @Mock
+    private TradeSignatureDomainService tradeSignatureDomainService;
+
+    @InjectMocks
+    private TradeSignatureServiceImpl tradeSignatureServiceImpl;
+
+    @Test
+    void createOrUpdateSignature_shouldDelegateToDomainService() {
+        TradeSignatureRequest request = new TradeSignatureRequest();
+        TradeSignatureResponse expectedResponse = new TradeSignatureResponse();
+
+        when(tradeSignatureDomainService.createOrUpdateSignature(any(), any(), any()))
+            .thenReturn(Mono.just(expectedResponse));
+
+        TradeSignatureResponse response = tradeSignatureServiceImpl
+                .createOrUpdateSignature(Locale.getDefault(), "ENTITY", request)
+                .block();
+
+        assertEquals(expectedResponse, response);
+        verify(tradeSignatureDomainService).validateCreateOrUpdateParams(request);
+        verify(tradeSignatureDomainService).findTradeSignature(request, "ENTITY");
+        // ...o verifica el método principal si lo tienes en el domainService
+    }
+
+    @Test
+    void createDocument_shouldReturnEmptyMono() {
+        CreateDocumentRequest request = new CreateDocumentRequest();
+        assertTrue(tradeSignatureServiceImpl.createDocument("originId", Locale.getDefault(), "ENTITY", request).blockOptional().isEmpty());
+    }
+}
