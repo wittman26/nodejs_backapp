@@ -1,0 +1,24 @@
+    public Mono<TradeSignatureResponse> upsertTradeSignature(TradeSignature tradeSignatureFound, TradeSignatureRequest request, String entity) {
+        // Lógica de actualización/creación
+        TradeSignature tradeSignature = TradeSignatureMapper.INSTANCE.toTradeSignature(request);
+        tradeSignature.setEntity(entity);
+        tradeSignature.setValidatedBo(VALIDATED_BO_DEFAULT);
+        tradeSignature.setOrigin(isEventProduct(tradeSignature.getProductId()) ? ORIGIN_EVENT : ORIGIN_TRADE);
+        tradeSignature.setTradeSignerList(request.getSigners().stream().map(TradeSignerMapper.INSTANCE::toTradeSigner).toList());
+
+        // Si es actualización, conserva el ID, validatedBo, OriginID y limpia la lista anterior
+        if (tradeSignatureFound != null) {
+            if(tradeSignatureFound.getExpedientId()!=null) {
+                throw CustomErrorException.ofArguments(HttpStatus.BAD_REQUEST, ERROR_HAS_EXPEDIENT_ID);
+            }
+            if(
+                    tradeSignatureFound.getOriginId().equals(request.getOriginId()) &&
+                            tradeSignatureFound.getProductId().equals(request.getProductId())
+            ) {
+                throw CustomErrorException.ofArguments(HttpStatus.BAD_REQUEST, ERROR_TRADE_SIGNATURE_EXISTS);
+            }
+
+            tradeSignature.setValidatedBo(tradeSignatureFound.getValidatedBo());
+            tradeSignature.setOriginId(tradeSignatureFound.getOriginId());
+            tradeSignature.setTradeSignatureId(tradeSignatureFound.getTradeSignatureId());
+        }
