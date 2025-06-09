@@ -5,6 +5,7 @@ import com.acelera.broker.fx.db.domain.dto.TradeSignatureFindRequest;
 import com.acelera.broker.fx.db.domain.dto.TradeSigner;
 import com.acelera.broker.fx.db.domain.port.TradeSignatureRepositoryClient;
 import com.acelera.broker.fx.db.domain.port.TradeSignatureViewRepositoryClient;
+import com.acelera.fx.digitalsignature.domain.TradeSignatureDomainService;
 import com.acelera.fx.digitalsignature.infrastructure.request.SignerDocument;
 import com.acelera.fx.digitalsignature.infrastructure.request.TradeSignatureRequest;
 import com.acelera.fx.digitalsignature.infrastructure.request.TradeSignerRequest;
@@ -41,6 +42,9 @@ public class TradeSignatureServiceImplTest {
     private TradeSignatureRepositoryClient tradeSignatureRepositoryClient;
 
     @Mock
+    private TradeSignatureDomainService tradeSignatureDomainService;
+
+    @Mock
     private TradeSignatureViewRepositoryClient tradeSignatureViewRepositoryClient;
 
     private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
@@ -49,7 +53,7 @@ public class TradeSignatureServiceImplTest {
     @BeforeEach
     void setUp() {
         openMocks(this);
-        tradeSignatureServiceImpl = new TradeSignatureServiceImpl(tradeSignatureRepositoryClient, tradeSignatureViewRepositoryClient);
+        tradeSignatureServiceImpl = new TradeSignatureServiceImpl(tradeSignatureDomainService);
     }
 
     /**
