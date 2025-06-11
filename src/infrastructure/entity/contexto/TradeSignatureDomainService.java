@@ -4,6 +4,10 @@ import com.acelera.broker.fx.db.domain.dto.TradeSignature;
 import com.acelera.broker.fx.db.domain.dto.TradeSignatureFindRequest;
 import com.acelera.broker.fx.db.domain.dto.TradeSignerDocumentStatusView;
 import com.acelera.broker.fx.db.domain.port.TradeSignatureRepositoryClient;
+import com.acelera.error.CustomErrorException;
+import com.acelera.fx.digitalsignature.application.service.mapper.TradeSignatureMapper;
+import com.acelera.fx.digitalsignature.application.service.mapper.TradeSignatureRequestMapper;
+import com.acelera.fx.digitalsignature.application.service.mapper.TradeSignerMapper;
 import com.acelera.broker.fx.db.domain.port.TradeSignatureViewRepositoryClient;
 import com.acelera.fx.digitalsignature.application.service.mapper.*;
 import com.acelera.fx.digitalsignature.domain.helper.TradeSignerHelper;
@@ -14,11 +18,13 @@ import com.acelera.fx.digitalsignature.infrastructure.response.TradeSignatureRes
 import com.acelera.fx.digitalsignature.infrastructure.response.TradeSignersResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.acelera.fx.digitalsignature.domain.helper.TradeSignerHelper.*;
@@ -78,6 +84,8 @@ public class TradeSignatureDomainService {
 
         // Si es actualización, conserva el ID, validatedBo, OriginID y limpia la lista anterior
         if (tradeSignatureFound != null) {
+            validateBeforeUpdate(tradeSignatureFound, request);
+
             tradeSignature.setValidatedBo(tradeSignatureFound.getValidatedBo());
             tradeSignature.setOriginId(tradeSignatureFound.getOriginId());
             tradeSignature.setTradeSignatureId(tradeSignatureFound.getTradeSignatureId());
@@ -99,6 +107,18 @@ public class TradeSignatureDomainService {
                         .tradeSignatureId(saved.getTradeSignatureId().intValue())
                         .build())
                 );
+    }
+
+    private void validateBeforeUpdate(TradeSignature tradeSignatureFound, TradeSignatureRequest request) {
+        if(tradeSignatureFound.getExpedientId()!=null) {
+            throw CustomErrorException.ofArguments(HttpStatus.BAD_REQUEST, ERROR_HAS_EXPEDIENT_ID);
+        }
+        boolean sameOriginAndProduct =
+                Objects.equals(tradeSignatureFound.getOriginId(),request.getOriginId()) &&
+                        Objects.equals(tradeSignatureFound.getProductId(),request.getProductId());
+        if(sameOriginAndProduct) {
+            throw CustomErrorException.ofArguments(HttpStatus.BAD_REQUEST, ERROR_TRADE_SIGNATURE_EXISTS);
+        }
     }
 
     private boolean isEventProduct(String productId) {
