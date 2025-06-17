@@ -3,3 +3,15 @@
                 .route("trade-signer-view-document-status.findTradeSignerViewDocument")
                 .data(tradeSignatureId)
                 .retrieveMono(TradeSignerDocumentStatusView.class);
+
+
+2025-06-17T16:17:42.079+02:00  INFO 16716 --- [demo] [           main] com.example.demo.DemoApplication         : Starting DemoApplication using Java 21.0.7 with PID 16716 (C:\GIT_REPOS\GIT_PERS\demo\target\classes started by x612243 in C:\GIT_REPOS\GIT_PERS\demo)
+2025-06-17T16:17:42.083+02:00  INFO 16716 --- [demo] [           main] com.example.demo.DemoApplication         : No active profile set, falling back to 1 default profile: "default"
+2025-06-17T16:17:43.984+02:00  INFO 16716 --- [demo] [           main] o.s.b.rsocket.netty.NettyRSocketServer   : Netty RSocket started on port 9898
+2025-06-17T16:17:44.018+02:00  INFO 16716 --- [demo] [           main] com.example.demo.DemoApplication         : Started DemoApplication in 2.672 seconds (process running for 3.506)
+2025-06-17T16:17:44.398+02:00  INFO 16716 --- [demo] [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-17T16:17:44.421+02:00 ERROR 16716 --- [demo] [           main] o.s.boot.SpringApplication               : Application run failed
+
+reactor.core.Exceptions$ReactiveException: io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: getsockopt: localhost/127.0.0.1:7000
