@@ -1,0 +1,5 @@
+    public Mono<List<TradeSignerDocumentStatusView>> findTradeSignerViewDocument(Long tradeSignatureId) {
+        return requester
+                .route("trade-signer-view-document-status.findTradeSignerViewDocument")
+                .data(tradeSignatureId)
+                .retrieveMono(TradeSignerDocumentStatusView.class);
