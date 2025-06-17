@@ -22,3 +22,50 @@
             tradeSignature.setOriginId(tradeSignatureFound.getOriginId());
             tradeSignature.setTradeSignatureId(tradeSignatureFound.getTradeSignatureId());
         }
+
+
+        public Mono<TradeSignatureResponse> upsertTradeSignature(
+        TradeSignature tradeSignatureFound,
+        TradeSignatureRequest request,
+        String entity) {
+
+    return Mono.defer(() -> {
+        // Validaciones previas si hay registro existente
+        if (tradeSignatureFound != null) {
+            if (tradeSignatureFound.getExpedientId() != null) {
+                return Mono.error(CustomErrorException.ofArguments(HttpStatus.BAD_REQUEST, ERROR_HAS_EXPEDIENT_ID));
+            }
+
+            boolean sameOriginAndProduct =
+                Objects.equals(tradeSignatureFound.getOriginId(), request.getOriginId()) &&
+                Objects.equals(tradeSignatureFound.getProductId(), request.getProductId());
+
+            if (sameOriginAndProduct) {
+                return Mono.error(CustomErrorException.ofArguments(HttpStatus.BAD_REQUEST, ERROR_TRADE_SIGNATURE_EXISTS));
+            }
+        }
+
+        // Crear nuevo TradeSignature desde el request
+        TradeSignature tradeSignature = TradeSignatureMapper.INSTANCE.toTradeSignature(request);
+
+        tradeSignature.setEntity(entity);
+        tradeSignature.setValidatedBo(
+            tradeSignatureFound != null ? tradeSignatureFound.getValidatedBo() : VALIDATED_BO_DEFAULT
+        );
+        tradeSignature.setOrigin(isEventProduct(tradeSignature.getProductId()) ? ORIGIN_EVENT : ORIGIN_TRADE);
+        tradeSignature.setTradeSignerList(
+            request.getSigners().stream()
+                .map(TradeSignerMapper.INSTANCE::toTradeSigner)
+                .toList()
+        );
+
+        // En caso de actualización, conservar IDs
+        if (tradeSignatureFound != null) {
+            tradeSignature.setOriginId(tradeSignatureFound.getOriginId());
+            tradeSignature.setTradeSignatureId(tradeSignatureFound.getTradeSignatureId());
+        }
+
+        return tradeSignatureRepository.save(tradeSignature)
+                .map(TradeSignatureMapper.INSTANCE::toTradeSignatureResponse);
+    });
+}
