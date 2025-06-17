@@ -430,3 +430,14 @@ Data:
 2025-06-17T17:14:26.114+02:00  INFO 1584 --- [conac-springboot-fx] [ctor-http-nio-2] [                                                 ] io.rsocket.core.RSocketResponder         : Try terminate connection on responder side
 2025-06-17T17:14:26.114+02:00 DEBUG 1584 --- [conac-springboot-fx] [ctor-http-nio-2] [                                                 ] io.rsocket.core.RSocketResponder         : closing responder InternalDuplexConnection{type=CLIENT, source=SetupHandlingDuplexConnection{source=io.rsocket.core.LoggingDuplexConnection@723dc184, done=true}, state=2}
 2025-06-17T17:14:26.114+02:00 DEBUG 1584 --- [conac-springboot-fx] [ctor-http-nio-2] [                                                 ] io.rsocket.core.RSocketResponder         : responder closed InternalDuplexConnection{type=CLIENT, source=SetupHandlingDuplexConnection{source=io.rsocket.core.LoggingDuplexConnection@723dc184, done=true}, state=2}
+
+
+
+    @GetMapping("/view")
+    @Operation(summary = "Obtain trade signarature information")
+    @ResponseStatus(HttpStatus.OK)
+    @MessageMapping("trades-signatures.view")
+    Mono<GetTradeSignatureResponse> getTradeSignature(@RequestHeader(name = LocaleConstants.ENTITY_HEADER, defaultValue = LocaleConstants.ENTITY_0049) String entity,
+            Locale locale,
+            @NotNull @Parameter(description = "TradeSignature request", required = true, in = ParameterIn.QUERY) @Valid GetTradeSignatureRequestParameter request
+    );
