@@ -93,3 +93,77 @@ public class FxTradeSignatureServiceImpl implements FxTradeSignatureService {
         });
     }
 }
+
+package com.acelera.integration.rsocket.infrastructure.config;
+
+import com.acelera.broker.fx.FxBrokerConfig;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+@Configuration
+@Import({ FxBrokerConfig.class,})
+public class RSocketBrokerConfig {
+
+}
+
+ARCHIVOS COMPARTIDOS EN LIBRERIAS DE CLIENTE Y SERVER
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class GetTradeSignatureRequestParameter {
+    private Locale locale;
+    private String entity;
+    @Schema(name = "originId", example = "123450", description = "Unique identifier for trade/event", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Long originId;
+
+    @Schema(name = "origin", example = "TRADE", description = "Identificator of TRADE or EVENT", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String origin;
+
+    @Schema(name = "tradeSignatureId", example = "9876", description = "Trade Signature Id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Long tradeSignatureId;
+}
+
+package com.acelera.broker.fx;
+
+import com.acelera.broker.fx.domain.port.TradeSignatureRestClient;
+import com.acelera.broker.shared.BaseBrokerConfig;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.messaging.rsocket.RSocketRequester;
+
+@Configuration
+@Import(FxRSocketRequesterBrokerConfig.class)
+public class FxBrokerConfig extends BaseBrokerConfig {
+  protected FxBrokerConfig(RSocketRequester rSocketRequesterFx) {
+    super(rSocketRequesterFx);
+  }
+
+  @Bean
+  TradeSignatureRestClient tradeSignatureRestClient() {
+    return createClient(TradeSignatureRestClient.class, true);
+  }
+
+}
+
+package com.acelera.broker.fx;
+
+import com.acelera.broker.shared.RSocketUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.rsocket.RSocketRequester;
+
+@Configuration
+public class FxRSocketRequesterBrokerConfig {
+    @Bean
+    @ConditionalOnMissingBean(name = "rSocketRequesterFx")
+    RSocketRequester rSocketRequesterFx(RSocketRequester.Builder rSocketRequesterBuilderLogger,
+            @Value("${services.conac-springboot-fx-service.rsocket.host:conac-springboot-fx-service}") String host,
+            @Value("${services.conac-springboot-fx-service.rsocket.port:7000}") int port) {
+        return RSocketUtils.createRequester(rSocketRequesterBuilderLogger, host, port);
+    }
+}
