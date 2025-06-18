@@ -1,0 +1,12 @@
+io.rsocket.exceptions.ApplicationErrorException: Could not resolve method parameter at index 0 in public reactor.core.publisher.Mono<com.acelera.broker.fx.domain.dto.response.GetTradeSignatureResponse> com.acelera.fx.digitalsignature.infrastructure.controller.TradeSignatureRSocketController.getTradeSignature(com.acelera.broker.fx.domain.dto.request.GetTradeSignatureRequestParameter): Payload content is missing: public reactor.core.publisher.Mono<com.acelera.broker.fx.domain.dto.response.GetTradeSignatureResponse> com.acelera.fx.digitalsignature.infrastructure.controller.TradeSignatureRSocketController.getTradeSignature(com.acelera.broker.fx.domain.dto.request.GetTradeSignatureRequestParameter)
+	at io.rsocket.exceptions.Exceptions.from(Exceptions.java:76) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.handleFrame(RSocketRequester.java:270) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.handleIncomingFrames(RSocketRequester.java:220) ~[rsocket-core-1.1.5.jar:na]
+	at reactor.core.publisher.LambdaSubscriber.onNext(LambdaSubscriber.java:160) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+	at io.rsocket.core.ClientServerInputMultiplexer$InternalDuplexConnection.onNext(ClientServerInputMultiplexer.java:276) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.ClientServerInputMultiplexer.onNext(ClientServerInputMultiplexer.java:129) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.ClientServerInputMultiplexer.onNext(ClientServerInputMultiplexer.java:48) ~[rsocket-core-1.1.5.jar:na]
+	at reactor.core.publisher.FluxPeek$PeekSubscriber.onNext(FluxPeek.java:200) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
