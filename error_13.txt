@@ -10,3 +10,86 @@ io.rsocket.exceptions.ApplicationErrorException: Could not resolve method parame
 	at reactor.core.publisher.FluxPeek$PeekSubscriber.onNext(FluxPeek.java:200) ~[reactor-core-3.7.6.jar:3.7.6]
 	at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122) ~[reactor-core-3.7.6.jar:3.7.6]
 	at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+
+SERVER
+
+@CircuitBreaker(name = ResilienceConstants.BROKER_FX_SHARED)
+public interface TradeSignatureRestClient {
+    @MessageMapping("trades-signatures.view")
+    Mono<GetTradeSignatureResponse> getTradeSignature(GetTradeSignatureRequestParameter request);
+}
+
+
+package com.acelera.fx.digitalsignature.infrastructure.controller;
+
+import com.acelera.broker.fx.domain.dto.request.GetTradeSignatureRequestParameter;
+import com.acelera.broker.fx.domain.dto.response.GetTradeSignatureResponse;
+import com.acelera.broker.fx.domain.port.TradeSignatureRestClient;
+import com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Mono;
+
+@Slf4j
+@Controller
+@RequiredArgsConstructor
+public class TradeSignatureRSocketController implements TradeSignatureRestClient {
+
+    private final TradeSignatureService tradeSignatureService;
+
+    @MessageMapping("trades-signatures.prueba")
+    Mono<String> find(@Payload Long tradeSignatureId) {
+        return Mono.just("El id es el siguiente: " + tradeSignatureId);
+    }
+
+    @Override
+    public Mono<GetTradeSignatureResponse> getTradeSignature(GetTradeSignatureRequestParameter request) {
+        log.info("ALANA - " + request.getTradeSignatureId());
+        return tradeSignatureService.getTradeSignature(request.getLocale(), request.getEntity(), request);
+    }
+}
+
+CLIENTE:
+
+public interface FxTradeSignatureService {
+    Mono<GetTradeSignatureResponse> getTradeSignature(String entity, Locale locale, GetTradeSignatureRequestParameter request);
+}
+
+
+
+package com.acelera.integration.rsocket.application.service;
+
+import com.acelera.broker.fx.domain.dto.request.GetTradeSignatureRequestParameter;
+import com.acelera.broker.fx.domain.dto.response.GetTradeSignatureResponse;
+import com.acelera.broker.fx.domain.port.TradeSignatureRestClient;
+import com.acelera.error.CustomErrorException;
+import com.acelera.integration.rsocket.domain.port.service.FxTradeSignatureService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+
+import java.util.Locale;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class FxTradeSignatureServiceImpl implements FxTradeSignatureService {
+    private final TradeSignatureRestClient client;
+
+    @Override
+    public Mono<GetTradeSignatureResponse> getTradeSignature(String entity, Locale locale, GetTradeSignatureRequestParameter request) {
+        request.setEntity(entity);
+        request.setLocale(locale);
+        return client.getTradeSignature(request).onErrorMap(e -> {
+            log.error("An error occurred while trying to get Trade Signature.", e);
+            // TODO modify message
+            return CustomErrorException.ofArguments(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "error.national-fixed-income.validate");
+        });
+    }
+}
