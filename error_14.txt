@@ -94,3 +94,20 @@ public class AmazonS3AutoConfig {
 		return new AmazonS3RepositoryImpl(properties.getBucketName(), s3Client);
 	}
 }
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class GetTradeSignatureRequestParameter {
+    private Locale locale;
+    private String entity;
+    @Schema(name = "originId", example = "123450", description = "Unique identifier for trade/event", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Long originId;
+
+    @Schema(name = "origin", example = "TRADE", description = "Identificator of TRADE or EVENT", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String origin;
+
+    @Schema(name = "tradeSignatureId", example = "9876", description = "Trade Signature Id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Long tradeSignatureId;
+}
