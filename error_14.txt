@@ -72,3 +72,25 @@ Caused by: java.lang.ClassNotFoundException: software.amazon.awssdk.auth.credent
 	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188) ~[na:na]
 	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526) ~[na:na]
 	... 38 common frames omitted
+
+@EnableConfigurationProperties({ AmazonS3Properties.class })
+@AutoConfiguration
+@RequiredArgsConstructor
+public class AmazonS3AutoConfig {
+	private final AmazonS3Properties properties;
+
+	@Bean
+	S3AsyncClient s3Client() {
+		return S3AsyncClient.builder().requestChecksumCalculation(RequestChecksumCalculation.WHEN_REQUIRED)
+				.responseChecksumValidation(ResponseChecksumValidation.WHEN_REQUIRED)
+				.serviceConfiguration(S3Configuration.builder().chunkedEncodingEnabled(true).build())
+				.credentialsProvider(StaticCredentialsProvider
+						.create(AwsBasicCredentials.create(properties.getAccessKey(), properties.getSecretKey())))
+				.endpointOverride(java.net.URI.create(properties.getEndpoint())).region(Region.US_EAST_2).build();
+	}
+
+	@Bean(destroyMethod = "shutdown")
+	AmazonS3Repository documentRepository(S3AsyncClient s3Client) {
+		return new AmazonS3RepositoryImpl(properties.getBucketName(), s3Client);
+	}
+}
