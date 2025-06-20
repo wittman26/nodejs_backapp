@@ -1,4 +1,4 @@
-C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\lib\idea_rt.jar=54108:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\bin" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file1384378732 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImplTest
+C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\lib\idea_rt.jar=65486:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\bin" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file932354730 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest
 Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
 WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
@@ -6,60 +6,90 @@ WARNING: If a serviceability tool is not in use, please run with -Djdk.instrumen
 WARNING: Dynamic loading of agents will be disallowed by default in a future release
 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
 
-org.mockito.exceptions.misusing.PotentialStubbingProblem: 
-Strict stubbing argument mismatch. Please check:
- - this invocation of 'find' method:
-    repository.find(
-    TradeSignatureFindRequest(tradeSignatureId=9052155625200, entity=ENTITY, originId=9052165191900, productId=null)
-);
-    -> at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImpl.getTradeSignature(TradeSignatureServiceGetImpl.java:42)
- - has following stubbing(s) with different arguments:
-    1. repository.find(
-    TradeSignatureFindRequest(tradeSignatureId=9052298860700, entity=gx9QEy6pFu, originId=9052300084700, productId=JcRd3Or4cE)
-);
-      -> at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImplTest.getTradeSignature_shouldReturnCombinedDto_whenFound(TradeSignatureServiceGetImplTest.java:78)
-Typically, stubbing argument mismatch indicates user mistake when writing tests.
-Mockito fails early so that you can debug potential problem easily.
-However, there are legit scenarios when this exception generates false negative signal:
-  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
-    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
-  - stubbed method is intentionally invoked with different arguments by code under test
-    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
-For more information see javadoc for PotentialStubbingProblem class.
+org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <com.acelera.error.CustomErrorException> but was: <java.lang.NullPointerException>
 
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImpl.getTradeSignature(TradeSignatureServiceGetImpl.java:42)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImplTest.getTradeSignature_shouldReturnCombinedDto_whenFound(TradeSignatureServiceGetImplTest.java:83)
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest.upsertTradeSignature_shouldReturnErrorWhenExpedientIdPresent(TradeSignatureServiceSaveImplTest.java:79)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.lang.NullPointerException: Cannot invoke "org.springframework.context.MessageSource.getMessage(String, Object[], java.util.Locale)" because the return value of "com.acelera.locale.MessageSourceHolder.getMessageSource()" is null
+	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:61)
+	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:56)
+	at com.acelera.error.CustomErrorException.<init>(CustomErrorException.java:43)
+	at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.upsertTradeSignature(TradeSignatureServiceSaveImpl.java:44)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.lambda$createOrUpdateSignature$0(TradeSignatureServiceSaveImpl.java:33)
+	at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:153)
+	at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4560)
+	at reactor.core.publisher.Mono.block(Mono.java:1778)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest.lambda$upsertTradeSignature_shouldReturnErrorWhenExpedientIdPresent$0(TradeSignatureServiceSaveImplTest.java:82)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	... 6 more
+	Suppressed: java.lang.Exception: #block terminated with an error
+		at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:104)
+		at reactor.core.publisher.Mono.block(Mono.java:1779)
+		... 8 more
 
 
-org.mockito.exceptions.misusing.PotentialStubbingProblem: 
-Strict stubbing argument mismatch. Please check:
- - this invocation of 'findByFilter' method:
-    viewRepository.findByFilter(
-    ViewTradeSignatureExpedientFindByFilterRequest(tradeSignatureId=1, entity=null, originId=null, origin=null, signatureType=null, pageable=PageableDto(page=0, size=10))
-);
-    -> at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImpl.getTradeSignatureResponse(TradeSignatureServiceGetImpl.java:52)
- - has following stubbing(s) with different arguments:
-    1. viewRepository.findByFilter(
-    ViewTradeSignatureExpedientFindByFilterRequest(tradeSignatureId=1, entity=null, originId=null, origin=null, signatureType=null, pageable=null)
-);
-      -> at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImplTest.getTradeSignatureResponse_shouldReturnCombinedResponse(TradeSignatureServiceGetImplTest.java:58)
-Typically, stubbing argument mismatch indicates user mistake when writing tests.
-Mockito fails early so that you can debug potential problem easily.
-However, there are legit scenarios when this exception generates false negative signal:
-  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
-    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
-  - stubbed method is intentionally invoked with different arguments by code under test
-    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
-For more information see javadoc for PotentialStubbingProblem class.
+org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <com.acelera.error.CustomErrorException> but was: <java.lang.NullPointerException>
 
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImpl.getTradeSignatureResponse(TradeSignatureServiceGetImpl.java:52)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImplTest.getTradeSignatureResponse_shouldReturnCombinedResponse(TradeSignatureServiceGetImplTest.java:64)
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest.upsertTradeSignature_shouldReturnErrorWhenOriginIdIsNullOnCreate(TradeSignatureServiceSaveImplTest.java:94)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.lang.NullPointerException: Cannot invoke "org.springframework.context.MessageSource.getMessage(String, Object[], java.util.Locale)" because the return value of "com.acelera.locale.MessageSourceHolder.getMessageSource()" is null
+	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:61)
+	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:56)
+	at com.acelera.error.CustomErrorException.<init>(CustomErrorException.java:43)
+	at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.upsertTradeSignature(TradeSignatureServiceSaveImpl.java:51)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.lambda$createOrUpdateSignature$1(TradeSignatureServiceSaveImpl.java:34)
+	at reactor.core.publisher.MonoDefer.subscribe(MonoDefer.java:45)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
+	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onComplete(FluxSwitchIfEmpty.java:82)
+	at reactor.core.publisher.Operators.complete(Operators.java:137)
+	at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:146)
+	at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4560)
+	at reactor.core.publisher.Mono.block(Mono.java:1778)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest.lambda$upsertTradeSignature_shouldReturnErrorWhenOriginIdIsNullOnCreate$1(TradeSignatureServiceSaveImplTest.java:97)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	... 6 more
+	Suppressed: java.lang.Exception: #block terminated with an error
+		at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:104)
+		at reactor.core.publisher.Mono.block(Mono.java:1779)
+		... 8 more
+
+
+java.lang.NullPointerException: Cannot invoke "org.springframework.context.MessageSource.getMessage(String, Object[], java.util.Locale)" because the return value of "com.acelera.locale.MessageSourceHolder.getMessageSource()" is null
+
+	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:61)
+	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:56)
+	at com.acelera.error.CustomErrorException.<init>(CustomErrorException.java:43)
+	at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.upsertTradeSignature(TradeSignatureServiceSaveImpl.java:44)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.lambda$createOrUpdateSignature$0(TradeSignatureServiceSaveImpl.java:33)
+	at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:153)
+	at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4560)
+	at reactor.core.publisher.Mono.block(Mono.java:1778)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest.createOrUpdateSignature_shouldUpdateWhenFound(TradeSignatureServiceSaveImplTest.java:64)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	Suppressed: java.lang.Exception: #block terminated with an error
+		at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:104)
+		at reactor.core.publisher.Mono.block(Mono.java:1779)
+		... 4 more
 
 
 Process finished with exit code -1
