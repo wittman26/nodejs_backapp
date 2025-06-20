@@ -1,0 +1,57 @@
+    public void validateTradeSignatureIdOriginId(boolean hasTradeSignatureId, boolean hasOriginId) {
+        if (hasTradeSignatureId == hasOriginId) {
+            log.error(ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE);
+            throw new IllegalArgumentException(ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE);
+        }
+    }
+
+    public void validateGetParams(GetTradeSignatureRequestParameter request) {
+        // Lógica de validación aquí
+        boolean hasTradeSignatureId = request.getTradeSignatureId() != null;
+        boolean hasOriginId = request.getOriginId() != null;
+        boolean hasOrigin = request.getOrigin() != null;
+
+        validateTradeSignatureIdOriginId(hasTradeSignatureId, hasOriginId);
+
+        if (hasOriginId != hasOrigin) {
+            log.error(ERROR_MESSAGE_DIGITAL_SIGNATURE_GET_SIGNATURE);
+            throw new IllegalArgumentException(ERROR_MESSAGE_DIGITAL_SIGNATURE_GET_SIGNATURE);
+        }
+    }
+
+package com.acelera.broker.fx.domain.dto.request;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.AssertTrue;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Locale;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class GetTradeSignatureRequestParameter {
+    @Schema(hidden = true)
+    private Locale locale;
+
+    @Schema(hidden = true)
+    private String entity;
+
+    @Schema(name = "originId", example = "123450", description = "Unique identifier for trade/event", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Long originId;
+
+    @Schema(name = "origin", example = "TRADE", description = "Identificator of TRADE or EVENT", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String origin;
+
+    @Schema(name = "tradeSignatureId", example = "9876", description = "Trade Signature Id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Long tradeSignatureId;
+
+    @AssertTrue(message = "Se espera incluir originId o transferId pero no ambos")
+    public boolean isValidTradeSignatureIdOriginId() {
+        return (tradeSignatureId == null) ^ (originId == null);
+    }
+}    
