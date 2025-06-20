@@ -1,0 +1,36 @@
+        TradeSignature tradeSignature = TradeSignatureMapper.INSTANCE.fromDtoToTradeSignature(dto);
+        tradeSignature.setEntity(entity);
+        tradeSignature.setValidatedBo(VALIDATED_BO_DEFAULT);
+        tradeSignature.setOrigin(isEventProduct(tradeSignature.getProductId()) ? ORIGIN_EVENT : ORIGIN_TRADE);
+
+
+
+package com.acelera.fx.digitalsignature.application.service.mapper;
+
+import com.acelera.broker.fx.db.domain.dto.TradeSignature;
+
+import com.acelera.broker.fx.domain.dto.request.TradeSignatureRequest;
+import com.acelera.fx.digitalsignature.domain.port.dto.TradeSignatureDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.factory.Mappers;
+
+@Mapper(uses = TradeSignerMapper.class, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface TradeSignatureMapper {
+    TradeSignatureMapper INSTANCE = Mappers.getMapper(TradeSignatureMapper.class);
+
+    @Mapping(target = "indicatorSSCC", source = "indicatorSSCC", qualifiedByName = "booleanToString")
+    @Mapping(target = "tradeSignerList", source = "signers")
+    TradeSignature toTradeSignature(TradeSignatureRequest tradeSignatureRequest);
+
+    @Mapping(target = "indicatorSSCC", source = "indicatorSSCC", qualifiedByName = "booleanToString")
+    @Mapping(target = "tradeSignerList", source = "signers")
+    TradeSignature fromDtoToTradeSignature(TradeSignatureDto tradeSignatureDto);
+
+    @Named("booleanToString")
+    static String mapBooleanToString(Boolean indicatorSSCC) {
+        return Boolean.TRUE.equals(indicatorSSCC) ? "Y":"N";
+    }
+}
