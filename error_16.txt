@@ -24,6 +24,9 @@ public class TradeSignatureRequest {
 }
 
 /**************************/
+publci class TradeSignatureRestController {
+
+    private final TradeSignatureService tradeSignatureService;
 
     @Override
     public Mono<TradeSignatureResponse> updateTradeSignature(String entity, Locale locale, TradeSignatureRequest request) {
@@ -36,9 +39,9 @@ public class TradeSignatureRequest {
                 .map(result -> new TradeSignatureResponse(result.getTradeSignatureId()));
     }
 
-    public void validateCreateOrUpdateParams(TradeSignatureRequest dto) {
-        boolean hasTradeSignatureId = dto.getTradeSignatureId() != null;
-        boolean hasOriginId = dto.getOriginId() != null;
+    public void validateCreateOrUpdateParams(TradeSignatureRequest req) {
+        boolean hasTradeSignatureId = req.getTradeSignatureId() != null;
+        boolean hasOriginId = req.getOriginId() != null;
 
         validateTradeSignatureIdOriginId(hasTradeSignatureId, hasOriginId);
     }
@@ -48,3 +51,4 @@ public class TradeSignatureRequest {
             throw new IllegalArgumentException(ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE);
         }
     }
+}

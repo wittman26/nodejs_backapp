@@ -4,6 +4,44 @@
         tradeSignature.setOrigin(isEventProduct(tradeSignature.getProductId()) ? ORIGIN_EVENT : ORIGIN_TRADE);
 
 
+    private boolean isEventProduct(String productId) {
+        return Arrays.asList("AN", "IN", "PC", "PS").contains(productId);
+    }        
+/************* */
+
+package com.acelera.broker.fx.db.domain.dto;
+
+import com.acelera.dto.AuditZonedFields;
+import lombok.*;
+
+import java.util.Collections;
+import java.util.List;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class TradeSignature extends AuditZonedFields {
+
+    private Long tradeSignatureId;
+    private String entity;
+    private Long originId;
+    private String origin;
+    private String productId;
+    private String signatureType;
+    private String indicatorSSCC;
+    private String validatedBo;
+    private Long expedientId;
+    @Getter(AccessLevel.NONE)
+    private List<TradeSigner> tradeSignerList;
+
+    public List<TradeSigner> getTradeSignerList() {
+        return tradeSignerList != null ? tradeSignerList : Collections.emptyList();
+    }
+}
+
+/*************** */
 
 package com.acelera.fx.digitalsignature.application.service.mapper;
 
