@@ -1,0 +1,49 @@
+C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:65303,suspend=y,server=n -ea -Didea.test.cyclic.buffer.size=1048576 -javaagent:C:\Users\x612243\AppData\Local\JetBrains\IdeaIC2024.2\captureAgent\debugger-agent.jar=file:/C:/Users/x612243/AppData/Local/Temp/capture.props -Dkotlinx.coroutines.debug.enable.creation.stack.trace=false -Ddebugger.agent.enable.coroutines=true -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file341747714 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImplTest
+Connected to the target VM, address: '127.0.0.1:65303', transport: 'socket'
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+java.lang.NullPointerException: Cannot invoke "reactor.core.publisher.Mono.map(java.util.function.Function)" because the return value of "com.acelera.broker.fx.db.domain.port.ViewTradeSignatureRepositoryClient.findByFilter(com.acelera.broker.fx.db.domain.dto.ViewTradeSignatureExpedientFindByFilterRequest)" is null
+
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImpl.getTradeSignatureResponse(TradeSignatureServiceGetImpl.java:53)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImplTest.getTradeSignature_shouldReturnCombinedDto_whenFound(TradeSignatureServiceGetImplTest.java:67)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+
+org.mockito.exceptions.misusing.WrongTypeOfReturnValue: 
+GetTradeSignatureDto cannot be returned by obtainOrigin()
+obtainOrigin() should return String
+***
+If you're unsure why you're getting above error read on.
+Due to the nature of the syntax above problem might occur because:
+1. This exception *might* occur in wrongly written multi-threaded tests.
+   Please refer to Mockito FAQ on limitations of concurrency testing.
+2. A spy is stubbed using when(spy.foo()).then() syntax. It is safer to stub spies - 
+   - with doReturn|Throw() family of methods. More in javadocs for Mockito.spy() method.
+
+
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImplTest.getTradeSignatureResponse_shouldReturnHeaderAndSigners(TradeSignatureServiceGetImplTest.java:106)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+
+org.mockito.exceptions.misusing.NotAMockException: 
+Argument passed to when() is not a mock!
+Example of correct stubbing:
+    doThrow(new RuntimeException()).when(mock).someMethod();
+
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImplTest.getTradeSignature_shouldReturnCombinedDto_whenNotFound(TradeSignatureServiceGetImplTest.java:82)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+Disconnected from the target VM, address: '127.0.0.1:65303', transport: 'socket'
+
+Process finished with exit code -1
