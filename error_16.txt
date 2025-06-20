@@ -1,0 +1,50 @@
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class TradeSignatureRequest {
+    @Schema(name = "tradeSignatureId", example = "9876", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Long tradeSignatureId;
+
+    @Schema(name = "originId", example = "123450", description = "Unique identifier for trade/event", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Long originId;
+
+    @Schema(name = "productId", example = "FW", description = "Unique identifier of product", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String productId;
+
+    @Schema(name = "signatureType", example = "DIGITAL", description = "Indicator of the signature type. PAPER / DIGITAL", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String signatureType;
+
+    @Schema(name = "indicatorSSCC", example = "false", description = "Indicator if the product is sent to Partenon SSCC, only applicable for derivatives", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Boolean indicatorSSCC;
+
+    @Schema(name = "signers", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private List<TradeSignerRequest> signers;
+}
+
+/**************************/
+
+    @Override
+    public Mono<TradeSignatureResponse> updateTradeSignature(String entity, Locale locale, TradeSignatureRequest request) {
+//        return tradeSignatureService.createOrUpdateSignature(locale, entity, request);
+
+        validateCreateOrUpdateParams(request);
+        var dto = TradeSignatureDtoMapper.INSTANCE.toTradeSignatureDto(request);
+
+        return tradeSignatureServiceSave.createOrUpdateSignature(locale, entity, dto)
+                .map(result -> new TradeSignatureResponse(result.getTradeSignatureId()));
+    }
+
+    public void validateCreateOrUpdateParams(TradeSignatureRequest dto) {
+        boolean hasTradeSignatureId = dto.getTradeSignatureId() != null;
+        boolean hasOriginId = dto.getOriginId() != null;
+
+        validateTradeSignatureIdOriginId(hasTradeSignatureId, hasOriginId);
+    }
+
+    public void validateTradeSignatureIdOriginId(boolean hasTradeSignatureId, boolean hasOriginId) {
+        if (hasTradeSignatureId == hasOriginId) {
+            throw new IllegalArgumentException(ERROR_MESSAGE_DIGITAL_SIGNATURE_CREATE_UPDATE_SIGNATURE);
+        }
+    }
