@@ -1,0 +1,343 @@
+SERVER
+2025-06-23T13:18:07.221+02:00 DEBUG 13548 --- [conac-springboot-fx] [ctor-http-nio-2] [                                                 ] io.rsocket.FrameLogger                   : receiving -> 
+Frame => Stream ID: 0 Type: SETUP Flags: 0b0 Length: 75
+Data:
+
+2025-06-23T13:18:07.223+02:00 DEBUG 13548 --- [conac-springboot-fx] [ctor-http-nio-2] [                                                 ] io.rsocket.FrameLogger                   : sending -> RejectedSetupException: Access Denied
+2025-06-23T13:18:07.224+02:00 DEBUG 13548 --- [conac-springboot-fx] [ctor-http-nio-2] [                                                 ] io.rsocket.FrameLogger                   : receiving -> 
+Frame => Stream ID: 1 Type: REQUEST_RESPONSE Flags: 0b100000000 Length: 911
+Metadata:
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| fe 00 00 17 16 74 72 61 64 65 73 2d 73 69 67 6e |.....trades-sign|
+|00000010| 61 74 75 72 65 73 2e 76 69 65 77 28 61 70 70 6c |atures.view(appl|
+|00000020| 69 63 61 74 69 6f 6e 2f 76 6e 64 2e 61 63 65 6c |ication/vnd.acel|
+|00000030| 65 72 61 2e 63 74 78 2e 6d 65 74 61 64 61 74 61 |era.ctx.metadata|
+|00000040| 2b 6a 73 6f 6e 00 00 22 7b 22 65 6e 74 69 74 79 |+json.."{"entity|
+|00000050| 22 3a 22 30 30 34 39 22 2c 22 6c 6f 63 61 6c 65 |":"0049","locale|
+|00000060| 22 3a 22 65 73 5f 45 53 22 7d 22 6d 65 73 73 61 |":"es_ES"}"messa|
+|00000070| 67 65 2f 78 2e 72 73 6f 63 6b 65 74 2e 61 75 74 |ge/x.rsocket.aut|
+|00000080| 68 65 6e 74 69 63 61 74 69 6f 6e 2e 76 30 00 02 |hentication.v0..|
+|00000090| 58 81 65 79 4a 72 61 57 51 69 4f 69 4a 54 56 46 |X.eyJraWQiOiJTVF|
+|000000a0| 4e 54 59 57 35 43 59 32 56 44 5a 58 4a 30 56 6a |NTYW5CY2VDZXJ0Vj|
+|000000b0| 45 69 4c 43 4a 30 65 58 41 69 4f 69 4a 4b 56 31 |EiLCJ0eXAiOiJKV1|
+|000000c0| 51 69 4c 43 4a 68 62 47 63 69 4f 69 4a 53 55 7a |QiLCJhbGciOiJSUz|
+|000000d0| 49 31 4e 69 4a 39 2e 65 79 4a 7a 64 57 49 69 4f |I1NiJ9.eyJzdWIiO|
+|000000e0| 69 4a 31 61 57 51 36 62 6a 45 78 4d 54 45 78 49 |iJ1aWQ6bjExMTExI|
+|000000f0| 69 77 69 62 6d 4a 6d 49 6a 6f 78 4e 7a 55 77 4e |iwibmJmIjoxNzUwN|
+|00000100| 6a 63 33 4d 54 67 32 4c 43 4a 70 63 33 4d 69 4f |jc3MTg2LCJpc3MiO|
+|00000110| 69 4a 54 56 46 4e 54 59 57 35 43 59 32 56 44 5a |iJTVFNTYW5CY2VDZ|
+|00000120| 58 4a 30 56 6a 45 69 4c 43 4a 6c 65 48 41 69 4f |XJ0VjEiLCJleHAiO|
+|00000130| 6a 45 33 4e 54 41 32 4f 44 41 34 4d 54 59 73 49 |jE3NTA2ODA4MTYsI|
+|00000140| 6d 6c 68 64 43 49 36 4d 54 63 31 4d 44 59 33 4e |mlhdCI6MTc1MDY3N|
+|00000150| 7a 49 78 4e 69 77 69 61 6e 52 70 49 6a 6f 69 4d |zIxNiwianRpIjoiM|
+|00000160| 54 63 33 5a 6a 4d 33 59 6a 41 74 4e 7a 49 32 4d |Tc3ZjM3YjAtNzI2M|
+|00000170| 53 30 30 4d 57 51 32 4c 57 45 31 4d 57 49 74 4d |S00MWQ2LWE1MWItM|
+|00000180| 6d 4e 68 4e 54 51 33 59 7a 6b 30 59 57 55 30 49 |mNhNTQ3Yzk0YWU0I|
+|00000190| 6e 30 2e 6e 4e 51 5a 44 72 46 43 76 33 72 4b 38 |n0.nNQZDrFCv3rK8|
+|000001a0| 36 4f 6c 57 62 6c 73 6b 7a 48 39 57 59 72 6d 42 |6OlWblskzH9WYrmB|
+|000001b0| 6e 61 52 6a 39 58 6a 42 4a 50 50 6a 70 69 72 77 |naRj9XjBJPPjpirw|
+|000001c0| 36 76 57 67 61 79 6b 4e 69 33 64 67 4f 69 34 79 |6vWgaykNi3dgOi4y|
+|000001d0| 74 30 65 48 6d 74 44 5a 77 75 61 35 6b 6f 4c 41 |t0eHmtDZwua5koLA|
+|000001e0| 5f 61 2d 6d 2d 6b 51 5f 63 71 73 30 46 46 65 43 |_a-m-kQ_cqs0FFeC|
+|000001f0| 6c 57 61 46 62 39 70 57 4e 44 53 6b 5f 76 4b 2d |lWaFb9pWNDSk_vK-|
+|00000200| 6f 6e 56 6f 35 41 39 79 34 46 42 75 2d 34 76 38 |onVo5A9y4FBu-4v8|
+|00000210| 49 64 30 54 4b 56 33 4b 61 5f 5a 69 44 35 45 7a |Id0TKV3Ka_ZiD5Ez|
+|00000220| 67 63 46 71 71 65 31 6b 33 31 68 55 68 65 65 51 |gcFqqe1k31hUheeQ|
+|00000230| 73 6e 4b 6a 37 4c 54 62 73 54 54 47 34 71 58 6f |snKj7LTbsTTG4qXo|
+|00000240| 59 61 6f 5a 31 5a 4a 37 43 54 33 57 6c 48 38 68 |YaoZ1ZJ7CT3WlH8h|
+|00000250| 6b 51 43 37 31 44 61 58 4a 4b 4b 52 2d 5f 50 47 |kQC71DaXJKKR-_PG|
+|00000260| 68 52 7a 77 77 6e 49 4d 45 59 49 51 45 45 4b 79 |hRzwwnIMEYIQEEKy|
+|00000270| 33 6a 30 6f 74 50 67 70 41 42 57 32 63 69 66 72 |3j0otPgpABW2cifr|
+|00000280| 66 51 5f 6e 47 33 7a 54 4e 2d 79 2d 31 2d 78 4b |fQ_nG3zTN-y-1-xK|
+|00000290| 73 58 44 34 78 66 65 6b 7a 72 48 50 63 69 4c 46 |sXD4xfekzrHPciLF|
+|000002a0| 48 7a 34 46 44 2d 38 52 51 4e 73 73 42 43 32 37 |Hz4FD-8RQNssBC27|
+|000002b0| 52 56 78 51 55 62 39 66 6f 4b 6c 52 32 53 4e 6d |RVxQUb9foKlR2SNm|
+|000002c0| 71 44 30 54 4e 30 48 62 70 37 75 77 58 50 5a 6a |qD0TN0Hbp7uwXPZj|
+|000002d0| 51 54 44 45 58 64 57 30 77 74 57 66 34 5f 76 35 |QTDEXdW0wtWf4_v5|
+|000002e0| 66 51 65 4c 6b 57 39 62 67                      |fQeLkW9bg       |
++--------+-------------------------------------------------+----------------+
+Data:
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 7b 22 6c 6f 63 61 6c 65 22 3a 22 65 73 5f 45 53 |{"locale":"es_ES|
+|00000010| 22 2c 22 65 6e 74 69 74 79 22 3a 22 30 30 34 39 |","entity":"0049|
+|00000020| 22 2c 22 6f 72 69 67 69 6e 49 64 22 3a 6e 75 6c |","originId":nul|
+|00000030| 6c 2c 22 6f 72 69 67 69 6e 22 3a 6e 75 6c 6c 2c |l,"origin":null,|
+|00000040| 22 74 72 61 64 65 53 69 67 6e 61 74 75 72 65 49 |"tradeSignatureI|
+|00000050| 64 22 3a 36 32 2c 22 6f 72 69 67 69 6e 49 64 41 |d":62,"originIdA|
+|00000060| 6e 64 4f 72 69 67 69 6e 43 6f 6e 73 69 74 65 6e |ndOriginConsiten|
+|00000070| 74 22 3a 74 72 75 65 2c 22 76 61 6c 69 64 54 72 |t":true,"validTr|
+|00000080| 61 64 65 53 69 67 6e 61 74 75 72 65 49 64 4f 72 |adeSignatureIdOr|
+|00000090| 69 67 69 6e 49 64 22 3a 74 72 75 65 7d          |iginId":true}   |
++--------+-------------------------------------------------+----------------+
+2025-06-23T13:18:07.224+02:00 DEBUG 13548 --- [conac-springboot-fx] [ctor-http-nio-2] [                                                 ] io.rsocket.core.RSocketRequester         : trying to close requester InternalDuplexConnection{type=SERVER, source=SetupHandlingDuplexConnection{source=io.rsocket.core.LoggingDuplexConnection@61b104cf, done=true}, state=2}
+2025-06-23T13:18:07.224+02:00 DEBUG 13548 --- [conac-springboot-fx] [ctor-http-nio-2] [                                                 ] io.rsocket.core.RSocketRequester         : closing requester InternalDuplexConnection{type=SERVER, source=SetupHandlingDuplexConnection{source=io.rsocket.core.LoggingDuplexConnection@61b104cf, done=true}, state=2} due to java.nio.channels.ClosedChannelException
+2025-06-23T13:18:07.225+02:00 DEBUG 13548 --- [conac-springboot-fx] [ctor-http-nio-2] [                                                 ] io.rsocket.core.RSocketRequester         : requester closed InternalDuplexConnection{type=SERVER, source=SetupHandlingDuplexConnection{source=io.rsocket.core.LoggingDuplexConnection@61b104cf, done=true}, state=2}
+
+
+CLIENT
+
+2025-06-23T13:18:00.599+02:00 TRACE 15080 --- [conac-springboot-integration] [     parallel-3] [0d68f2f605a0ea77a1573a1474653a36-6588cca6d9c98bf6] org.zalando.logbook.Logbook              : {"origin":"remote","type":"request","correlation":"fcc1bae1259fd589","protocol":"HTTP/1.1","remote":"/[0:0:0:0:0:0:0:1]:63746","method":"GET","uri":"http://localhost:9010/v1/trades-signatures/view?tradeSignatureId=62","host":"localhost","path":"/v1/trades-signatures/view","scheme":"http","port":"9010","headers":{"accept":["*/*"],"Accept-Encoding":["gzip, deflate, br, zstd"],"Accept-Language":["es"],"Authorization":["XXX"],"Connection":["keep-alive"],"Host":["localhost:9010"],"sec-ch-ua":["\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""],"sec-ch-ua-mobile":["?0"],"sec-ch-ua-platform":["\"Windows\""],"Sec-Fetch-Dest":["empty"],"Sec-Fetch-Mode":["cors"],"Sec-Fetch-Site":["same-origin"],"User-Agent":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"],"X-ACELERA-ENTITY":["0049"]}}
+2025-06-23T13:18:07.214+02:00  INFO 15080 --- [conac-springboot-integration] [oundedElastic-2] [0d68f2f605a0ea77a1573a1474653a36-6588cca6d9c98bf6] com.acelera.util.ReactorUtils            : -------> INI: Calling to TradeSignatureRestClient.getTradeSignature
+2025-06-23T13:18:07.217+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.FrameLogger                   : sending -> 
+Frame => Stream ID: 0 Type: SETUP Flags: 0b0 Length: 75
+Data:
+
+2025-06-23T13:18:07.219+02:00  INFO 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] c.a.b.shared.domain.RSocketProxyLogs     : client: {"correlationId":1750677487218975818,"route":"trades-signatures.view","messageType":"request","rsocketType":"requestResponse","payload":{"locale":"es_ES","entity":"0049","originId":null,"origin":null,"tradeSignatureId":62,"originIdAndOriginConsitent":true,"validTradeSignatureIdOriginId":true},"metadata":{"acelera.ctx":{"entity":"0049","locale":"es_ES"}}}
+2025-06-23T13:18:07.220+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [0d68f2f605a0ea77a1573a1474653a36-6588cca6d9c98bf6] io.rsocket.FrameLogger                   : sending -> 
+Frame => Stream ID: 1 Type: REQUEST_RESPONSE Flags: 0b100000000 Length: 911
+Metadata:
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| fe 00 00 17 16 74 72 61 64 65 73 2d 73 69 67 6e |.....trades-sign|
+|00000010| 61 74 75 72 65 73 2e 76 69 65 77 28 61 70 70 6c |atures.view(appl|
+|00000020| 69 63 61 74 69 6f 6e 2f 76 6e 64 2e 61 63 65 6c |ication/vnd.acel|
+|00000030| 65 72 61 2e 63 74 78 2e 6d 65 74 61 64 61 74 61 |era.ctx.metadata|
+|00000040| 2b 6a 73 6f 6e 00 00 22 7b 22 65 6e 74 69 74 79 |+json.."{"entity|
+|00000050| 22 3a 22 30 30 34 39 22 2c 22 6c 6f 63 61 6c 65 |":"0049","locale|
+|00000060| 22 3a 22 65 73 5f 45 53 22 7d 22 6d 65 73 73 61 |":"es_ES"}"messa|
+|00000070| 67 65 2f 78 2e 72 73 6f 63 6b 65 74 2e 61 75 74 |ge/x.rsocket.aut|
+|00000080| 68 65 6e 74 69 63 61 74 69 6f 6e 2e 76 30 00 02 |hentication.v0..|
+|00000090| 58 81 65 79 4a 72 61 57 51 69 4f 69 4a 54 56 46 |X.eyJraWQiOiJTVF|
+|000000a0| 4e 54 59 57 35 43 59 32 56 44 5a 58 4a 30 56 6a |NTYW5CY2VDZXJ0Vj|
+|000000b0| 45 69 4c 43 4a 30 65 58 41 69 4f 69 4a 4b 56 31 |EiLCJ0eXAiOiJKV1|
+|000000c0| 51 69 4c 43 4a 68 62 47 63 69 4f 69 4a 53 55 7a |QiLCJhbGciOiJSUz|
+|000000d0| 49 31 4e 69 4a 39 2e 65 79 4a 7a 64 57 49 69 4f |I1NiJ9.eyJzdWIiO|
+|000000e0| 69 4a 31 61 57 51 36 62 6a 45 78 4d 54 45 78 49 |iJ1aWQ6bjExMTExI|
+|000000f0| 69 77 69 62 6d 4a 6d 49 6a 6f 78 4e 7a 55 77 4e |iwibmJmIjoxNzUwN|
+|00000100| 6a 63 33 4d 54 67 32 4c 43 4a 70 63 33 4d 69 4f |jc3MTg2LCJpc3MiO|
+|00000110| 69 4a 54 56 46 4e 54 59 57 35 43 59 32 56 44 5a |iJTVFNTYW5CY2VDZ|
+|00000120| 58 4a 30 56 6a 45 69 4c 43 4a 6c 65 48 41 69 4f |XJ0VjEiLCJleHAiO|
+|00000130| 6a 45 33 4e 54 41 32 4f 44 41 34 4d 54 59 73 49 |jE3NTA2ODA4MTYsI|
+|00000140| 6d 6c 68 64 43 49 36 4d 54 63 31 4d 44 59 33 4e |mlhdCI6MTc1MDY3N|
+|00000150| 7a 49 78 4e 69 77 69 61 6e 52 70 49 6a 6f 69 4d |zIxNiwianRpIjoiM|
+|00000160| 54 63 33 5a 6a 4d 33 59 6a 41 74 4e 7a 49 32 4d |Tc3ZjM3YjAtNzI2M|
+|00000170| 53 30 30 4d 57 51 32 4c 57 45 31 4d 57 49 74 4d |S00MWQ2LWE1MWItM|
+|00000180| 6d 4e 68 4e 54 51 33 59 7a 6b 30 59 57 55 30 49 |mNhNTQ3Yzk0YWU0I|
+|00000190| 6e 30 2e 6e 4e 51 5a 44 72 46 43 76 33 72 4b 38 |n0.nNQZDrFCv3rK8|
+|000001a0| 36 4f 6c 57 62 6c 73 6b 7a 48 39 57 59 72 6d 42 |6OlWblskzH9WYrmB|
+|000001b0| 6e 61 52 6a 39 58 6a 42 4a 50 50 6a 70 69 72 77 |naRj9XjBJPPjpirw|
+|000001c0| 36 76 57 67 61 79 6b 4e 69 33 64 67 4f 69 34 79 |6vWgaykNi3dgOi4y|
+|000001d0| 74 30 65 48 6d 74 44 5a 77 75 61 35 6b 6f 4c 41 |t0eHmtDZwua5koLA|
+|000001e0| 5f 61 2d 6d 2d 6b 51 5f 63 71 73 30 46 46 65 43 |_a-m-kQ_cqs0FFeC|
+|000001f0| 6c 57 61 46 62 39 70 57 4e 44 53 6b 5f 76 4b 2d |lWaFb9pWNDSk_vK-|
+|00000200| 6f 6e 56 6f 35 41 39 79 34 46 42 75 2d 34 76 38 |onVo5A9y4FBu-4v8|
+|00000210| 49 64 30 54 4b 56 33 4b 61 5f 5a 69 44 35 45 7a |Id0TKV3Ka_ZiD5Ez|
+|00000220| 67 63 46 71 71 65 31 6b 33 31 68 55 68 65 65 51 |gcFqqe1k31hUheeQ|
+|00000230| 73 6e 4b 6a 37 4c 54 62 73 54 54 47 34 71 58 6f |snKj7LTbsTTG4qXo|
+|00000240| 59 61 6f 5a 31 5a 4a 37 43 54 33 57 6c 48 38 68 |YaoZ1ZJ7CT3WlH8h|
+|00000250| 6b 51 43 37 31 44 61 58 4a 4b 4b 52 2d 5f 50 47 |kQC71DaXJKKR-_PG|
+|00000260| 68 52 7a 77 77 6e 49 4d 45 59 49 51 45 45 4b 79 |hRzwwnIMEYIQEEKy|
+|00000270| 33 6a 30 6f 74 50 67 70 41 42 57 32 63 69 66 72 |3j0otPgpABW2cifr|
+|00000280| 66 51 5f 6e 47 33 7a 54 4e 2d 79 2d 31 2d 78 4b |fQ_nG3zTN-y-1-xK|
+|00000290| 73 58 44 34 78 66 65 6b 7a 72 48 50 63 69 4c 46 |sXD4xfekzrHPciLF|
+|000002a0| 48 7a 34 46 44 2d 38 52 51 4e 73 73 42 43 32 37 |Hz4FD-8RQNssBC27|
+|000002b0| 52 56 78 51 55 62 39 66 6f 4b 6c 52 32 53 4e 6d |RVxQUb9foKlR2SNm|
+|000002c0| 71 44 30 54 4e 30 48 62 70 37 75 77 58 50 5a 6a |qD0TN0Hbp7uwXPZj|
+|000002d0| 51 54 44 45 58 64 57 30 77 74 57 66 34 5f 76 35 |QTDEXdW0wtWf4_v5|
+|000002e0| 66 51 65 4c 6b 57 39 62 67                      |fQeLkW9bg       |
++--------+-------------------------------------------------+----------------+
+Data:
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 7b 22 6c 6f 63 61 6c 65 22 3a 22 65 73 5f 45 53 |{"locale":"es_ES|
+|00000010| 22 2c 22 65 6e 74 69 74 79 22 3a 22 30 30 34 39 |","entity":"0049|
+|00000020| 22 2c 22 6f 72 69 67 69 6e 49 64 22 3a 6e 75 6c |","originId":nul|
+|00000030| 6c 2c 22 6f 72 69 67 69 6e 22 3a 6e 75 6c 6c 2c |l,"origin":null,|
+|00000040| 22 74 72 61 64 65 53 69 67 6e 61 74 75 72 65 49 |"tradeSignatureI|
+|00000050| 64 22 3a 36 32 2c 22 6f 72 69 67 69 6e 49 64 41 |d":62,"originIdA|
+|00000060| 6e 64 4f 72 69 67 69 6e 43 6f 6e 73 69 74 65 6e |ndOriginConsiten|
+|00000070| 74 22 3a 74 72 75 65 2c 22 76 61 6c 69 64 54 72 |t":true,"validTr|
+|00000080| 61 64 65 53 69 67 6e 61 74 75 72 65 49 64 4f 72 |adeSignatureIdOr|
+|00000090| 69 67 69 6e 49 64 22 3a 74 72 75 65 7d          |iginId":true}   |
++--------+-------------------------------------------------+----------------+
+2025-06-23T13:18:07.224+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.FrameLogger                   : receiving -> 
+Frame => Stream ID: 0 Type: ERROR Flags: 0b0 Length: 23
+Data:
+
+2025-06-23T13:18:07.225+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketRequester         : trying to close requester InternalDuplexConnection{type=CLIENT, source=io.rsocket.core.LoggingDuplexConnection@60c0874, state=2}
+2025-06-23T13:18:07.225+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketRequester         : closing requester InternalDuplexConnection{type=CLIENT, source=io.rsocket.core.LoggingDuplexConnection@60c0874, state=2} due to RejectedSetupException (0x3): Access Denied
+2025-06-23T13:18:07.225+02:00 ERROR 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [0d68f2f605a0ea77a1573a1474653a36-6588cca6d9c98bf6] c.a.b.shared.domain.RSocketProxyLogs     : <------- RSocket client error of correlation 1750677487218975818:
+
+io.rsocket.exceptions.RejectedSetupException: Access Denied
+	at io.rsocket.exceptions.Exceptions.from(Exceptions.java:62) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.lambda$tryTerminateOnZeroError$3(RSocketRequester.java:346) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.tryTerminate(RSocketRequester.java:354) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.tryTerminateOnZeroError(RSocketRequester.java:346) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.handleStreamZero(RSocketRequester.java:233) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.handleIncomingFrames(RSocketRequester.java:218) ~[rsocket-core-1.1.5.jar:na]
+	at reactor.core.publisher.LambdaSubscriber.onNext(LambdaSubscriber.java:160) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+	at io.rsocket.core.ClientServerInputMultiplexer$InternalDuplexConnection.onNext(ClientServerInputMultiplexer.java:276) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.ClientServerInputMultiplexer.onNext(ClientServerInputMultiplexer.java:129) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.ClientServerInputMultiplexer.onNext(ClientServerInputMultiplexer.java:48) ~[rsocket-core-1.1.5.jar:na]
+	at reactor.core.publisher.FluxPeek$PeekSubscriber.onNext(FluxPeek.java:200) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxMap$MapConditionalSubscriber.onNext(FluxMap.java:224) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.netty.channel.FluxReceive.onInboundNext(FluxReceive.java:377) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+	at reactor.netty.channel.ChannelOperations.onInboundNext(ChannelOperations.java:435) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+	at reactor.netty.channel.ChannelOperationsHandler.channelRead(ChannelOperationsHandler.java:115) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:346) ~[netty-codec-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:318) ~[netty-codec-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1357) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:440) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:868) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:796) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:732) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:658) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2025-06-23T13:18:07.226+02:00 ERROR 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [0d68f2f605a0ea77a1573a1474653a36-6588cca6d9c98bf6] c.a.i.r.a.s.FxTradeSignatureServiceImpl  : An error occurred while trying to get Trade Signature.
+
+io.rsocket.exceptions.RejectedSetupException: Access Denied
+	at io.rsocket.exceptions.Exceptions.from(Exceptions.java:62) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.lambda$tryTerminateOnZeroError$3(RSocketRequester.java:346) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.tryTerminate(RSocketRequester.java:354) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.tryTerminateOnZeroError(RSocketRequester.java:346) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.handleStreamZero(RSocketRequester.java:233) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.RSocketRequester.handleIncomingFrames(RSocketRequester.java:218) ~[rsocket-core-1.1.5.jar:na]
+	at reactor.core.publisher.LambdaSubscriber.onNext(LambdaSubscriber.java:160) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+	at io.rsocket.core.ClientServerInputMultiplexer$InternalDuplexConnection.onNext(ClientServerInputMultiplexer.java:276) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.ClientServerInputMultiplexer.onNext(ClientServerInputMultiplexer.java:129) ~[rsocket-core-1.1.5.jar:na]
+	at io.rsocket.core.ClientServerInputMultiplexer.onNext(ClientServerInputMultiplexer.java:48) ~[rsocket-core-1.1.5.jar:na]
+	at reactor.core.publisher.FluxPeek$PeekSubscriber.onNext(FluxPeek.java:200) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxMap$MapConditionalSubscriber.onNext(FluxMap.java:224) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+	at reactor.netty.channel.FluxReceive.onInboundNext(FluxReceive.java:377) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+	at reactor.netty.channel.ChannelOperations.onInboundNext(ChannelOperations.java:435) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+	at reactor.netty.channel.ChannelOperationsHandler.channelRead(ChannelOperationsHandler.java:115) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:346) ~[netty-codec-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:318) ~[netty-codec-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1357) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:440) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:868) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:796) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:732) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:658) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2025-06-23T13:18:07.229+02:00 ERROR 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [0d68f2f605a0ea77a1573a1474653a36-abed3b2cf9a85dbd] a.w.r.e.AbstractErrorWebExceptionHandler : [396b25da-23]  500 Server Error for HTTP GET "/v1/trades-signatures/view?tradeSignatureId=62"
+
+com.acelera.error.CustomErrorException: 500 INTERNAL_SERVER_ERROR "Se produjo un error al tratar de validar la orden"
+	at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61) ~[classes/:na]
+	Suppressed: reactor.core.publisher.FluxOnAssembly$OnAssemblyException: 
+Error has been observed at the following site(s):
+	*__checkpoint ⇢ Handler com.acelera.integration.rsocket.infrastructure.adapter.rest.controller.FxTradeSignatureRestController#getTradeSignature(String, Locale, GetTradeSignatureRequestParameter) [DispatcherHandler]
+	*__checkpoint ⇢ org.zalando.logbook.spring.webflux.LogbookWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ com.acelera.locale.AceleraContextFilterConfig$$Lambda/0x0000023202d94648 [DefaultWebFilterChain]
+	*__checkpoint ⇢ AuthorizationWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ ExceptionTranslationWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ LogoutWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ ServerRequestCacheWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ SecurityContextServerWebExchangeWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ ReactorContextWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ HttpHeaderWriterWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ ServerWebExchangeReactorContextWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ org.springframework.security.web.server.WebFilterChainProxy [DefaultWebFilterChain]
+	*__checkpoint ⇢ com.acelera.locale.LocaleAutoConfig$$Lambda/0x0000023202d94ad8 [DefaultWebFilterChain]
+	*__checkpoint ⇢ com.acelera.locale.LocaleAutoConfig$$Lambda/0x0000023202d94890 [DefaultWebFilterChain]
+	*__checkpoint ⇢ HTTP GET "/v1/trades-signatures/view?tradeSignatureId=62" [ExceptionHandlingWebHandler]
+Original Stack Trace:
+		at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61) ~[classes/:na]
+		at com.acelera.integration.rsocket.application.service.FxTradeSignatureServiceImpl.lambda$getTradeSignature$0(FxTradeSignatureServiceImpl.java:31) ~[classes/:na]
+		at reactor.core.publisher.Mono.lambda$onErrorMap$29(Mono.java:3862) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:94) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onError(MonoContextWriteRestoringThreadLocals.java:127) ~[reactor-core-3.7.6.jar:3.7.6]
+		at io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerSubscriber.hookOnError(CircuitBreakerSubscriber.java:86) ~[resilience4j-reactor-2.2.0.jar:2.2.0]
+		at reactor.core.publisher.BaseSubscriber.onError(BaseSubscriber.java:180) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoFlatMap$FlatMapMain.secondError(MonoFlatMap.java:241) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoFlatMap$FlatMapInner.onError(MonoFlatMap.java:315) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWrite$ContextWriteSubscriber.onError(FluxContextWrite.java:121) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoSubscribeOn$SubscribeOnSubscriber.onError(MonoSubscribeOn.java:152) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoIgnoreThen$ThenIgnoreMain.onError(MonoIgnoreThen.java:280) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxDoFinally$DoFinallySubscriber.onError(FluxDoFinally.java:119) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxMap$MapSubscriber.onError(FluxMap.java:134) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxMap$MapSubscriber.onError(FluxMap.java:134) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onError(FluxContextWriteRestoringThreadLocals.java:140) ~[reactor-core-3.7.6.jar:3.7.6]
+		at io.rsocket.core.ResolvingOperator$DeferredResolution.onError(ResolvingOperator.java:524) ~[rsocket-core-1.1.5.jar:na]
+		at reactor.core.publisher.MonoPeekTerminal$MonoTerminalPeekSubscriber.onError(MonoPeekTerminal.java:258) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxPeekFuseable$PeekConditionalSubscriber.onError(FluxPeekFuseable.java:903) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onError(FluxContextWriteRestoringThreadLocals.java:140) ~[reactor-core-3.7.6.jar:3.7.6]
+		at io.rsocket.core.RequestResponseRequesterMono.handleError(RequestResponseRequesterMono.java:355) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.RSocketRequester.terminate(RSocketRequester.java:430) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.RSocketRequester.tryTerminate(RSocketRequester.java:356) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.RSocketRequester.tryTerminateOnZeroError(RSocketRequester.java:346) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.RSocketRequester.handleStreamZero(RSocketRequester.java:233) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.RSocketRequester.handleIncomingFrames(RSocketRequester.java:218) ~[rsocket-core-1.1.5.jar:na]
+		at reactor.core.publisher.LambdaSubscriber.onNext(LambdaSubscriber.java:160) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+		at io.rsocket.core.ClientServerInputMultiplexer$InternalDuplexConnection.onNext(ClientServerInputMultiplexer.java:276) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.ClientServerInputMultiplexer.onNext(ClientServerInputMultiplexer.java:129) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.ClientServerInputMultiplexer.onNext(ClientServerInputMultiplexer.java:48) ~[rsocket-core-1.1.5.jar:na]
+		at reactor.core.publisher.FluxPeek$PeekSubscriber.onNext(FluxPeek.java:200) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxMap$MapConditionalSubscriber.onNext(FluxMap.java:224) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.netty.channel.FluxReceive.onInboundNext(FluxReceive.java:377) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+		at reactor.netty.channel.ChannelOperations.onInboundNext(ChannelOperations.java:435) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+		at reactor.netty.channel.ChannelOperationsHandler.channelRead(ChannelOperationsHandler.java:115) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:346) ~[netty-codec-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:318) ~[netty-codec-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1357) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:440) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:868) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:796) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:732) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:658) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+		at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2025-06-23T13:18:07.231+02:00 TRACE 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [0d68f2f605a0ea77a1573a1474653a36-abed3b2cf9a85dbd] org.zalando.logbook.Logbook              : {"origin":"local","type":"response","correlation":"fcc1bae1259fd589","duration":6631,"protocol":"HTTP/1.1","status":500,"headers":{"Cache-Control":["no-cache, no-store, max-age=0, must-revalidate"],"Content-Length":["139"],"Content-Security-Policy":["default-src 'self'; script-src 'self'"],"Content-Type":["application/json"],"Expires":["0"],"Pragma":["no-cache"],"Referrer-Policy":["no-referrer"],"transfer-encoding":["chunked"],"X-Content-Type-Options":["nosniff"],"X-Frame-Options":["DENY"],"X-XSS-Protection":["0"]}}
+2025-06-23T13:18:07.231+02:00  INFO 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [0d68f2f605a0ea77a1573a1474653a36-6588cca6d9c98bf6] com.acelera.util.ReactorUtils            : <------- END: Calling to TradeSignatureRestClient.getTradeSignature
+2025-06-23T13:18:07.232+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketRequester         : requester closed InternalDuplexConnection{type=CLIENT, source=io.rsocket.core.LoggingDuplexConnection@60c0874, state=2}
+2025-06-23T13:18:07.232+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketRequester         : trying to close requester InternalDuplexConnection{type=CLIENT, source=io.rsocket.core.LoggingDuplexConnection@60c0874, state=2}
+2025-06-23T13:18:07.232+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketRequester         : trying to close requester failed because of RejectedSetupException (0x3): Access Denied InternalDuplexConnection{type=CLIENT, source=io.rsocket.core.LoggingDuplexConnection@60c0874, state=2}
+2025-06-23T13:18:07.232+02:00  INFO 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketResponder         : Try terminate connection on responder side
+2025-06-23T13:18:07.232+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketResponder         : closing responder InternalDuplexConnection{type=SERVER, source=io.rsocket.core.LoggingDuplexConnection@60c0874, state=2}
+2025-06-23T13:18:07.233+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketResponder         : responder closed InternalDuplexConnection{type=SERVER, source=io.rsocket.core.LoggingDuplexConnection@60c0874, state=2}
