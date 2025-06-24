@@ -127,3 +127,52 @@ public final class JWTToken extends Jwt {
     }
 }
 
+/*****************************/
+
+package com.acelera.integration.shared.infrastructure.config;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtDecoder;
+import org.springframework.util.ObjectUtils;
+import reactor.core.publisher.Mono;
+
+@Slf4j
+public class AceleraReactiveJwtDecoder implements ReactiveJwtDecoder {
+    private boolean throwError;
+
+    public AceleraReactiveJwtDecoder(boolean throwError) {
+        this.throwError = throwError;
+    }
+
+    public AceleraReactiveJwtDecoder() {
+        this(false);
+    }
+
+    @Override
+    public Mono<Jwt> decode(String token) {
+        try {
+            return Mono.just(getJwtToken(token));
+        } catch (Exception e) {
+            log.info("Error when decoding jwt: {}", e.getMessage(), e);
+            if (throwError) {
+                return Mono.error(new AccessDeniedException("Access Denied"));
+            }
+            return Mono.error(new JwtException("Invalid JWT token", e));
+        }
+    }
+
+    private JWTToken getJwtToken(String token) {
+        var isBlank = ObjectUtils.isEmpty(token);
+        if (isBlank) {
+            throw new JwtException("Jwt is empty");
+        }
+        var jwtToken = JWTToken.of(token);
+        if (jwtToken.isExpired()) {
+            throw new JwtException("Jwt has expired");
+        }
+        return jwtToken;
+    }
+}
