@@ -1,0 +1,32 @@
+package com.acelera.integration.shared.infrastructure.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+
+//import es.santander.adn.mercados.broker.security.AceleraJwtDecoder;
+
+@Configuration
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+public class SecurityConfig {
+
+    @Bean
+    SecurityFilterChain publicfilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(a -> a
+                        .requestMatchers("/", "/csrf", "/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
+                                "/configuration/**", "/swagger-ui.html", "/webjars/**", "/public/v*/**",
+                                "/rest/dna/recourses/refreshResources", "/rest/dna/cotizacion/refreshCotizaciones",
+                                "/rest/dna/recourses/refreshResourcesById/**", "/rest/dna/recourses/refreshNewsSlide")
+                        .permitAll().anyRequest().permitAll())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(new AceleraJwtDecoder())));
+
+        return http.build();
+    }
+}
