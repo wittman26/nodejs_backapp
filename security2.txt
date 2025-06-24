@@ -176,3 +176,11 @@ public class AceleraReactiveJwtDecoder implements ReactiveJwtDecoder {
         return jwtToken;
     }
 }
+
+Description:
+
+The bean 'securityWebFilterChain', defined in class path resource [com/acelera/security/WebSecurityAutoConfig.class], could not be registered. A bean with that name has already been defined in class path resource [com/acelera/integration/shared/infrastructure/config/SecurityConfig.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
