@@ -30,3 +30,38 @@ public class SecurityConfig {
         return http.build();
     }
 }
+
+package com.acelera.integration.shared.infrastructure.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+
+//import es.santander.adn.mercados.broker.security.AceleraJwtDecoder;
+
+@Configuration
+@EnableWebFluxSecurity
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+public class SecurityConfig {
+
+    @Bean
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        http
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            .sessionManagement(sm -> sm.sessionCreationPolicy(org.springframework.security.config.web.server.SessionCreationPolicy.STATELESS))
+            .authorizeExchange(a -> a
+                .pathMatchers("/", "/csrf", "/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
+                        "/configuration/**", "/swagger-ui.html", "/webjars/**", "/public/v*/**",
+                        "/rest/dna/recourses/refreshResources", "/rest/dna/cotizacion/refreshCotizaciones",
+                        "/rest/dna/recourses/refreshResourcesById/**", "/rest/dna/recourses/refreshNewsSlide")
+                .permitAll()
+                .anyExchange().permitAll()
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtDecoder(new AceleraJwtDecoder())));
+        return http.build();
+    }
+}
