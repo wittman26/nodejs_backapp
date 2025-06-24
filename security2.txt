@@ -1,0 +1,129 @@
+package com.acelera.integration.shared.infrastructure.config;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.util.ObjectUtils;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class AceleraJwtDecoder implements JwtDecoder {
+    private boolean throwError;
+
+    public AceleraJwtDecoder(boolean throwError) {
+        super();
+        this.throwError = throwError;
+    }
+
+    public AceleraJwtDecoder() {
+        this(false);
+    }
+
+    @Override
+    public Jwt decode(String token) throws JwtException {
+        try {
+            return getJwtToken(token);
+        } catch (Exception e) {
+            log.info("Error when decoding jwt: {}", e.getMessage(), e);
+            if (throwError) {
+                throw new AccessDeniedException("Access Denied");
+            }
+            return null;
+        }
+    }
+
+    private JWTToken getJwtToken(String token) {
+        var isBlank = ObjectUtils.isEmpty(token);
+        if (isBlank) {
+            throw new JwtException("Jwt is empty");
+        }
+        var jwtToken = JWTToken.of(token);
+        if (jwtToken.isExpired()) {
+            throw new JwtException("Jwt has expired");
+        }
+        return jwtToken;
+    }
+}
+
+
+package com.acelera.integration.shared.infrastructure.config;
+
+import java.text.ParseException;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.security.oauth2.jwt.MappedJwtClaimSetConverter;
+
+import com.nimbusds.jwt.JWTParser;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public final class JWTToken extends Jwt {
+    private static final long serialVersionUID = 346682034174422300L;
+
+    private JWTToken(String tokenValue, Instant issuedAt, Instant expiresAt, Map<String, Object> headers,
+            Map<String, Object> claims) {
+        super(tokenValue, issuedAt, expiresAt, headers, claims);
+    }
+
+    public static JWTToken of(String token) {
+        try {
+            var jwt = JWTParser.parse(token);
+            var claimSetConverter = MappedJwtClaimSetConverter.withDefaults(Collections.emptyMap());
+            var headers = new LinkedHashMap<>(jwt.getHeader().toJSONObject());
+            var claims = claimSetConverter.convert(jwt.getJWTClaimsSet().getClaims());
+
+            var aux = Jwt.withTokenValue(token).headers(h -> h.putAll(headers)).claims(c -> c.putAll(claims)).build();
+
+            return new JWTToken(token, aux.getIssuedAt(), aux.getExpiresAt(), aux.getHeaders(), aux.getClaims());
+        } catch (ParseException e) {
+            throw new JwtException("Error when parse jwt", e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return getToken();
+    }
+
+    public String getToken() {
+        return getTokenValue();
+    }
+
+    public static boolean isValid(String token) {
+        try {
+            return !of(token).isExpired();
+        } catch (JwtException e) {
+            log.info("Error when validate jwt token");
+        }
+
+        return false;
+    }
+
+    public boolean isExpired() {
+        boolean afterNow = Instant.now().isAfter(getExpiresAt());
+
+        if (afterNow) {
+            log.warn("JWT from user {} is expired", getUsername());
+        }
+
+        return afterNow;
+    }
+
+    public String getKid() {
+        return Optional.ofNullable(getHeaders()).map(x -> x.get("kid")).map(String.class::cast).orElseThrow();
+    }
+
+    public String getUsername() {
+        return Optional.ofNullable(getClaimAsString("sub")).orElseThrow();
+    }
+}
+
