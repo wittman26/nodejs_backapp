@@ -1,4 +1,41 @@
-trict stubbing argument mismatch. Please check:
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+java.lang.NullPointerException: The mapper [com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImpl$$Lambda/0x00000239aa277270] returned a null value.
+
+	at reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.onNext(FluxMapFuseable.java:115)
+	at reactor.core.publisher.Operators$ScalarSubscription.request(Operators.java:2570)
+	at reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.request(FluxMapFuseable.java:171)
+	at reactor.core.publisher.MonoFlatMapMany$FlatMapManyMain.onSubscribe(MonoFlatMapMany.java:141)
+	at reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.onSubscribe(FluxMapFuseable.java:96)
+	at reactor.core.publisher.MonoJust.subscribe(MonoJust.java:55)
+	at reactor.core.publisher.InternalMonoOperator.subscribe(InternalMonoOperator.java:76)
+	at reactor.core.publisher.MonoZip$ZipCoordinator.request(MonoZip.java:220)
+	at reactor.core.publisher.FluxMap$MapSubscriber.request(FluxMap.java:164)
+	at reactor.core.publisher.BlockingSingleSubscriber.onSubscribe(BlockingSingleSubscriber.java:54)
+	at reactor.core.publisher.FluxMap$MapSubscriber.onSubscribe(FluxMap.java:92)
+	at reactor.core.publisher.MonoZip.subscribe(MonoZip.java:129)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
+	at reactor.core.publisher.Mono.block(Mono.java:1778)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceGetImplTest.getTradeSignatureResponse_shouldReturnCombinedResponse(TradeSignatureServiceGetImplTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	Suppressed: java.lang.Exception: #block terminated with an error
+		at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:104)
+		at reactor.core.publisher.Mono.block(Mono.java:1779)
+		... 4 more
+
+Disconnected from the target VM, address: '127.0.0.1:61171', transport: 'socket'
+
+Process finished with exit code -1
+
+/****************/
+Strict stubbing argument mismatch. Please check:
  - this invocation of 'findByFilter' method:
     viewRepository.findByFilter(
     ViewTradeSignatureExpedientFindByFilterRequest(tradeSignatureId=1, entity=null, originId=null, origin=null, signatureType=null, pageable=PageableDto(page=0, size=10))
@@ -17,3 +54,5 @@ However, there are legit scenarios when this exception generates false negative 
   - stubbed method is intentionally invoked with different arguments by code under test
     Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
 For more information see javadoc for PotentialStubbingProblem class.
+
+/*******************/

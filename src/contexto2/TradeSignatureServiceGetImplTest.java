@@ -54,7 +54,7 @@ class TradeSignatureServiceGetImplTest {
         GetTradeSignatureParameterDto request = PODAM_FACTORY.manufacturePojo(GetTradeSignatureParameterDto.class);
 
         var req = ViewTradeSignatureExpedientFindByFilterRequest.builder().tradeSignatureId(1L).build();
-        when(viewRepository.findByFilter(req))
+        when(viewRepository.findByFilter(any()))
                 .thenReturn(Mono.just(new PageDto<ViewTradeSignatureExpedient>()));
 
         when(viewRepository.findTradeSignerViewDocument(req.getTradeSignatureId()))
