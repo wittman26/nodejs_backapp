@@ -347,7 +347,7 @@ FROM ACELER_ENTIDADES.SAFE_TRANSLATE
 WHERE CODIGO IN ('error.fx.tradesignature.id.notFound', 'error.fx.tradesignature.expedient.exists');
 
 INSERT INTO ACELER_ENTIDADES.SAFE_TRANSLATE (CODIGO, GRUPO, IDIOMA, TEXTO) VALUES ('error.fx.tradesignature.id.notFound', 'I18N', 'es', 'No se ha encontrado el Transfer Id Proporcionado');
-INSERT INTO ACELER_ENTIDADES.SAFE_TRANSLATE (CODIGO, GRUPO, IDIOMA, TEXTO) VALUES ('error.fx.tradesignature.id.notFound', 'I18N', 'en', 'Given transfer Id has not found');
+INSERT INTO ACELER_ENTIDADES.SAFE_TRANSLATE (CODIGO, GRUPO, IDIOMA, TEXTO) VALUES ('error.fx.tradesignature.id.notFound', 'I18N', 'en', 'The provided transfer Id was not found.');
 
 INSERT INTO ACELER_ENTIDADES.SAFE_TRANSLATE (CODIGO, GRUPO, IDIOMA, TEXTO) VALUES ('error.fx.tradesignature.expedient.exists', 'I18N', 'es', 'La operación ya tiene un expediente de firma creado');
-INSERT INTO ACELER_ENTIDADES.SAFE_TRANSLATE (CODIGO, GRUPO, IDIOMA, TEXTO) VALUES ('error.fx.tradesignature.expedient.exists', 'I18N', 'en', 'The operation has already an created sign expedient');
+INSERT INTO ACELER_ENTIDADES.SAFE_TRANSLATE (CODIGO, GRUPO, IDIOMA, TEXTO) VALUES ('error.fx.tradesignature.expedient.exists', 'I18N', 'en', 'A signature expedient has already been created for this operation');
