@@ -341,3 +341,13 @@ Original Stack Trace:
 2025-06-23T13:18:07.232+02:00  INFO 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketResponder         : Try terminate connection on responder side
 2025-06-23T13:18:07.232+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketResponder         : closing responder InternalDuplexConnection{type=SERVER, source=io.rsocket.core.LoggingDuplexConnection@60c0874, state=2}
 2025-06-23T13:18:07.233+02:00 DEBUG 15080 --- [conac-springboot-integration] [actor-tcp-nio-4] [                                                 ] io.rsocket.core.RSocketResponder         : responder closed InternalDuplexConnection{type=SERVER, source=io.rsocket.core.LoggingDuplexConnection@60c0874, state=2}
+
+DELETE
+FROM ACELER_ENTIDADES.SAFE_TRANSLATE
+WHERE CODIGO IN ('error.fx.tradesignature.id.notFound', 'error.fx.tradesignature.expedient.exists');
+
+INSERT INTO ACELER_ENTIDADES.SAFE_TRANSLATE (CODIGO, GRUPO, IDIOMA, TEXTO) VALUES ('error.fx.tradesignature.id.notFound', 'I18N', 'es', 'No se ha encontrado el Transfer Id Proporcionado');
+INSERT INTO ACELER_ENTIDADES.SAFE_TRANSLATE (CODIGO, GRUPO, IDIOMA, TEXTO) VALUES ('error.fx.tradesignature.id.notFound', 'I18N', 'en', 'Given transfer Id has not found');
+
+INSERT INTO ACELER_ENTIDADES.SAFE_TRANSLATE (CODIGO, GRUPO, IDIOMA, TEXTO) VALUES ('error.fx.tradesignature.expedient.exists', 'I18N', 'es', 'La operación ya tiene un expediente de firma creado');
+INSERT INTO ACELER_ENTIDADES.SAFE_TRANSLATE (CODIGO, GRUPO, IDIOMA, TEXTO) VALUES ('error.fx.tradesignature.expedient.exists', 'I18N', 'en', 'The operation has already an created sign expedient');
