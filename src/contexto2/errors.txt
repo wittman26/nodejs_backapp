@@ -1,95 +1,87 @@
-C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\lib\idea_rt.jar=65486:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\bin" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file932354730 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest
-Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
-WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
-WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
-WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
-WARNING: Dynamic loading of agents will be disallowed by default in a future release
-OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+025-06-27T10:13:40.685+02:00 ERROR 7008 --- [conac-springboot-fx] [actor-tcp-nio-2] [78772a2fa63138dd16030a6e2530661c-edbf1836d4b70f19] a.w.r.e.AbstractErrorWebExceptionHandler : [abfbbebc-51]  500 Server Error for HTTP GET "/v1/trades-signatures/view?tradeSignatureId=9876"
 
-org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <com.acelera.error.CustomErrorException> but was: <java.lang.NullPointerException>
+java.util.NoSuchElementException: Source was empty
+	at reactor.core.publisher.MonoSingle$SingleSubscriber.onComplete(MonoSingle.java:174) ~[reactor-core-3.7.6.jar:3.7.6]
+	Suppressed: reactor.core.publisher.FluxOnAssembly$OnAssemblyException: 
+Error has been observed at the following site(s):
+	*__checkpoint ⇢ Handler com.acelera.fx.digitalsignature.infrastructure.controller.TradeSignatureRestController#getTradeSignature(String, Locale, GetTradeSignatureRequestParameter, ServerHttpRequest) [DispatcherHandler]
+	*__checkpoint ⇢ org.zalando.logbook.spring.webflux.LogbookWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ com.acelera.locale.AceleraContextFilterConfig$$Lambda/0x0000020a11bb0c20 [DefaultWebFilterChain]
+	*__checkpoint ⇢ AuthorizationWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ ExceptionTranslationWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ LogoutWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ ServerRequestCacheWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ SecurityContextServerWebExchangeWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ ReactorContextWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ HttpHeaderWriterWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ ServerWebExchangeReactorContextWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ org.springframework.security.web.server.WebFilterChainProxy [DefaultWebFilterChain]
+	*__checkpoint ⇢ com.acelera.locale.LocaleAutoConfig$$Lambda/0x0000020a11bb10b0 [DefaultWebFilterChain]
+	*__checkpoint ⇢ com.acelera.locale.LocaleAutoConfig$$Lambda/0x0000020a11bb0e68 [DefaultWebFilterChain]
+	*__checkpoint ⇢ HTTP GET "/v1/trades-signatures/view?tradeSignatureId=9876" [ExceptionHandlingWebHandler]
+Original Stack Trace:
+		at reactor.core.publisher.MonoSingle$SingleSubscriber.onComplete(MonoSingle.java:174) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoFlatMapMany$FlatMapManyInner.onComplete(MonoFlatMapMany.java:261) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.Operators.complete(Operators.java:137) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxIterable.subscribe(FluxIterable.java:144) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxIterable.subscribe(FluxIterable.java:83) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.Flux.subscribe(Flux.java:8891) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoFlatMapMany$FlatMapManyMain.onNext(MonoFlatMapMany.java:196) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(MonoContextWriteRestoringThreadLocals.java:110) ~[reactor-core-3.7.6.jar:3.7.6]
+		at io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerSubscriber.hookOnNext(CircuitBreakerSubscriber.java:59) ~[resilience4j-reactor-2.2.0.jar:2.2.0]
+		at reactor.core.publisher.BaseSubscriber.onNext(BaseSubscriber.java:160) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoFlatMap$FlatMapMain.secondComplete(MonoFlatMap.java:245) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoFlatMap$FlatMapInner.onNext(MonoFlatMap.java:305) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWrite$ContextWriteSubscriber.onNext(FluxContextWrite.java:107) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoSubscribeOn$SubscribeOnSubscriber.onNext(MonoSubscribeOn.java:146) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoIgnoreThen$ThenIgnoreMain.complete(MonoIgnoreThen.java:294) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.MonoIgnoreThen$ThenIgnoreMain.onNext(MonoIgnoreThen.java:188) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxDoFinally$DoFinallySubscriber.onNext(FluxDoFinally.java:113) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+		at io.rsocket.core.ResolvingOperator$DeferredResolution.onNext(ResolvingOperator.java:513) ~[rsocket-core-1.1.5.jar:na]
+		at reactor.core.publisher.MonoPeekTerminal$MonoTerminalPeekSubscriber.onNext(MonoPeekTerminal.java:180) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxPeekFuseable$PeekConditionalSubscriber.onNext(FluxPeekFuseable.java:854) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+		at io.rsocket.core.RequestResponseRequesterMono.handlePayload(RequestResponseRequesterMono.java:282) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.ReassemblyUtils.handleNextSupport(ReassemblyUtils.java:94) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.RequestResponseRequesterMono.handleNext(RequestResponseRequesterMono.java:360) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.RSocketRequester.handleFrame(RSocketRequester.java:260) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.RSocketRequester.handleIncomingFrames(RSocketRequester.java:220) ~[rsocket-core-1.1.5.jar:na]
+		at reactor.core.publisher.LambdaSubscriber.onNext(LambdaSubscriber.java:160) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+		at io.rsocket.core.ClientServerInputMultiplexer$InternalDuplexConnection.onNext(ClientServerInputMultiplexer.java:276) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.ClientServerInputMultiplexer.onNext(ClientServerInputMultiplexer.java:129) ~[rsocket-core-1.1.5.jar:na]
+		at io.rsocket.core.ClientServerInputMultiplexer.onNext(ClientServerInputMultiplexer.java:48) ~[rsocket-core-1.1.5.jar:na]
+		at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxMap$MapConditionalSubscriber.onNext(FluxMap.java:224) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.core.publisher.FluxContextWriteRestoringThreadLocals$ContextWriteRestoringThreadLocalsSubscriber.onNext(FluxContextWriteRestoringThreadLocals.java:118) ~[reactor-core-3.7.6.jar:3.7.6]
+		at reactor.netty.channel.FluxReceive.onInboundNext(FluxReceive.java:377) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+		at reactor.netty.channel.ChannelOperations.onInboundNext(ChannelOperations.java:435) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+		at reactor.netty.channel.ChannelOperationsHandler.channelRead(ChannelOperationsHandler.java:115) ~[reactor-netty-core-1.2.6.jar:1.2.6]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:346) ~[netty-codec-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:318) ~[netty-codec-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1357) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:440) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:868) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:796) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:732) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:658) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562) ~[netty-transport-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+		at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.121.Final.jar:4.1.121.Final]
+		at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
 
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
-	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
-	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest.upsertTradeSignature_shouldReturnErrorWhenExpedientIdPresent(TradeSignatureServiceSaveImplTest.java:79)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-Caused by: java.lang.NullPointerException: Cannot invoke "org.springframework.context.MessageSource.getMessage(String, Object[], java.util.Locale)" because the return value of "com.acelera.locale.MessageSourceHolder.getMessageSource()" is null
-	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:61)
-	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:56)
-	at com.acelera.error.CustomErrorException.<init>(CustomErrorException.java:43)
-	at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.upsertTradeSignature(TradeSignatureServiceSaveImpl.java:44)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.lambda$createOrUpdateSignature$0(TradeSignatureServiceSaveImpl.java:33)
-	at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:153)
-	at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53)
-	at reactor.core.publisher.Mono.subscribe(Mono.java:4560)
-	at reactor.core.publisher.Mono.block(Mono.java:1778)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest.lambda$upsertTradeSignature_shouldReturnErrorWhenExpedientIdPresent$0(TradeSignatureServiceSaveImplTest.java:82)
-	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
-	... 6 more
-	Suppressed: java.lang.Exception: #block terminated with an error
-		at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:104)
-		at reactor.core.publisher.Mono.block(Mono.java:1779)
-		... 8 more
-
-
-org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <com.acelera.error.CustomErrorException> but was: <java.lang.NullPointerException>
-
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
-	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
-	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest.upsertTradeSignature_shouldReturnErrorWhenOriginIdIsNullOnCreate(TradeSignatureServiceSaveImplTest.java:94)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-Caused by: java.lang.NullPointerException: Cannot invoke "org.springframework.context.MessageSource.getMessage(String, Object[], java.util.Locale)" because the return value of "com.acelera.locale.MessageSourceHolder.getMessageSource()" is null
-	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:61)
-	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:56)
-	at com.acelera.error.CustomErrorException.<init>(CustomErrorException.java:43)
-	at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.upsertTradeSignature(TradeSignatureServiceSaveImpl.java:51)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.lambda$createOrUpdateSignature$1(TradeSignatureServiceSaveImpl.java:34)
-	at reactor.core.publisher.MonoDefer.subscribe(MonoDefer.java:45)
-	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
-	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onComplete(FluxSwitchIfEmpty.java:82)
-	at reactor.core.publisher.Operators.complete(Operators.java:137)
-	at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:146)
-	at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53)
-	at reactor.core.publisher.Mono.subscribe(Mono.java:4560)
-	at reactor.core.publisher.Mono.block(Mono.java:1778)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest.lambda$upsertTradeSignature_shouldReturnErrorWhenOriginIdIsNullOnCreate$1(TradeSignatureServiceSaveImplTest.java:97)
-	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
-	... 6 more
-	Suppressed: java.lang.Exception: #block terminated with an error
-		at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:104)
-		at reactor.core.publisher.Mono.block(Mono.java:1779)
-		... 8 more
-
-
-java.lang.NullPointerException: Cannot invoke "org.springframework.context.MessageSource.getMessage(String, Object[], java.util.Locale)" because the return value of "com.acelera.locale.MessageSourceHolder.getMessageSource()" is null
-
-	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:61)
-	at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:56)
-	at com.acelera.error.CustomErrorException.<init>(CustomErrorException.java:43)
-	at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.upsertTradeSignature(TradeSignatureServiceSaveImpl.java:44)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.lambda$createOrUpdateSignature$0(TradeSignatureServiceSaveImpl.java:33)
-	at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:153)
-	at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53)
-	at reactor.core.publisher.Mono.subscribe(Mono.java:4560)
-	at reactor.core.publisher.Mono.block(Mono.java:1778)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImplTest.createOrUpdateSignature_shouldUpdateWhenFound(TradeSignatureServiceSaveImplTest.java:64)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	Suppressed: java.lang.Exception: #block terminated with an error
-		at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:104)
-		at reactor.core.publisher.Mono.block(Mono.java:1779)
-		... 4 more
-
-
-Process finished with exit code -1
+2025-06-27T10:13:40.687+02:00 TRACE 7008 --- [conac-springboot-fx] [actor-tcp-nio-2] [78772a2fa63138dd16030a6e2530661c-edbf1836d4b70f19] org.zalando.logbook.Logbook              : {"origin":"local","type":"response","correlation":"9fa4fe894f7b6438","duration":11018,"protocol":"HTTP/1.1","status":500,"headers":{"Cache-Control":["no-cache, no-store, max-age=0, must-revalidate"],"Content-Length":["91"],"Content-Security-Policy":["default-src 'self'; script-src 'self'"],"Content-Type":["application/json"],"Expires":["0"],"Pragma":["no-cache"],"Referrer-Policy":["no-referrer"],"transfer-encoding":["chunked"],"X-Content-Type-Options":["nosniff"],"X-Frame-Options":["DENY"],"X-XSS-Protection":["0"]}}
