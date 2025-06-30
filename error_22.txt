@@ -1,0 +1,83 @@
+package com.acelera.fx.digitalsignature.infrastructure.controller;
+
+import com.acelera.broker.fx.domain.dto.request.GetTradeSignatureRequestParameter;
+import com.acelera.broker.fx.domain.dto.response.GetTradeSignatureResponse;
+import com.acelera.fx.digitalsignature.domain.port.dto.GetTradeSignatureDto;
+import com.acelera.fx.digitalsignature.domain.port.dto.GetTradeSignatureParameterDto;
+import com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureServiceGet;
+import com.acelera.locale.LocaleAutoConfig;
+import com.acelera.locale.LocaleConstants;
+import com.acelera.security.WebSecurityAutoConfig;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
+import uk.co.jemos.podam.api.PodamFactory;
+import uk.co.jemos.podam.api.PodamFactoryImpl;
+
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+@WebFluxTest(TradeSignatureRestController.class)
+@Import({ LocaleAutoConfig.class, WebSecurityAutoConfig.class })
+@WithMockUser(username = "x1103878")
+public class TradeSignatureRestControllerTest {
+
+    @Autowired
+    private WebTestClient webClient;
+
+    @MockitoBean
+    private TradeSignatureServiceGet serviceGet;
+
+    private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
+
+    @ParameterizedTest
+    @CsvSource({
+            "9876, null, null",
+            "null, 123450, 'TRADE'"
+    })
+    void shouldReturnTradeSignatureResponseOk(Long tradeSignatureId, Long originId, String origin) throws IOException {
+
+        var response = GetTradeSignatureDto.builder().tradeSignatureId(9876L).build();
+        var getResponse = prepareGetCall(tradeSignatureId, originId, origin, response);
+
+        getResponse.expectStatus().isOk().expectBody(GetTradeSignatureResponse.class)
+                .value(x -> assertThat(x).usingRecursiveComparison().isEqualTo(response));
+    }
+
+    private WebTestClient.ResponseSpec prepareGetCall(Long tradeSignatureId, Long originId, String origin,
+            GetTradeSignatureDto response) {
+        var locale = ArgumentCaptor.forClass(Locale.class);
+        var entity = ArgumentCaptor.forClass(String.class);
+        var requestDto = ArgumentCaptor.forClass(GetTradeSignatureParameterDto.class);
+        var request = GetTradeSignatureRequestParameter.builder()
+                .tradeSignatureId(tradeSignatureId)
+                .originId(originId)
+                .origin(origin)
+                .build();
+
+        when(serviceGet.getTradeSignature(locale.capture(), entity.capture(), requestDto.capture()))
+                .thenReturn(Mono.just(response));
+
+        return webClient.get()
+                .uri(builder -> builder.path("/v1/trades-signatures/view")
+                        //.bodyValue(getTradeSignatureRequest(ONLY_TRADE_SIGNATURE_ID)).accept(MediaType.APPLICATION_JSON)
+                        .queryParam("originId", Optional.ofNullable(request.getOriginId()))
+                        .queryParam("origin", Optional.ofNullable(request.getOrigin()))
+                        .queryParam("tradeSignatureId", Optional.ofNullable(request.getTradeSignatureId()))
+                        .build())
+                .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
+                .exchange();
+    }
+
+}
