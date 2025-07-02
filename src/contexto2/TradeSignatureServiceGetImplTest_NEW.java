@@ -1,85 +1,93 @@
 package com.acelera.fx.digitalsignature.application.service;
 
 import com.acelera.broker.fx.db.domain.dto.TradeSignerDocumentStatusView;
-import com.acelera.broker.fx.db.domain.dto.ViewTradeSignatureExpedient;
 import com.acelera.broker.fx.db.domain.dto.ViewTradeSignatureExpedientFindByFilterRequest;
 import com.acelera.broker.fx.db.domain.port.TradeSignatureRepositoryClient;
 import com.acelera.broker.fx.db.domain.port.ViewTradeSignatureRepositoryClient;
 import com.acelera.broker.shared.domain.PageDto;
+import com.acelera.broker.shared.domain.PageableDto;
+import com.acelera.fx.digitalsignature.application.mapper.TradeSignatureRequestMapper;
+import com.acelera.fx.digitalsignature.application.mapper.TradeSignatureViewMapper;
+import com.acelera.fx.digitalsignature.application.mapper.TradeSignerDocumentStatusViewMapper;
 import com.acelera.fx.digitalsignature.domain.helper.TradeSignerHelper;
 import com.acelera.fx.digitalsignature.domain.port.dto.GetTradeSignatureDto;
 import com.acelera.fx.digitalsignature.domain.port.dto.GetTradeSignatureParameterDto;
 import com.acelera.fx.digitalsignature.domain.port.dto.TradeSignerDto;
-import com.acelera.locale.LocaleConstants;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureServiceGet;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import uk.co.jemos.podam.api.PodamFactory;
-import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class TradeSignatureServiceGetImpl implements TradeSignatureServiceGet {
 
-@ExtendWith(MockitoExtension.class)
-class TradeSignatureServiceGetImplTest {
+    private final TradeSignatureRepositoryClient tradeSignatureRepositoryClient;
 
-    @Mock
-    private TradeSignerHelper tradeSignerHelper;
+    private final ViewTradeSignatureRepositoryClient viewTradeSignatureRepositoryClient;
 
-    @Mock
-    private TradeSignatureRepositoryClient repository;
+    private final TradeSignerHelper tradeSignerHelper;
 
-    @Mock
-    private ViewTradeSignatureRepositoryClient viewRepository;
+    @Override
+    public Mono<GetTradeSignatureDto> getTradeSignature(Locale locale, String entity,
+            GetTradeSignatureParameterDto dto) {
 
-    @InjectMocks
-    private TradeSignatureServiceGetImpl impl;
-
-    private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
-
-    private static final String ENTITY = LocaleConstants.ENTITY_0049;
-    private static final Locale LOCALE = LocaleConstants.DEFAULT_LOCALE;
-
-    @Test
-    void getTradeSignatureResponse_shouldReturnCombinedResponse() {
-        Long tradeSignatureId = 1L;
-        GetTradeSignatureParameterDto request = PODAM_FACTORY.manufacturePojo(GetTradeSignatureParameterDto.class);
-
-        var req = ViewTradeSignatureExpedientFindByFilterRequest.builder().tradeSignatureId(1L).build();
-        when(viewRepository.findByFilter(req))
-                .thenReturn(Mono.just(new PageDto<ViewTradeSignatureExpedient>()));
-
-        when(viewRepository.findTradeSignerViewDocument(req.getTradeSignatureId()))
-                .thenReturn(Mono.just(List.of()));
-
-        Mono<GetTradeSignatureDto> result = impl.getTradeSignatureResponse(tradeSignatureId);
-        assertNotNull(result.block());
-        verify(viewRepository).findByFilter(req);
-        verify(viewRepository).findTradeSignerViewDocument(tradeSignatureId);
+        return tradeSignatureRepositoryClient.find(
+                TradeSignatureRequestMapper.INSTANCE.fromGetDtoToTradeSignatureFindRequest(dto, entity))
+                .flatMap(tradeSignatureFound -> getTradeSignatureResponse(tradeSignatureFound.getTradeSignatureId()))
+                .switchIfEmpty(getTradeSignatureResponse(dto.getTradeSignatureId()));
     }
 
-    @Test
-    void mapSignersWithColour_shouldGroupAndSetColour() {
-        TradeSignerDocumentStatusView doc1 = new TradeSignerDocumentStatusView();
-        doc1.setSignerId("A");
-        doc1.setSignedDoc("Y");
-        TradeSignerDocumentStatusView doc2 = new TradeSignerDocumentStatusView();
-        doc2.setSignerId("A");
-        doc2.setSignedDoc("N");
+    public Mono<GetTradeSignatureDto> getTradeSignatureResponse(Long tradeSignatureId) {
+        // Build header
+        var filterRequest = ViewTradeSignatureExpedientFindByFilterRequest.builder()
+                .tradeSignatureId(tradeSignatureId).pageable(PageableDto.defaultPageable()).build();
+        var headerMono = viewTradeSignatureRepositoryClient.findByFilter(filterRequest)
+                .map(PageDto::getContent).flatMapMany(Flux::fromIterable)
+                .singleOrEmpty()
+                .flatMap(response -> Mono.just(TradeSignatureViewMapper.INSTANCE.fromDataToGetTradeSignatureDto(response)))
+                .switchIfEmpty(Mono.empty());
 
-        when(tradeSignerHelper.getSignerColour(any())).thenReturn("YELLOW");
+        // Build Signers
+        Mono<List<TradeSignerDto>> signersMono = viewTradeSignatureRepositoryClient.findTradeSignerViewDocument(tradeSignatureId==null ? 0 : tradeSignatureId)
+                .map(this::mapSignersWithColour)
+                .switchIfEmpty(Mono.empty());
 
-        List<TradeSignerDto> result = impl.mapSignersWithColour(List.of(doc1, doc2));
-        assertEquals(1, result.size());
-        assertEquals("YELLOW", result.getFirst().getSignerColour());
+        return Mono.zip(headerMono, signersMono)
+                .map( tuple -> {
+                    GetTradeSignatureDto header = tuple.getT1();
+                    List<TradeSignerDto> signers = tuple.getT2();
+
+                    header.setSigners(signers);
+                    return header;
+                })
+                .switchIfEmpty(Mono.empty());
+    }
+
+    public List<TradeSignerDto> mapSignersWithColour(List<TradeSignerDocumentStatusView> views) {
+        return views.stream()
+                .collect(Collectors.groupingBy(TradeSignerDocumentStatusView::getSignerId))
+                .values()
+                .stream()
+                .map(signerDocs -> {
+                    TradeSignerDocumentStatusView base = signerDocs.getFirst();
+
+                    String signerColour = tradeSignerHelper.getSignerColour(signerDocs);
+
+                    var tradeSignersResponse = TradeSignerDocumentStatusViewMapper.INSTANCE.fromDatatoTradeSignerDto(base);
+                    tradeSignersResponse.setSignerColour(signerColour);
+                    tradeSignersResponse.setDocs(signerDocs.stream().map(
+                            TradeSignerDocumentStatusViewMapper.INSTANCE::fromDataToStatusDocumentPerSignerDto
+                    ).toList());
+
+                    return tradeSignersResponse;
+                }).toList();
     }
 }
