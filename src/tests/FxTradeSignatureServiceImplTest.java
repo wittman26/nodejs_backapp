@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 public class FxTradeSignatureServiceImplTest {
     private @InjectMocks FxTradeSignatureServiceImpl impl;
     private @Mock TradeSignatureClient client;
+    private @Mock ServerHttpRequest serverHttpRequest;
 
     private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
 
@@ -31,10 +32,9 @@ public class FxTradeSignatureServiceImplTest {
 
         var locale = LocaleConstants.DEFAULT_LOCALE;
         var entity = LocaleConstants.ENTITY_0049;
-        var serverHttpRequest = PODAM_FACTORY.manufacturePojo(ServerHttpRequest.class);
         var request = PODAM_FACTORY.manufacturePojo(GetTradeSignatureRequestParameter.class);
 
-        when(client.getTradeSignature(request).thenReturn(Mono.just(response)));
+        when(client.getTradeSignature(any()).thenReturn(Mono.just(response)));
 
         impl.getTradeSignature(entity, locale, request, serverHttpRequest).as(StepVerifier::create).expectNext(response)
                 .verifyComplete();

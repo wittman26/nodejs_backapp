@@ -1,12 +1,10 @@
-C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\lib\idea_rt.jar=53405:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\bin" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file316229601 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.integration.rest.application.service.FxTradeSignatureServiceImplTest
+C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\lib\idea_rt.jar=59120:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\bin" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file163545134 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.integration.rest.application.service.FxTradeSignatureServiceImplTest
 Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
 WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
 WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
 WARNING: Dynamic loading of agents will be disallowed by default in a future release
 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
-10:54:42.330 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- Cannot instantiate a class interface org.springframework.http.server.reactive.ServerHttpRequest. Resorting to uk.co.jemos.podam.api.NullExternalFactory external factory
-10:54:42.339 [main] WARN uk.co.jemos.podam.api.NullExternalFactory -- Cannot instantiate interface org.springframework.http.server.reactive.ServerHttpRequest with arguments []. Returning null.
 
 java.lang.NullPointerException: Cannot invoke "reactor.core.publisher.Mono.thenReturn(Object)" because the return value of "com.acelera.broker.fx.domain.port.TradeSignatureClient.getTradeSignature(com.acelera.broker.fx.domain.dto.request.GetTradeSignatureRequestParameter)" is null
 
