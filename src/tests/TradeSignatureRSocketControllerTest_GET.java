@@ -1,7 +1,7 @@
 package com.acelera.rest.fx.infrastructure.adapter.rsocket.controller;
 
-import com.acelera.broker.fx.domain.dto.request.TradeSignatureRequest;
-import com.acelera.broker.fx.domain.dto.response.TradeSignatureResponse;
+import com.acelera.broker.fx.domain.dto.request.GetTradeSignatureRequestParameter;
+import com.acelera.broker.fx.domain.dto.response.GetTradeSignatureResponse;
 import com.acelera.broker.fx.domain.port.TradeSignatureClient;
 import com.acelera.broker.rest.RestManyBrokerConfig;
 import com.acelera.rest.fx.domain.port.FxCaller;
@@ -47,22 +47,19 @@ public class TradeSignatureRSocketControllerTest {
     }
 
     private @MockitoBean FxCaller service;
-    private @Qualifier("tradeSignatureClient") @Autowired TradeSignatureClient client;
+    private @Qualifier("tradeSignatureRestClient2") @Autowired TradeSignatureClient client;
 
     @Test
-    void testUpdateTradeSignature() {
+    void testGetTradeSignature() {
 
-        var response = TradeSignatureResponse.builder().tradeSignatureId(9876L).build();
+        var response = GetTradeSignatureResponse.builder().tradeSignatureId(9876L).build();
         var locale = ArgumentCaptor.forClass(Locale.class);
         var entity = ArgumentCaptor.forClass(String.class);
-        var request= ArgumentCaptor.forClass(TradeSignatureRequest.class);
+        var request= ArgumentCaptor.forClass(GetTradeSignatureRequestParameter.class);
 
-        var req = TradeSignatureRequest.builder().tradeSignatureId(9876L)
-                .build();
-
-        when(service.updateTradeSignature(locale.capture(), entity.capture(), request.capture()))
+        when(service.getTradeSignature(locale.capture(), entity.capture(), request.capture()))
                 .thenReturn(Mono.just(response));
 
-        client.updateTradeSignature(req).as(StepVerifier::create).expectNext(response).verifyComplete();
+        client.getTradeSignature(request.capture()).as(StepVerifier::create).expectNext(response).verifyComplete();
     }
 }
