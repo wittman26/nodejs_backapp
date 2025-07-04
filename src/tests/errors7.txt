@@ -1,0 +1,93 @@
+C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\lib\idea_rt.jar=52485:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\bin" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file708111292 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImplTest
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'findProductDocumentParameters' method:
+    client.findProductDocumentParameters(
+    ProductDocumentParametersRequest(entity=0049, productId=FW)
+);
+    -> at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImpl.findProductDocumentType(ProductDocumentsServiceImpl.java:23)
+ - has following stubbing(s) with different arguments:
+    1. client.findProductDocumentParameters(
+    ProductDocumentParametersRequest(entity=FW, productId=0049)
+);
+      -> at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImplTest.testFindProductDocumentType_ok(ProductDocumentsServiceImplTest.java:36)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+
+	at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImpl.findProductDocumentType(ProductDocumentsServiceImpl.java:23)
+	at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImplTest.testFindProductDocumentType_ok(ProductDocumentsServiceImplTest.java:38)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'findProductDocumentParameters' method:
+    client.findProductDocumentParameters(
+    ProductDocumentParametersRequest(entity=0049, productId=FW)
+);
+    -> at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImpl.findProductDocumentType(ProductDocumentsServiceImpl.java:23)
+ - has following stubbing(s) with different arguments:
+    1. client.findProductDocumentParameters(
+    ProductDocumentParametersRequest(entity=FW, productId=0049)
+);
+      -> at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImplTest.testFindProductDocumentType_invalidEnum(ProductDocumentsServiceImplTest.java:55)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+
+	at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImpl.findProductDocumentType(ProductDocumentsServiceImpl.java:23)
+	at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImplTest.testFindProductDocumentType_invalidEnum(ProductDocumentsServiceImplTest.java:56)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'findProductDocumentParameters' method:
+    client.findProductDocumentParameters(
+    ProductDocumentParametersRequest(entity=0049, productId=FW)
+);
+    -> at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImpl.findProductDocumentType(ProductDocumentsServiceImpl.java:23)
+ - has following stubbing(s) with different arguments:
+    1. client.findProductDocumentParameters(
+    ProductDocumentParametersRequest(entity=FW, productId=0049)
+);
+      -> at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImplTest.testFindProductDocumentType_empty(ProductDocumentsServiceImplTest.java:46)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+
+	at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImpl.findProductDocumentType(ProductDocumentsServiceImpl.java:23)
+	at com.acelera.fx.digitalsignature.application.service.ProductDocumentsServiceImplTest.testFindProductDocumentType_empty(ProductDocumentsServiceImplTest.java:47)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+
+Process finished with exit code -1
