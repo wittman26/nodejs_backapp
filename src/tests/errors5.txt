@@ -1,0 +1,55 @@
+2025-07-04T11:11:40.620+02:00 ERROR 14536 --- [           main] [                                                 ] o.s.t.w.reactive.server.ExchangeResult   : Request details for assertion failure:
+
+> GET /v1/products/FW/documents
+> WebTestClient-Request-Id: [1]
+> X-ACELERA-ENTITY: [0049]
+> Accept-Language: [es]
+> Accept-Charset: [utf-8]
+
+No content
+
+< 200 OK OK
+< Content-Type: [application/json]
+< Cache-Control: [no-cache, no-store, max-age=0, must-revalidate]
+< Pragma: [no-cache]
+< Expires: [0]
+< X-Content-Type-Options: [nosniff]
+< X-Frame-Options: [DENY]
+< X-XSS-Protection: [0]
+< Content-Security-Policy: [default-src 'self'; script-src 'self']
+< Referrer-Policy: [no-referrer]
+
+[{"type":"KD","isPrecontractual":false,"documentalType":"o3FnRFjvr2","documentalTypeCode":"Ztve70TlFB"}]
+
+
+java.lang.AssertionError: 
+Expecting actual:
+  com.acelera.fx.digitalsignature.infrastructure.response.DocumentTypeResponse@5a63fa71
+to be equal to:
+  ProductDocumentParameters(id=872498961172700, entity=iANPXbsv89, product=53mQZIEXZ4, documentType=KD, isPrecontractual=SzlYVJ6sL0, documentalTypeDoc=o3FnRFjvr2, documentalCodeDoc=Ztve70TlFB)
+when recursively comparing field by field, but found the following difference:
+
+Top level actual and expected objects differ:
+- actual value  : com.acelera.fx.digitalsignature.infrastructure.response.DocumentTypeResponse@5a63fa71
+- expected value: ProductDocumentParameters(id=872498961172700, entity=iANPXbsv89, product=53mQZIEXZ4, documentType=KD, isPrecontractual=SzlYVJ6sL0, documentalTypeDoc=o3FnRFjvr2, documentalCodeDoc=Ztve70TlFB)
+com.acelera.fx.digitalsignature.infrastructure.response.DocumentTypeResponse can't be compared to com.acelera.broker.fx.db.domain.dto.ProductDocumentParameters as ProductDocumentParameters does not declare all DocumentTypeResponse fields, it lacks these: [documentalType, type, documentalTypeCode]
+
+The recursive comparison was performed with this configuration:
+- no equals methods were used in the comparison EXCEPT for java JDK types since introspecting JDK types is forbidden in java 17+ (use withEqualsForType to register a specific way to compare a JDK type if you need it)
+- these types were compared with the following comparators:
+  - java.lang.Double -> DoubleComparator[precision=1.0E-15]
+  - java.lang.Float -> FloatComparator[precision=1.0E-6]
+  - java.nio.file.Path -> lexicographic comparator (Path natural order)
+- actual and expected objects and their fields were compared field by field recursively even if they were not of the same type, this allows for example to compare a Person to a PersonDto (call strictTypeChecking(true) to change that behavior).
+- the introspection strategy used was: DefaultRecursiveComparisonIntrospectionStrategy
+
+
+	at com.acelera.fx.digitalsignature.infrastructure.controller.ProductDocumentsRestControllerTest.lambda$testFindProductDocumentType_ok$1(ProductDocumentsRestControllerTest.java:59)
+	at org.springframework.test.web.reactive.server.DefaultWebTestClient$DefaultBodySpec.lambda$value$3(DefaultWebTestClient.java:581)
+	at org.springframework.test.web.reactive.server.ExchangeResult.assertWithDiagnostics(ExchangeResult.java:232)
+	at org.springframework.test.web.reactive.server.DefaultWebTestClient$DefaultBodySpec.value(DefaultWebTestClient.java:581)
+	at com.acelera.fx.digitalsignature.infrastructure.controller.ProductDocumentsRestControllerTest.testFindProductDocumentType_ok(ProductDocumentsRestControllerTest.java:57)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
