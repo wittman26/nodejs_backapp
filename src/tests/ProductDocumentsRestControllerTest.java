@@ -3,6 +3,7 @@ package com.acelera.fx.digitalsignature.infrastructure.controller;
 import com.acelera.broker.fx.db.domain.dto.ProductDocumentParameters;
 import com.acelera.error.ErrorWebFluxAutoConfig;
 import com.acelera.fx.digitalsignature.domain.port.service.ProductDocumentsService;
+import com.acelera.fx.digitalsignature.infrastructure.mapper.ProductDocumentsMapper;
 import com.acelera.fx.digitalsignature.infrastructure.response.DocumentTypeResponse;
 import com.acelera.fx.digitalsignature.infrastructure.response.base.TypeEnum;
 import com.acelera.locale.LocaleAutoConfig;
@@ -43,8 +44,11 @@ public class ProductDocumentsRestControllerTest {
     void testFindProductDocumentType_ok() {
         ProductDocumentParameters response = PODAM_FACTORY.manufacturePojo(ProductDocumentParameters.class);
         response.setDocumentType(String.valueOf(TypeEnum.KD));
+
         when(service.findProductDocumentType(LocaleConstants.ENTITY_0049, LocaleConstants.DEFAULT_LOCALE, PRODUCT_ID))
                 .thenReturn(Flux.just(response));
+
+        DocumentTypeResponse expected = ProductDocumentsMapper.INSTANCE.toDocumentTypeResponse(response);
 
         webClient.get()
                 .uri(builder -> builder.path("/v1/products/{productId}/documents").build(PRODUCT_ID))
@@ -56,7 +60,7 @@ public class ProductDocumentsRestControllerTest {
                 .expectBodyList(DocumentTypeResponse.class)
                 .value(list -> {
                     assertThat(list).asList().hasSize(1);
-                    assertThat(list.getFirst()).usingRecursiveComparison().isEqualTo(response);
+                    assertThat(list.getFirst()).usingRecursiveComparison().isEqualTo(expected);
                 });
     }
 
