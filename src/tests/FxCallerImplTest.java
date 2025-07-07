@@ -7,6 +7,7 @@ import com.acelera.broker.fx.domain.dto.request.TradeSignatureRequest;
 import com.acelera.broker.fx.domain.dto.response.GetTradeSignatureResponse;
 import com.acelera.broker.fx.domain.dto.response.TradeSignatureResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.*;
@@ -22,7 +23,8 @@ class FxCallerImplTest {
     static MockWebServer mockBackEnd;
     FxCallerImpl fxCaller;
     static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
-    static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
+    private static final String TOKEN = "test-token";
 
     @BeforeAll
     static void setUp() throws Exception {
@@ -52,7 +54,7 @@ class FxCallerImplTest {
                 .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
 
         TradeSignatureRequest request = new TradeSignatureRequest();
-        request.setToken("Bearer test-token");
+        request.setToken(TOKEN);
         // set other fields as needed
 
         fxCaller.updateTradeSignature(null, null, request)
@@ -63,7 +65,7 @@ class FxCallerImplTest {
         var recordedRequest = mockBackEnd.takeRequest();
         assertEquals("PUT", recordedRequest.getMethod());
         assertEquals("/v1/trades-signatures", recordedRequest.getPath());
-        assertEquals("Bearer test-token", recordedRequest.getHeader("Authorization"));
+        assertEquals(TOKEN, recordedRequest.getHeader("Authorization"));
     }
 
     @Test
@@ -76,7 +78,7 @@ class FxCallerImplTest {
                 .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
 
         GetTradeSignatureRequestParameter request = new GetTradeSignatureRequestParameter();
-        request.setToken("Bearer test-token");
+        request.setToken(TOKEN);
         request.setTradeSignatureId(response.getTradeSignatureId());
         // set other fields as needed
 
@@ -87,7 +89,7 @@ class FxCallerImplTest {
 
         var recordedRequest = mockBackEnd.takeRequest();
         assertEquals("GET", recordedRequest.getMethod());
-        assertEquals("Bearer test-token", recordedRequest.getHeader("Authorization"));
+        assertEquals(TOKEN, recordedRequest.getHeader("Authorization"));
     }
 
     @Test
@@ -95,7 +97,7 @@ class FxCallerImplTest {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(500).setBody("Internal Error"));
 
         TradeSignatureRequest request = new TradeSignatureRequest();
-        request.setToken("Bearer test-token");
+        request.setToken(TOKEN);
 
         fxCaller.updateTradeSignature(null, null, request)
                 .as(StepVerifier::create)
