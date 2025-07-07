@@ -36,6 +36,13 @@ public class FxTradeSignatureServiceImplTest {
 
     private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
 
+    @BeforeEach
+    void setup() {
+        StaticMessageSource messageSource = new StaticMessageSource();
+        messageSource.addMessage("my app exception", Locale.getDefault(), "Mensaje de prueba");
+        MessageSourceHolder.setMessageSource(messageSource);
+    }    
+
     @Test
     void testGetTradeSignature() {
         var response = PODAM_FACTORY.manufacturePojo(GetTradeSignatureResponse.class);
