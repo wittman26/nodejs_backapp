@@ -1,0 +1,1486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.isb.acelera.persistence.LpaConfigPlantillaMapper">
+
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+
+    <select id="getTipoOrigenPlantilla" parameterType="String" resultType="LpaConfigOrigen">
+        SELECT DISTINCT TIPO_ORIGEN as "tipoOrigen", CONDICION as "condicion"
+        FROM ACE_LPA_CONFIG_PLANT
+        WHERE ID_PLANTILLALPA = #{id_plantilla}
+          AND ID_ENTIDAD = #{id_entidad}
+    </select>
+
+    <select id="getEtiquetaPlantilla" parameterType="String" resultType="String">
+        SELECT VALOR_ORIGEN
+        FROM ACE_LPA_CONFIG_PLANT
+        WHERE TIPO_ORIGEN IN ('ETIQUETA', 'LISTA')
+          AND ID_ENTIDAD = #{id_entidad}
+          AND ID_PLANTILLALPA = #{id_plantilla}
+    </select>
+
+    <select id="getConfigPlantilla" parameterType="String" resultType="lpaConfigPlantilla">
+        SELECT ID_ENTIDAD as entidad, ID_PLANTILLALPA as id, LPA_ETIQUETA as lpaEtiqueta,
+        TIPO_ORIGEN as tipoOrigen, VALOR_ORIGEN as valorOrigen, CONDICION as condicion
+        FROM ACE_LPA_CONFIG_PLANT
+        WHERE ID_PLANTILLALPA = #{id_plantilla} AND ID_ENTIDAD = #{id_entidad}
+        <if test="tipo_origen != null">
+            AND TIPO_ORIGEN = #{tipo_origen}
+        </if>
+        <if test="condicion != null">
+            AND CONDICION = #{condicion}
+        </if>
+        ORDER BY LPA_ETIQUETA
+    </select>
+
+    <delete id="deleteConfigPlantilla" parameterType="lpaConfigPlantilla">
+        DELETE
+        FROM ACE_LPA_CONFIG_PLANT
+        WHERE ID_PLANTILLALPA = #{id}
+          AND ID_ENTIDAD = #{entidad}
+          AND LPA_ETIQUETA = #{lpaEtiqueta}
+    </delete>
+
+    <delete id="deleteAllConfigPlantilla" parameterType="LpaPlantilla">
+        DELETE
+        FROM ACE_LPA_CONFIG_PLANT
+        WHERE ID_PLANTILLALPA = #{idPlantilla}
+          AND ID_ENTIDAD = #{entidad}
+    </delete>
+
+    <update id="editConfigPlantilla" parameterType="lpaConfigPlantilla">
+        UPDATE ACE_LPA_CONFIG_PLANT
+        SET TIPO_ORIGEN  = #{tipoOrigen},
+            VALOR_ORIGEN = #{valorOrigen},
+            CONDICION    = #{condicion}
+        WHERE ID_PLANTILLALPA = #{id}
+          AND ID_ENTIDAD = #{entidad}
+          AND LPA_ETIQUETA = #{lpaEtiqueta}
+    </update>
+
+    <insert id="addConfigPlantilla" parameterType="lpaConfigPlantilla">
+        INSERT INTO ACE_LPA_CONFIG_PLANT (ID_ENTIDAD, ID_PLANTILLALPA, LPA_ETIQUETA, TIPO_ORIGEN, VALOR_ORIGEN,
+                                          CONDICION)
+        VALUES (#{entidad}, #{id}, #{lpaEtiqueta}, #{tipoOrigen}, #{valorOrigen}, #{condicion})
+    </insert>
+
+    <select id="getValueTableXml" resultType="String">
+
+        SELECT
+        <if test="etiquetaLista != null">'&#60;'||#{etiquetaLista}||'&#62;'||</if>
+        <foreach item="lpaConfigPlantilla" index="index" collection="listalpaConfigPlantilla" open="" separator="||"
+                 close="">
+            '&#60;'||#{lpaConfigPlantilla.lpaEtiqueta}||'&#62;'||
+            <foreach item="valor" index="index" collection="lpaConfigPlantilla.listaValorOrigen" open="" separator=""
+                     close="">
+                <choose>
+                    <!-- ACE_ISIN_RF -->
+                    <when test="valor == 'ISIN'">ISIN</when>
+                    <when test="valor == 'TICKER'">TICKER</when>
+                    <when test="valor == 'CALLABLE'">CALLABLE</when>
+                    <when test="valor == 'PUTABLE'">PUTABLE</when>
+                    <when test="valor == 'FEC_SOLICITUD_BB'">FEC_SOLICITUD_BB</when>
+                    <when test="valor == 'CONVERTIBLE'">CONVERTIBLE</when>
+                    <when test="valor == 'IS_REVERSE_CONVERTIBLE'">IS_REVERSE_CONVERTIBLE</when>
+                    <when test="valor == 'IS_SYNTH_CONV'">IS_SYNTH_CONV</when>
+                    <when test="valor == 'SINKABLE'">SINKABLE</when>
+                    <when test="valor == 'EXTENDIBLE'">EXTENDIBLE</when>
+                    <when test="valor == 'NXT_CALL_DT'">NXT_CALL_DT</when>
+                    <when test="valor == 'MAKE_WHOLE_CALL_SPREAD'">MAKE_WHOLE_CALL_SPREAD</when>
+                    <when test="valor == 'NAME'">NAME</when>
+                    <when test="valor == 'GUARANTOR'">GUARANTOR</when>
+                    <when test="valor == 'EXCH_CODE'">EXCH_CODE</when>
+                    <when test="valor == 'CPN'">CPN</when>
+                    <when test="valor == 'CPN_FREQ'">CPN_FREQ</when>
+                    <when test="valor == 'CRNCY'">CRNCY</when>
+                    <when test="valor == 'MIN_PIECE'">MIN_PIECE</when>
+                    <when test="valor == 'MIN_INCREMENT'">MIN_INCREMENT</when>
+                    <when test="valor == 'PREV_CPN_DT'">PREV_CPN_DT</when>
+                    <when test="valor == 'NXT_CPN_DT'">NXT_CPN_DT</when>
+                    <when test="valor == 'FINAL_MATURITY'">FINAL_MATURITY</when>
+                    <when test="valor == 'PX_LAST'">PX_LAST</when>
+                    <when test="valor == 'INT_ACC'">INT_ACC</when>
+                    <when test="valor == 'MAKE_WHOLE_CALL'">MAKE_WHOLE_CALL</when>
+                    <when test="valor == 'POISON_PILL_RIGHTS'">POISON_PILL_RIGHTS</when>
+                    <when test="valor == 'SURVIVOR_PUT_OPT_IND'">SURVIVOR_PUT_OPT_IND</when>
+                    <when test="valor == 'RTG_MOODY'">RTG_MOODY</when>
+                    <when test="valor == 'RTG_SP'">RTG_SP</when>
+                    <when test="valor == 'RTG_FITCH'">RTG_FITCH</when>
+                    <when test="valor == 'PAYMENT_RANK'">PAYMENT_RANK</when>
+                    <when test="valor == 'CNTRY_OF_RISK'">CNTRY_OF_RISK</when>
+                    <when test="valor == 'MIN_INCREMENT'">MIN_INCREMENT</when>
+                    <when test="valor == 'MTY_TYP'">MTY_TYP</when>
+                    <when test="valor == 'SETTLE_DT'">SETTLE_DT</when>
+                    <when test="valor == 'DAY_CNT_DES'">DAY_CNT_DES</when>
+                    <when test="valor == 'DUR_MID'">DUR_MID</when>
+                    <when test="valor == 'CPN_TYP'">CPN_TYP</when>
+                    <when test="valor == 'BAIL_IN_BOND_DESIGNATION'">BAIL_IN_BOND_DESIGNATION</when>
+                    <when test="valor == 'IS_PERPETUAL'">IS_PERPETUAL</when>
+                    <when test="valor == 'FLOATER_FORMULA'">FLOATER_FORMULA</when>
+                    <when test="valor == 'PX_BID'">PX_BID</when>
+                    <when test="valor == 'NXT_CALL_PX'">NXT_CALL_PX</when>
+                    <when test="valor == 'NXT_PUT_PX'">NXT_PUT_PX</when>
+                    <when test="valor == 'NXT_PUT_DT'">NXT_PUT_DT</when>
+                    <when test="valor == 'MAKE_WHOLE_TERMINATION_DATE'">MAKE_WHOLE_TERMINATION_DATE</when>
+                    <when test="valor == 'CHANGE_CONTROL_PRICE'">CHANGE_CONTROL_PRICE</when>
+                    <when test="valor == 'CHG_OF_CTRL_BFIT_GOLD_CHUTE_AG'">CHG_OF_CTRL_BFIT_GOLD_CHUTE_AG</when>
+                    <when test="valor == 'CV_CNVS_PX'">CV_CNVS_PX</when>
+                    <when test="valor == 'CV_CNVS_RATIO'">CV_CNVS_RATIO</when>
+                    <when test="valor == 'CV_START_DT'">CV_START_DT</when>
+                    <when test="valor == 'CV_UNTIL'">CV_UNTIL</when>
+                    <when test="valor == 'SINKING_FUND_FACTOR'">SINKING_FUND_FACTOR</when>
+                    <when test="valor == 'NXT_SINK_AMT'">NXT_SINK_AMT</when>
+                    <when test="valor == 'SINKABLE_PAR_MARKET'">SINKABLE_PAR_MARKET</when>
+                    <when test="valor == 'SINK_LOTTERY'">SINK_LOTTERY</when>
+                    <when test="valor == 'NXT_SINK_DT'">NXT_SINK_DT</when>
+                    <when test="valor == 'LAST_FACTOR_DATE'">LAST_FACTOR_DATE</when>
+                    <when test="valor == 'EXTENDIBLE_IS_STILL_EXTENDIBLE'">EXTENDIBLE_IS_STILL_EXTENDIBLE</when>
+                    <when test="valor == 'NXT_FACTOR_DT'">NXT_FACTOR_DT</when>
+                    <when test="valor == 'COUPON_TYPE_RESET_DATE'">COUPON_TYPE_RESET_DATE</when>
+                    <when test="valor == 'SECURITY_FACTORABLE'">SECURITY_FACTORABLE</when>
+                    <when test="valor == 'INDUSTRY_SUBGROUP'">INDUSTRY_SUBGROUP</when>
+                    <when test="valor == 'PRINCIPAL_FACTOR'">PRINCIPAL_FACTOR</when>
+                    <when test="valor == 'ISSUE_DT'">ISSUE_DT</when>
+                    <when test="valor == 'CUPON_CORTO'">CUPON_CORTO</when>
+                    <when test="valor == 'ACCRUED_CALC_INT_RT'">ACCRUED_CALC_INT_RT</when>
+                    <when test="valor == 'FIRST_CPN_PERIOD_TYP'">FIRST_CPN_PERIOD_TYP</when>
+                    <when test="valor == 'CAPITAL_TYPE_COCO_ACTION'">CAPITAL_TYPE_COCO_ACTION</when>
+                    <when test="valor == 'CHNG_OF_CONTROL_COVENANT'">CHNG_OF_CONTROL_COVENANT</when>
+                    <when test="valor == 'PX_METHOD'">PX_METHOD</when>
+                    <when test="valor == 'PX_DIRTY_CLEAN'">PX_DIRTY_CLEAN</when>
+                    <when test="valor == 'PCT_PAR_QUOTED'">PCT_PAR_QUOTED</when>
+                    <when test="valor == 'EXCHANGEABLE'">EXCHANGEABLE</when>
+                    <when test="valor == 'MATURITY'">MATURITY</when>   
+                    <when test="valor == 'CLIENT_GROUP_A'">CLIENT_GROUP_A</when>
+                    <when test="valor == 'CLIENT_GROUP_B'">CLIENT_GROUP_B</when>
+                    <when test="valor == 'CLIENT_GROUP_C'">CLIENT_GROUP_C</when>
+                    <when test="valor == 'CLIENT_GROUP_D'">CLIENT_GROUP_D</when>
+                    <when test="valor == 'CLIENT_GROUP_E'">CLIENT_GROUP_E</when>
+                    <when test="valor == 'HOME_A'">HOME_A</when>
+                    <when test="valor == 'HOME_B'">HOME_B</when>
+                    <when test="valor == 'HOME_C'">HOME_C</when>
+                    <when test="valor == 'HOME_D'">HOME_D</when>
+                    <when test="valor == 'HOME_E'">HOME_E</when>             
+                    <when test="valor == 'ACE_ISIN_RF.ISIN'">ACE_ISIN_RF.ISIN</when>
+                    <!-- VISTA ISIN  -->
+                    <when test="valor == 'ACE_PERIODICIDAD_RF.ID_PERIODICIDAD'">ACE_PERIODICIDAD_RF.ID_PERIODICIDAD
+                    </when>
+                    <when test="valor == 'ACE_PERIODICIDAD_RF.DESCRIPCION'">ACE_PERIODICIDAD_RF.DESCRIPCION</when>
+                    <when test="valor == 'ACE_PAYMENT_NIVELRIESGO_RF.ID_PAYMENT_RANK'">
+                        ACE_PAYMENT_NIVELRIESGO_RF.ID_PAYMENT_RANK
+                    </when>
+                    <when test="valor == 'ACE_PAYMENT_RANK_RF.DESCRIPCION'">ACE_PAYMENT_RANK_RF.DESCRIPCION</when>
+                    <when test="valor == 'ACE_TIPO_ACTIVO.TIPO_ACTIVO'">ACE_TIPO_ACTIVO.TIPO_ACTIVO</when>
+                    <!-- ACE_OPERACION -->
+                    <when test="valor == 'ID_OPERACION'">ID_OPERACION</when>
+                    <when test="valor == 'TIPO_OPERACION'">TIPO_OPERACION</when>
+                    <when test="valor == 'PRODUCTO'">PRODUCTO</when>
+                    <when test="valor == 'FECHA_SOLICITUD'">FECHA_SOLICITUD</when>
+                    <when test="valor == 'NUMGESTOR'">NUMGESTOR</when>
+                    <when test="valor == 'IDCENT'">IDCENT</when>
+                    <when test="valor == 'NOMINAL'">NOMINAL</when>
+                    <when test="valor == 'ORDENANTE'">ORDENANTE</when>
+                    <when test="valor == 'ID_ESTADO'">ID_ESTADO</when>
+                    <when test="valor == 'USUALTA'">USUALTA</when>
+                    <when test="valor == 'FECALTA'">FECALTA</when>
+                    <when test="valor == 'USUMODI'">USUMODI</when>
+                    <when test="valor == 'FECMODI'">FECMODI</when>
+                    <when test="valor == 'MOTIVO_ESTADO'">MOTIVO_ESTADO</when>
+                    <when test="valor == 'EXCEPCION_AUTORIZADA'">EXCEPCION_AUTORIZADA</when>
+                    <when test="valor == 'TIPO_ORDENANTE'">TIPO_ORDENANTE</when>
+                    <when test="valor == 'TITULAR'">TITULAR</when>
+                    <when test="valor == 'ID_ENTIDAD'">ID_ENTIDAD</when>
+                    <!-- ACE_OPERACION_FWD -->
+                    <when test="valor == 'NOMINAL_CLIENTE_COMPRA'">NOMINAL_CLIENTE_COMPRA</when>
+                    <when test="valor == 'DIVISA_NOMINAL_CC'">DIVISA_NOMINAL_CC</when>
+                    <when test="valor == 'NOMINAL_CLIENTE_VENDE'">NOMINAL_CLIENTE_VENDE</when>
+                    <when test="valor == 'DIVISA_NOMINAL_CV'">DIVISA_NOMINAL_CV</when>
+                    <when test="valor == 'FECHA_VENCIMIENTO'">FECHA_VENCIMIENTO</when>
+                    <when test="valor == 'MESA'">MESA</when>
+                    <when test="valor == 'DESTINO'">DESTINO</when>
+                    <when test="valor == 'PRECIO_FINAL_CLIENTE'">PRECIO_FINAL_CLIENTE</when>
+                    <when test="valor == 'MARGEN_OPERACION'">MARGEN_OPERACION</when>
+                    <when test="valor == 'FECHA_INICIO'">FECHA_INICIO</when>
+                    <when test="valor == 'IMPORT_EXPORT'">IMPORT_EXPORT</when>
+                    <when test="valor == 'ID_PAIS'">ID_PAIS</when>
+                    <when test="valor == 'BIEN_SERVICIO'">BIEN_SERVICIO</when>
+                    <when test="valor == 'DESC_BI_SERV'">DESC_BI_SERV</when>
+                    <when test="valor == 'FECHA_OPERACION'">FECHA_OPERACION</when>
+                    <when test="valor == 'PRECIO_SPOT'">PRECIO_SPOT</when>
+                    <when test="valor == 'PUNTOS'">PUNTOS</when>
+                    <when test="valor == 'PRECIO_TESORERIA'">PRECIO_TESORERIA</when>
+                    <when test="valor == 'SENTIDO'">SENTIDO</when>
+                    <when test="valor == 'PAR_DIVISAS'">PAR_DIVISAS</when>
+                    <when test="valor == 'FECHA_FIXING'">FECHA_FIXING</when>
+                    <when test="valor == 'FECHA_SPOT'">FECHA_SPOT</when>
+                    <when test="valor == 'FIXING_REFERENCIA'">FIXING_REFERENCIA</when>
+                    <when test="valor == 'DIVISA_LIQUIDACION'">DIVISA_LIQUIDACION</when>
+                    <when test="valor == 'TRADER_ID'">TRADER_ID</when>
+                    <when test="valor == 'EXECUTION_DECISION_ALGOID'">EXECUTION_DECISION_ALGOID</when>
+                    <when test="valor == 'PORTFOLIO_TRADER'">PORTFOLIO_TRADER</when>
+                    <when test="valor == 'INVESTMET_DECISION_ALGO_ID'">INVESTMET_DECISION_ALGO_ID</when>
+                    <when test="valor == 'NOMINAL_CLIENTE_COMPRA_SWAP'">NOMINAL_CLIENTE_COMPRA_SWAP</when>
+                    <when test="valor == 'NOMINAL_CLIENTE_VENDE_SWAP'">NOMINAL_CLIENTE_VENDE_SWAP</when>
+                    <when test="valor == 'DIVISA_NOMINAL_CC_SWAP'">DIVISA_NOMINAL_CC_SWAP</when>
+                    <when test="valor == 'DIVISA_NOMINAL_CV_SWAP'">DIVISA_NOMINAL_CV_SWAP</when>
+                    <when test="valor == 'FECHA_VENCIMIENTO_SWAP'">FECHA_VENCIMIENTO_SWAP</when>
+                    <when test="valor == 'SENTIDO_SWAP'">SENTIDO_SWAP</when>
+                    <when test="valor == 'PUNTOS_SWAP'">PUNTOS_SWAP</when>
+                    <when test="valor == 'PRECIO_TESORERIA_SWAP'">PRECIO_TESORERIA_SWAP</when>
+                    <when test="valor == 'PRECIO_FINAL_CLIENTE_PC_SWAP'">PRECIO_FINAL_CLIENTE_PC_SWAP</when>
+                    <when test="valor == 'CONTRATO_PARTENON_SWAP'">CONTRATO_PARTENON_SWAP</when>
+                    <when test="valor == 'CCC'">CCC</when>
+                    <when test="valor == 'CCC2'">CCC2</when>
+                    <when test="valor == 'DIVISA_CCC'">DIVISA_CCC</when>
+                    <when test="valor == 'DIVISA_CCC2'">DIVISA_CCC2</when>
+                    <when test="valor == 'MARGEN_OPERACION_SIN_CVA'">MARGEN_OPERACION_SIN_CVA</when>
+                    <when test="valor == 'CCC_PARTENON'">CCC_PARTENON</when>
+                    <when test="valor == 'CCC2_PARTENON'">CCC2_PARTENON</when>
+                    <when test="valor == 'LOCAL_BOOKING_TRADER_ID'">LOCAL_BOOKING_TRADER_ID</when>
+                    <when test="valor == 'CC_CURRENCY'">CC_CURRENCY</when>
+                    <when test="valor == 'COST_AND_CHARGES'">COST_AND_CHARGES</when>
+                    <when test="valor == 'MARGIN_AMOUNT'">MARGIN_AMOUNT</when>
+                    <when test="valor == 'CVA_AMOUNT'">CVA_AMOUNT</when>
+                    <!-- ACE_OPERACION_DEPO_SWAP -->
+                    <when test="valor == 'DIVISA_CLIENTE'">DIVISA_CLIENTE</when>
+                    <when test="valor == 'DIVISA_SWAP'">DIVISA_SWAP</when>
+                    <when test="valor == 'CONTRATO_MARCO'">CONTRATO_MARCO</when>
+                    <when test="valor == 'CCC_DIVISA_CLIENTE'">CCC_DIVISA_CLIENTE</when>
+                    <when test="valor == 'CCC_DIVISA_SWAP'">CCC_DIVISA_SWAP</when>
+                    <when test="valor == 'NOMINAL_CLIENTE_ENTREGA'">NOMINAL_CLIENTE_ENTREGA</when>
+                    <when test="valor == 'IMPORTE_INICIO'">IMPORTE_INICIO</when>
+                    <when test="valor == 'IMPORTE_ABONAR'">IMPORTE_ABONAR</when>
+                    <when test="valor == 'REMUNERACION_FIJA'">REMUNERACION_FIJA</when>
+                    <when test="valor == 'TAE'">TAE</when>
+                    <when test="valor == 'TIPO_CAMBIO'">TIPO_CAMBIO</when>
+                    <when test="valor == 'MARGEN_DIVISA_CLIENTE'">MARGEN_DIVISA_CLIENTE</when>
+                    <when test="valor == 'MARGEN_DIVISA_SWAP'">MARGEN_DIVISA_SWAP</when>
+                    <when test="valor == 'CCC_PARTENON_DIVISA_CLIENTE'">CCC_PARTENON_DIVISA_CLIENTE</when>
+                    <when test="valor == 'CCC_PARTENON_DIVISA_SWAP'">CCC_PARTENON_DIVISA_SWAP</when>
+                    <when test="valor == 'PUNTOS'">PUNTOS</when>
+                    <when test="valor == 'TIN'">TIN</when>
+                    <when test="valor == 'DOCUBOX_TEXT'">DOCUBOX_TEXT</when>
+                    <when test="valor == 'ADDON'">ADDON</when>
+                    <when test="valor == 'ADDON_PRE'">ADDON_PRE</when>
+                    <when test="valor == 'ADDON_AMOUNT_EXE'">ADDON_AMOUNT_EXE</when>
+                    <when test="valor == 'ADDON_AMOUNT_PRE'">ADDON_AMOUNT_PRE</when>
+                    <!-- ACE_OPERACION_FX -->
+                    <when test="valor == 'SENTIDO'">SENTIDO</when>
+                    <when test="valor == 'TIPO_BARRERA'">TIPO_BARRERA</when>
+                    <when test="valor == 'PROPUESTA_RIESGOS'">PROPUESTA_RIESGOS</when>
+                    <when test="valor == 'CCC'">CCC</when>
+                    <when test="valor == 'NOMINAL_FW'">NOMINAL_FW</when>
+                    <when test="valor == 'DIVISA_NOMINAL_FW'">DIVISA_NOMINAL_FW</when>
+                    <when test="valor == 'PRECIO_ASEGURADO_FW'">PRECIO_ASEGURADO_FW</when>
+                    <when test="valor == 'PAR_DIVISAS_FW'">PAR_DIVISAS_FW</when>
+                    <when test="valor == 'FECHA_ENTREGA_FW'">FECHA_ENTREGA_FW</when>
+                    <when test="valor == 'NOMINAL_OPC1'">NOMINAL_OPC1</when>
+                    <when test="valor == 'DIVISA_NOMINAL_OPC1'">DIVISA_NOMINAL_OPC1</when>
+                    <when test="valor == 'STRIKE_OPC1'">STRIKE_OPC1</when>
+                    <when test="valor == 'PAR_DIVISAS_OPC1'">PAR_DIVISAS_OPC1</when>
+                    <when test="valor == 'BARRERA_OPC1'">BARRERA_OPC1</when>
+                    <when test="valor == 'BARRERA_IN_OUT_OPC1'">BARRERA_IN_OUT_OPC1</when>
+                    <when test="valor == 'BARRERA_UP_DOWN_OPC1'">BARRERA_UP_DOWN_OPC1</when>
+                    <when test="valor == 'BARRERA_ABOVE_BELOW_OPC1'">BARRERA_ABOVE_BELOW_OPC1</when>
+                    <when test="valor == 'FECHA_VENCIMIENTO_OPC1'">FECHA_VENCIMIENTO_OPC1</when>
+                    <when test="valor == 'FECHA_ENTREGA_OPC1'">FECHA_ENTREGA_OPC1</when>
+                    <when test="valor == 'FIXING_REFERENCE_OPC1'">FIXING_REFERENCE_OPC1</when>
+                    <when test="valor == 'CALL_PUT_OPC1'">CALL_PUT_OPC1</when>
+                    <when test="valor == 'DIVISA_CP_OPC1'">DIVISA_CP_OPC1</when>
+                    <when test="valor == 'NOMINAL_OPC2'">NOMINAL_OPC2</when>
+                    <when test="valor == 'DIVISA_NOMINAL_OPC2'">DIVISA_NOMINAL_OPC2</when>
+                    <when test="valor == 'STRIKE_OPC2'">STRIKE_OPC2</when>
+                    <when test="valor == 'PAR_DIVISAS_OPC2'">PAR_DIVISAS_OPC2</when>
+                    <when test="valor == 'BARRERA_OPC2'">BARRERA_OPC2</when>
+                    <when test="valor == 'BARRERA_IN_OUT_OPC2'">BARRERA_IN_OUT_OPC2</when>
+                    <when test="valor == 'BARRERA_UP_DOWN_OPC2'">BARRERA_UP_DOWN_OPC2</when>
+                    <when test="valor == 'BARRERA_ABOVE_BELOW_OPC2'">BARRERA_ABOVE_BELOW_OPC2</when>
+                    <when test="valor == 'FECHA_VENCIMIENTO_OPC2'">FECHA_VENCIMIENTO_OPC2</when>
+                    <when test="valor == 'FECHA_ENTREGA_OPC2'">FECHA_ENTREGA_OPC2</when>
+                    <when test="valor == 'FIXING_REFERENCE_OPC2'">FIXING_REFERENCE_OPC2</when>
+                    <when test="valor == 'CALL_PUT_OPC2'">CALL_PUT_OPC2</when>
+                    <when test="valor == 'DIVISA_CP_OPC2'">DIVISA_CP_OPC2</when>
+                    <when test="valor == 'MIFID'">MIFID</when>
+                    <when test="valor == 'INICIO_BARRERA_OPC1'">INICIO_BARRERA_OPC1</when>
+                    <when test="valor == 'FIN_BARRERA_OPC1'">FIN_BARRERA_OPC1</when>
+                    <when test="valor == 'FIXING_BLOCK_OPC1'">FIXING_BLOCK_OPC1</when>
+                    <when test="valor == 'FIXING_BLOCK_OPC2'">FIXING_BLOCK_OPC2</when>
+                    <when test="valor == 'BARRERA2_IN_OUT_OPC1'">BARRERA2_IN_OUT_OPC1</when>
+                    <when test="valor == 'PAYOFF_OPC1'">PAYOFF_OPC1</when>
+                    <when test="valor == 'FRECUENCIA_BARRERA_OPC1'">FRECUENCIA_BARRERA_OPC1</when>
+                    <when test="valor == 'BARRERA2_OPC1'">BARRERA2_OPC1</when>
+                    <when test="valor == 'BARRERA2_UP_DOWN_OPC1'">BARRERA2_UP_DOWN_OPC1</when>
+                    <when test="valor == 'CONTRATO_PARTENON'">CONTRATO_PARTENON</when>
+                    <when test="valor == 'FECHA_EJECUCION_SE'">FECHA_EJECUCION_SE</when>
+                    <when test="valor == 'PAR_DIVISAS_FW'">PAR_DIVISAS_FW</when>
+                    <when test="valor == 'CLIENT_FAIR_VALUE_SCOPE'">CLIENT_FAIR_VALUE_SCOPE</when>
+                    <!-- ACE_OPERACION_RF -->
+                    <when test="valor == 'ID_SENTIDO'">ID_SENTIDO</when>
+                    <when test="valor == 'ISIN'">ISIN</when>
+                    <when test="valor == 'CCV'">CCV</when>
+                    <when test="valor == 'EXCUPON'">EXCUPON</when>
+                    <when test="valor == 'MARGEN'">MARGEN</when>
+                    <when test="valor == 'EXCUPONMERCADO'">EXCUPONMERCADO</when>
+                    <when test="valor == 'COMENTARIOS'">COMENTARIOS</when>
+                    <when test="valor == 'USUALTA'">USUALTA</when>
+                    <when test="valor == 'FECALTA'">FECALTA</when>
+                    <when test="valor == 'USUMODI'">USUMODI</when>
+                    <when test="valor == 'FECMODI'">FECMODI</when>
+                    <when test="valor == 'FECHA_OPERACION'">FECHA_OPERACION</when>
+                    <when test="valor == 'FECHA_VIGENCIA'">FECHA_VIGENCIA</when>
+                    <when test="valor == 'CCC'">CCC</when>
+                    <when test="valor == 'DISCLAIMER_ORDEN_MINIST'">DISCLAIMER_ORDEN_MINIST</when>
+                    <when test="valor == 'SOLICITUD'">SOLICITUD</when>
+                    <when test="valor == 'PRECIO_EXCUPON_CLIENTE'">PRECIO_EXCUPON_CLIENTE</when>
+                    <when test="valor == 'PRECIO_EXCUPON_MERCADO'">PRECIO_EXCUPON_MERCADO</when>
+                    <when test="valor == 'CLASF_MIFID_TIT'">CLASF_MIFID_TIT</when>
+                    <when test="valor == 'SEGMENTO_TIT'">SEGMENTO_TIT</when>
+                    <when test="valor == 'CONTRAPARTIDA_TIT'">CONTRAPARTIDA_TIT</when>
+                    <when test="valor == 'NIVEL_RIESGO'">NIVEL_RIESGO</when>
+                    <when test="valor == 'CODIGO_FFVV'">CODIGO_FFVV</when>
+                    <when test="valor == 'CONTRAPARTIDA_CIERRE'">CONTRAPARTIDA_CIERRE</when>
+                    <when test="valor == 'MARGEN_UF_PORC'">MARGEN_UF_PORC</when>
+                    <when test="valor == 'MARGEN_ANUAL_PORC'">MARGEN_ANUAL_PORC</when>
+                    <when test="valor == 'MARGEN_EUROS'">MARGEN_EUROS</when>
+                    <when test="valor == 'EFECTIVO'">EFECTIVO</when>
+                    <when test="valor == 'TIR'">TIR</when>
+                    <when test="valor == 'CANAL'">CANAL</when>
+                    <when test="valor == 'FECHA_ISIN'">FECHA_ISIN</when>
+                    <when test="valor == 'CCC_DIVISA'">CCC_DIVISA</when>
+                    <when test="valor == 'TITULAR_SOLICITUD'">TITULAR_SOLICITUD</when>
+                    <when test="valor == 'FECHA_VALOR'">FECHA_VALOR</when>
+                    <when test="valor == 'CUPON_CORRIDO'">CUPON_CORRIDO</when>
+                    <when test="valor == 'SIGA'">SIGA</when>
+                    <when test="valor == 'ID_SIGA'">ID_SIGA</when>
+                    <when test="valor == 'COMISION_CUSTODIA'">COMISION_CUSTODIA</when>
+                    <when test="valor == 'GASTOS_CORREO_ENT'">GASTOS_CORREO_ENT</when>
+                    <when test="valor == 'GASTOS_CORREO_COR'">GASTOS_CORREO_COR</when>
+                    <when test="valor == 'GASTOS_CORREO_SAL'">GASTOS_CORREO_SAL</when>
+                    <when test="valor == 'ACE_OPERACION_FX.ID_OPERACION'">ACE_OPERACION_FX.ID_OPERACION</when>
+                    <when test="valor == 'BLOOMBERG_CIERRE_AUTOMATICO'">BLOOMBERG_CIERRE_AUTOMATICO</when>
+                    <when test="valor == 'BLOOMBERG_MODALIDAD'">BLOOMBERG_MODALIDAD</when>
+                    <when test="valor == 'CHECK_MONEDA'">CHECK_MONEDA</when>
+                    <when test="valor == 'TIR_SIN_GASTOS'">TIR_SIN_GASTOS</when>
+                    <when test="valor == 'COBRO_CUPONES'">COBRO_CUPONES</when>
+                    <when test="valor == 'CANAL_RF'">CANAL_RF</when>
+                    <when test="valor == 'SIGNIFICANT_VALUE_DISCLAIMER'">SIGNIFICANT_VALUE_DISCLAIMER</when>
+                    <when test="valor == 'SIGNIFICANT_VALUE_PCTG'">SIGNIFICANT_VALUE_PCTG</when>
+                    <!-- ACE_OPERACION_PRECIO_SSCC -->
+                    <when test="valor == 'GESTOR'">GESTOR</when>
+                    <when test="valor == 'PRIMA'">PRIMA</when>
+                    <when test="valor == 'PIN_RISK'">PIN_RISK</when>
+                    <when test="valor == 'VEGA'">VEGA</when>
+                    <when test="valor == 'DELTA'">DELTA</when>
+                    <when test="valor == 'ID_SENTINEL'">ID_SENTINEL</when>
+                    <when test="valor == 'CVA'">CVA</when>
+                    <when test="valor == 'CREDIT_SALES'">CREDIT_SALES</when>
+                    <when test="valor == 'BENEFICIO'">BENEFICIO</when>
+                    <when test="valor == 'BENEFICIO_PORCENTAJE'">BENEFICIO_PORCENTAJE</when>
+                    <when test="valor == 'ID_DEAL'">ID_DEAL</when>
+                    <when test="valor == 'ADDON_AMOUNT'">ADDON_AMOUNT</when>
+                    <when test="valor == 'MID_PRICE'">MID_PRICE</when>
+                    <!-- ACE_OPERACION_EVENTO -->
+                    <when test="valor == 'FECHA_EJECUCION'">FECHA_EJECUCION</when>
+                    <when test="valor == 'EVENTO'">EVENTO</when>
+                    <!-- ACE_PRECIO_FX -->
+                    <when test="valor == 'ID_DEAL'">ID_DEAL</when>
+                    <when test="valor == 'RFQ'">RFQ</when>
+                    <when test="valor == 'ID_CEREBRO'">ID_CEREBRO</when>
+                    <!-- ACE_OPERACION_APODERADOS_RF && ACE_OPERACION_ORDENANTES && ACE_OPERACION_TITULARES -->
+                    <when test="valor == 'ACE_OPERACION_TITULARES.DOCUMENTO'">ACE_OPERACION_TITULARES.DOCUMENTO</when>
+                    <when test="valor == 'ACE_OPERACION_TITULARES.NOMBRE'">ACE_OPERACION_TITULARES.NOMBRE</when>
+                    <when test="valor == 'ACE_OPERACION_TITULARES.HOSTID'">ACE_OPERACION_TITULARES.HOSTID</when>
+                    <when test="valor == 'HOSTID'">HOSTID</when>
+                    <when test="valor == 'HOST_ID'">HOST_ID</when>
+                    <when test="valor == 'DFA_ESTADO'">DFA_ESTADO</when>                    
+                    <when test="valor == 'NOMBRE'">NOMBRE</when>
+                    <when test="valor == 'DOCUMENTO'">DOCUMENTO</when>
+                    <when test="valor == 'CLOB_RESPUESTA'">CLOB_RESPUESTA</when>
+                    <when test="valor == 'ID_TIPOAPODER'">ID_TIPOAPODER</when>
+                    <when test="valor == 'HOSTID'">HOSTID</when>
+                    <when test="valor == 'NUM_ORDER'">NUM_ORDER</when>
+                    <when test="valor == 'TIPO_TITULARIDAD'">TIPO_TITULARIDAD</when>
+                    <when test="valor == 'IDMUREX'">IDMUREX</when>
+                    <when test="valor == 'LEI'">LEI</when>
+                    <when test="valor == 'DOMICILIO'">DOMICILIO</when>
+                    <when test="valor == 'ACUERDO_BASICO'">ACUERDO_BASICO</when>
+                    <when test="valor == 'EXISTENCIA_TEST_IDON'">EXISTENCIA_TEST_IDON</when>
+                    <when test="valor == 'VALIDEZ_TEST_IDON'">VALIDEZ_TEST_IDON</when>
+                    <when test="valor == 'FECHA_TEST_IDON'">FECHA_TEST_IDON</when>
+                    <when test="valor == 'FECHA_VIGEN_TEST_IDON'">FECHA_VIGEN_TEST_IDON</when>
+                    <when test="valor == 'RESULTADO_COB_TEST_IDON'">RESULTADO_COB_TEST_IDON</when>
+                    <!-- AC_MIFID -->
+                    <when test="valor == 'INEXPE'">INEXPE</when>
+                    <when test="valor == 'CODMIFID'">CODMIFID</when>
+                    <when test="valor == 'CDEXPEDI'">CDEXPEDI</when>
+                    <when test="valor == 'CLAUSULA'">CLAUSULA</when>
+                    <when test="valor == 'CODMIFID'">CODMIFID</when>
+                    <when test="valor == 'CODFFVV'">CODFFVV</when>
+                    <when test="valor == 'USUALTA'">USUALTA</when>
+                    <when test="valor == 'FECALTA'">FECALTA</when>
+                    <when test="valor == 'USUMODI'">USUMODI</when>
+                    <when test="valor == 'DESC_CODMIFID'">DESC_CODMIFID</when>
+                    <when test="valor == 'FECMODI'">FECMODI</when>
+                    <when test="valor == 'IDPROPMIFID'">IDPROPMIFID</when>
+                    <when test="valor == 'FECHAPORPMIFID'">FECHAPORPMIFID</when>
+                    <!-- AC_VARIABLES && AC_COMBO -->
+                    <when test="valor == 'VALOR'">VALOR</when>
+                    <when test="valor == 'DESCRIPCION'">DESCRIPCION</when>
+                    <when test="valor == 'VALOR_CNAE'">ACE_COMBOS.VALOR</when>
+                    <when test="valor == 'DESCRIPCION_CNAE'">ACE_COMBOS.DESCRIPCION</when>
+                    <when test="valor == 'DESCRIPCION_IND_TRABAJO'">D.DESCRIPCION</when>
+                    <when test="valor == 'REPRESENTANTE_TIPO'">ACE_COMBOS.DESCRIPCION</when>
+                    <!-- BRANCH_INFO -->
+                    <when test="valor == 'TIPOOFI'">TIPOOFI</when>
+                    <when test="valor == 'INDNIVEL'">INDNIVEL</when>
+                    <when test="valor == 'IDEMP'">IDEMP</when>
+                    <when test="valor == 'IDCENT'">IDCENT</when>
+                    <when test="valor == 'NOMBRECENTRO'">NOMBRECENTRO</when>
+                    <when test="valor == 'INDICADORTIPOVIA'">INDICADORTIPOVIA</when>
+                    <when test="valor == 'NOMVIA'">NOMVIA</when>
+                    <when test="valor == 'NUMVIA'">NUMVIA</when>
+                    <when test="valor == 'ANEXDOM'">ANEXDOM</when>
+                    <when test="valor == 'NOMPLAZ'">NOMPLAZ</when>
+                    <when test="valor == 'CODPROV'">CODPROV</when>
+                    <when test="valor == 'NOMPROV'">NOMPROV</when>
+                    <when test="valor == 'DISTRITO'">DISTRITO</when>
+                    <when test="valor == 'CODMUNIC'">CODMUNIC</when>
+                    <when test="valor == 'TELEFONO'">TELEFONO</when>
+                    <when test="valor == 'TELEFAX'">TELEFAX</when>
+                    <when test="valor == 'INDNIVELO'">INDNIVELO</when>
+                    <when test="valor == 'IDCENTO'">IDCENTO</when>
+                    <when test="valor == 'NOMIDCENTO'">NOMIDCENTO</when>
+                    <when test="valor == 'INDNIVELA'">INDNIVELA</when>
+                    <when test="valor == 'IDCENTA'">IDCENTA</when>
+                    <when test="valor == 'NOMCENTA'">NOMCENTA</when>
+                    <when test="valor == 'INDNIVELM'">INDNIVELM</when>
+                    <when test="valor == 'IDCENTM'">IDCENTM</when>
+                    <when test="valor == 'NOMCENTM'">NOMCENTM</when>
+                    <when test="valor == 'CENTROOPERADOR'">CENTROOPERADOR</when>
+                    <when test="valor == 'NOMBRECENTROOPERADOR'">NOMBRECENTROOPERADOR</when>
+                    <when test="valor == 'CENTROEJECT'">CENTROEJECT</when>
+                    <when test="valor == 'NOMBRECENTROEJECT'">NOMBRECENTROEJECT</when>
+                    <when test="valor == 'CENTROTERR'">CENTROTERR</when>
+                    <when test="valor == 'NOMBRECENTROTERR'">NOMBRECENTROTERR</when>
+                    <when test="valor == 'CREATIONDATE'">CREATIONDATE</when>
+                    <when test="valor == 'VALID'">VALID</when>
+                    <when test="valor == 'TIPO'">TIPO</when>
+                    <!-- ACE_PR_PROPUESTAS -->
+                    <when test="valor == 'ID_PROP_PORTAL'">ID_PROP_PORTAL</when>
+                    <when test="valor == 'ID_PROPUESTA_LPA'">ID_PROPUESTA_LPA</when>
+                    <when test="valor == 'CLASIFICACION_MIFID'">CLASIFICACION_MIFID</when>
+                    <when test="valor == 'ESTADO_TEST'">ESTADO_TEST</when>
+                    <when test="valor == 'RESULTADO_CONVENIENCIA'">RESULTADO_CONVENIENCIA</when>
+                    <when test="valor == 'RESULTADO_INVERSION'">RESULTADO_INVERSION</when>
+                    <when test="valor == 'RESULTADO_COBERTURA'">RESULTADO_COBERTURA</when>
+                    <when test="valor == 'FECHA_VIGENCIA_TEST'">FECHA_VIGENCIA_TEST</when>
+                    <when test="valor == 'ID_TEST'">ID_TEST</when>
+                    <when test="valor == 'CLIENTE_GCB'">CLIENTE_GCB</when>
+                    <when test="valor == 'ESTADO_PROPUESTA'">ESTADO_PROPUESTA</when>
+                    <when test="valor == 'FECHA_ALTA_PROPUESTA'">FECHA_ALTA_PROPUESTA</when>
+                    <when test="valor == 'FECHA_VENCIMIENTO_PROPUESTA'">FECHA_VENCIMIENTO_PROPUESTA</when>
+                    <when test="valor == 'VERSION_PROPUESTA'">VERSION_PROPUESTA</when>
+                    <when test="valor == 'TIPO_PROPUESTA'">TIPO_PROPUESTA</when>
+                    <when test="valor == 'OFICINA'">OFICINA</when>
+                    <when test="valor == 'NUMERO_EMPLEADO'">NUMERO_EMPLEADO</when>
+                    <when test="valor == 'FECHA_CREACION_TEST'">FECHA_CREACION_TEST</when>
+                    <when test="valor == 'TIPO_PRODUCTO'">TIPO_PRODUCTO</when>
+                    <!-- ACE_PROPUESTAS_FX -->
+                    <when test="valor == 'ID_PROPUESTA'">ID_PROPUESTA</when>
+                    <!-- ACE_PR_PROP_DOCS y ACE_DOCUMENTOS -->
+                    <when test="valor == 'NOMBRE_DOCUMENTO'">NOMBRE_DOCUMENTO</when>
+                    <when test="valor == 'DESCRIPCION_DOCUMENTO'">DESCRIPCION_DOCUMENTO</when>
+                    <when test="valor == 'ID_TIPDOC'">ID_TIPDOC</when>
+                    <when test="valor == 'NOMBRE_LPA'">NOMBRE_LPA</when>
+                    <when test="valor == 'ID_LPA'">ID_LPA</when>
+                    <when test="valor == 'ID_DOC_LPA'">ID_DOC_LPA</when>
+                     <!-- ACE_ORDENES_CONDICIONADAS -->
+                    <when test="valor == 'DOMICILIO_TIT'">DOMICILIO_TIT</when>
+                    <when test="valor == 'ID_ORDEN'">ID_ORDEN</when> 
+                    <when test="valor == 'DOCUMENTO_TIT'">DOCUMENTO_TIT</when>
+                    <when test="valor == 'PRECIO'">PRECIO</when>   
+                    <when test="valor == 'TIPO_ORDEN'">TIPO_ORDEN</when>
+                    <when test="valor == 'PAR_DIVISA'">PAR_DIVISA</when>
+                    <!-- FUNCIONES Y CARACTERES ORACLE -->
+                    <when test="valor == 'ABS'">ABS</when>
+                    <when test="valor == 'COALESCE'">COALESCE</when>
+                    <when test="valor == 'DECODE'">DECODE</when>
+                    <when test="valor == 'COUNT'">COUNT</when>
+                    <when test="valor == 'ROWNUM'">ROWNUM</when>
+                    <when test="valor == 'TO_CHAR'">TO_CHAR</when>
+                    <when test="valor == 'TO_DATE'">TO_DATE</when>
+                    <when test="valor == 'TO_NUMBER'">TO_NUMBER</when>
+                    <when test="valor == 'RTRIM'">RTRIM</when>
+                    <when test="valor == 'TRIM'">TRIM</when>
+                    <when test="valor == 'LTRIM'">TRIM</when>
+                    <when test="valor == 'LPAD'">LPAD</when>
+                    <when test="valor == 'RPAD'">RPAD</when>
+                    <when test="valor == 'LOWER'">LOWER</when>
+                    <when test="valor == 'UPPER'">UPPER</when>
+                    <when test="valor == 'INITCAP'">INITCAP</when>
+                    <when test="valor == 'INSTR'">INSTR</when>
+                    <when test="valor == 'SUBSTR'">SUBSTR</when>
+                    <when test="valor == 'CONCAT'">CONCAT</when>
+                    <when test="valor == 'LENGTH'">LENGTH</when>
+                    <when test="valor == 'ROUND'">ROUND</when>
+                    <when test="valor == 'TRUNC'">TRUNC</when>
+                    <when test="valor == 'REPLACE'">REPLACE</when>
+                    <when test="valor == 'MAX'">MAX</when>
+                    <when test="valor == 'MIN'">MIN</when>
+                    <when test="valor == 'LIKE'">LIKE</when>
+                    <when test="valor == 'NULL'">NULL</when>
+                    <when test="valor == 'SYSDATE'">SYSDATE</when>
+                    <when test="valor == 'SYSTIMESTAMP'">SYSTIMESTAMP</when>
+                    <!-- A estos caracteres les hemos añadido en el java un espacio. Porque si se consulta solo el caracter da error -->
+                    <when test="valor == '||'">||</when>
+                    <when test="valor == '= '">=</when>
+                    <when test="valor == '+ '">+</when>
+                    <when test="valor == '- '">-</when>
+                    <when test="valor == '/ '">/</when>
+                    <when test="valor == '* '">*</when>
+                    <when test="valor == '( '">(</when>
+                    <when test="valor == ') '">)</when>
+                    <when test="valor == ', '">,</when>
+                    <when test="valor == '> '">></when>
+                    <when test="valor == '>= '">>=</when>
+                    <when test="valor == 'CASE'">CASE</when>
+                    <when test="valor == 'WHEN'">WHEN</when>
+                    <when test="valor == 'NOT'">NOT</when>
+                    <when test="valor == 'IN'">IN</when>
+                    <when test="valor == 'AND'">AND</when>
+                    <when test="valor == 'THEN'">THEN</when>
+                    <when test="valor == 'ELSE'">ELSE</when>
+                    <when test="valor == 'END'">END</when>
+                    <when test="valor == 'OR'">OR</when>
+                    <when test="valor == 'NVL'">NVL</when>
+                    <when test="valor == 'SYS_EXTRACT_UTC'">SYS_EXTRACT_UTC</when>
+                    <when test="valor == 'TO_TIMESTAMP'">TO_TIMESTAMP</when>
+                    <when test="valor == 'TO_TIMESTAMP_TZ'">TO_TIMESTAMP_TZ</when>
+                    <when test="valor == 'TIMESTAMP'">TIMESTAMP</when>
+                    <when test="valor == 'CAST'">CAST</when>
+                    <when test="valor == 'AS'">AS</when>
+                    <when test="valor == 'FROM_TZ'">FROM_TZ</when>
+                    <when test="valor == 'DBMS_RANDOM.VALUE'">DBMS_RANDOM.VALUE</when>
+                    <when test="valor == 'AT'">AT</when>
+                    <when test="valor == 'LOCAL'">LOCAL</when>
+                    <when test="valor == '(+)'">(+)</when>    
+                    <when test="valor == 'IS'">IS</when>
+                    <when test="valor == 'ESPACIO_EN_BLANCO'">' '</when>
+                    <when test="valor == 'REGEXP_SUBSTR'">REGEXP_SUBSTR</when>
+                    <when test="valor == 'HASHTAG_SEPARATOR_REGEX'">'[^#]+'</when>
+                    <!-- ACE_EVENTO -->
+                    <when test="valor == 'ID_EVENTO'">ID_EVENTO</when>
+                    <when test="valor == 'ID_PARTENON'">ID_PARTENON</when>
+                    <when test="valor == 'ID_PARTENON_BACK'">ID_PARTENON_BACK</when>
+                    <when test="valor == 'FECHA_EVENTO'">FECHA_EVENTO</when>
+                    <when test="valor == 'TIPO_EVENTO'">TIPO_EVENTO</when>
+                    <when test="valor == 'IMPORTE_EVENTO'">IMPORTE_EVENTO</when>
+                    <when test="valor == 'FECHA_VENCIMIENTO_EVENTO'">FECHA_VENCIMIENTO_EVENTO</when>
+                    <when test="valor == 'PRECIO_EVENTO'">PRECIO_EVENTO</when>
+                    <when test="valor == 'DIVISA_EVENTO'">DIVISA_EVENTO</when>
+                    <when test="valor == 'LIQUIDACION_EVENTO'">LIQUIDACION_EVENTO</when>
+                    <when test="valor == 'MERCADO_CONCERTADO'">MERCADO_CONCERTADO</when>
+                    <when test="valor == 'FECHA_LIQUIDACION_EVENTO'">FECHA_LIQUIDACION_EVENTO</when>
+                    <when test="valor == 'PUNTOS_EVENTO'">PUNTOS_EVENTO</when>
+                    <when test="valor == 'TIPO_CAMBIO_EVENTO'">TIPO_CAMBIO_EVENTO</when>
+                    <when test="valor == 'MARGEN_EVENTO'">MARGEN_EVENTO</when>
+                    <when test="valor == 'TIPO_CAMBIO_CLIENTE_EVENTO'">TIPO_CAMBIO_CLIENTE_EVENTO</when>
+                    <when test="valor == 'ESTADO_EVENTO'">ESTADO_EVENTO</when>
+                    <when test="valor == 'PRECIO_ANTICIPO_INCUMP'">PRECIO_ANTICIPO_INCUMP</when>
+                    <when test="valor == 'MODO_EVENTO'">MODO_EVENTO</when>
+                    <when test="valor == 'REFERENCIA'">REFERENCIA</when>
+                    <when test="valor == 'NOMBRE_TITULAR'">NOMBRE_TITULAR</when>
+                    <when test="valor == 'DOCUMENTO_TITULAR'">DOCUMENTO_TITULAR</when>
+                    <when test="valor == 'TIPO_CAMBIO_CLIENTE_CANCEL'">TIPO_CAMBIO_CLIENTE_CANCEL</when>
+                    <when test="valor == 'TIPO_CAMBIO_APLICADO'">TIPO_CAMBIO_APLICADO</when>
+                    <when test="valor == 'DIVISA_RIESGO'">DIVISA_RIESGO</when>
+                    <when test="valor == 'SPOT_EVENTO'">SPOT_EVENTO</when>
+                    <when test="valor == 'PAR_DIVISA_COTIZADA'">PAR_DIVISA_COTIZADA</when>
+                    <when test="valor == 'ACE_EVENTO.IDCENT'">ACE_EVENTO.IDCENT</when>
+                    <when test="valor == 'CANAL_INTERNO_ID'">CANAL_INTERNO_ID</when>
+                    <when test="valor == 'APLICACION'">APLICACION</when>                    
+                    <!-- ACE_KID_TERCEROS -->
+                    <when test="valor == 'ID'">ID</when>
+                    <when test="valor == 'ENTIDAD'">ENTIDAD</when>
+                    <when test="valor == 'ISIN'">ISIN</when>
+                    <when test="valor == 'EMISOR'">EMISOR</when>
+                    <when test="valor == 'NOMBRE_PRODUCTO'">NOMBRE_PRODUCTO</when>
+                    <when test="valor == 'WARRANT_ETF'">WARRANT_ETF</when>
+                    <when test="valor == 'CLIENTE_NOMBRE'">CLIENTE_NOMBRE</when>
+                    <when test="valor == 'CLIENTE_DOCUMENTO'">CLIENTE_DOCUMENTO</when>
+                    <when test="valor == 'CLIENTE_CODIGOJ'">CLIENTE_CODIGOJ</when>
+                    <!-- ACE_OPCION_FX_CANCELACIONES -->
+                    <when test="valor == 'MUREX_ID'">MUREX_ID</when>
+                    <when test="valor == 'FECHA_CANCELACION'">FECHA_CANCELACION</when>
+                    <when test="valor == 'PRECIO_CANCELACION'">PRECIO_CANCELACION</when>
+                    <when test="valor == 'PRECIO_CANCELACION_QEF'">PRECIO_CANCELACION_QEF</when>
+                    <when test="valor == 'PRECIO_FINAL_CLIENTE'">PRECIO_FINAL_CLIENTE</when>
+                    <when test="valor == 'COUNTERPARTY_DESC'">COUNTERPARTY_DESC</when>
+                    <when test="valor == 'NOMINAL'">NOMINAL</when>
+                    <when test="valor == 'FX_BASE_CURRENCY'">FX_BASE_CURRENCY</when>
+                    <when test="valor == 'QUANTITY_UNIT'">QUANTITY_UNIT</when>
+                    <when test="valor == 'TRADE_DATE'">TRADE_DATE</when>
+                    <when test="valor == 'CLIENTE_DIRECCION'">CLIENTE_DIRECCION</when>
+                    <when test="valor == 'LIVE_QUANTITY2'">LIVE_QUANTITY2</when>
+                    <when test="valor == 'EQUIVALENT_QUANTITY'">EQUIVALENT_QUANTITY</when>
+                    <when test="valor == 'EQUIVALENT_QUANTITY_UNIT'">EQUIVALENT_QUANTITY_UNIT</when>
+                    <when test="valor == 'PRECIO_FINAL_CLIENTE'">PRECIO_FINAL_CLIENTE</when>
+                    <when test="valor == 'MARGEN'">MARGEN</when>
+                    <when test="valor == 'DIVISA_LIQUIDACION'">DIVISA_LIQUIDACION</when>
+                    <when test="valor == 'CONTRACT_NUMBER'">CONTRACT_NUMBER</when>
+                    <!-- VISTA_OPERACION_RF_DOCUMENTOS -->
+                    <when test="valor == 'ACE_OPERACION_RF.ID_ENTIDAD'">ACE_OPERACION_RF.ID_ENTIDAD</when>
+                    <when test="valor == 'ACE_DOCUMENTOS.FECALTA'">ACE_DOCUMENTOS.FECALTA</when>
+                    <when test="valor == 'ACE_OPERACION_RF.ISIN'">ACE_OPERACION_RF.ISIN</when>
+                    <when test="valor == 'ACE_OPERACION.NOMINAL'">ACE_OPERACION.NOMINAL</when>
+                    <when test="valor == 'ACE_OPERACION_RF.ID_OPERACION'">ACE_OPERACION_RF.ID_OPERACION</when>
+                    <when test="valor == 'ACE_OPERACION_ORDENANTES.DOCUMENTO'">ACE_OPERACION_ORDENANTES.DOCUMENTO</when>
+                    <when test="valor == 'NUM_TITULARES'">(SELECT COUNT(*) FROM ACE_OPERACION_TITULARES WHERE
+                        ACE_OPERACION_TITULARES.ID_OPERACION=ACE_OPERACION_RF.ID_OPERACION)
+                    </when>
+                    <when test="valor == 'ACE_ISIN_RF.PREV_CPN_DT'">ACE_ISIN_RF.PREV_CPN_DT</when>
+                    <!-- ACE_ACUM_CLIENTE -->
+                    <when test="valor == 'CONTRAPARTIDA'">CONTRAPARTIDA</when>
+                    <!-- ACE_ACUM_COTIZACION -->
+                    <when test="valor == 'PRICE_VERSION'">PRICE_VERSION</when>
+                    <when test="valor == 'ESTADO'">ESTADO</when>
+                    <when test="valor == 'PREMIUM_IMPORTE'">PREMIUM_IMPORTE</when>
+                    <when test="valor == 'PREMIUM_PORCENTUAL'">PREMIUM_PORCENTUAL</when>
+                    <when test="valor == 'PREMIUM_MERCADO'">PREMIUM_MERCADO</when>
+                    <when test="valor == 'COMENTARIO'">COMENTARIO</when>
+                    <when test="valor == 'FECHA_COTIZACION'">FECHA_COTIZACION</when>
+                    <when test="valor == 'TIMEOUT'">TIMEOUT</when>
+                    <when test="valor == 'IL'">IL</when>
+                    <when test="valor == 'TRADER'">TRADER</when>
+                    <when test="valor == 'DIVISA_GRIEGA'">DIVISA_GRIEGA</when>
+                    <when test="valor == 'NOMINAL_DIVISA_GRIEGA'">NOMINAL_DIVISA_GRIEGA</when>
+                    <when test="valor == 'MARGEN_DIVISA_GRIEGA'">MARGEN_DIVISA_GRIEGA</when>
+                    <when test="valor == 'STRIKE'">STRIKE</when>
+                    <when test="valor == 'MARGEN_NETO'">MARGEN_NETO</when>
+                    <when test="valor == 'VALOR_MERCADO_TOTAL'">VALOR_MERCADO_TOTAL</when>
+                    <when test="valor == 'MARGEN_NETO_PCTG'">MARGEN_NETO_PCTG</when>
+                    <!-- ACE_ACUM_OPER_FECHA_OBS -->
+                    <when test="valor == 'PONDERADO'">PONDERADO</when>
+                    <when test="valor == 'FECHA_LIQUIDACION'">FECHA_LIQUIDACION</when>
+                    <!-- ACE_ACUM_OPERACION -->
+                    <when test="valor == 'FRECUENCIA'">FRECUENCIA</when>
+                    <when test="valor == 'TIPO_BARRERA'">TIPO_BARRERA</when>
+                    <when test="valor == 'ESCALONADO'">ESCALONADO</when>
+                    <when test="valor == 'TIPO_NOMINAL'">TIPO_NOMINAL</when>
+                    <when test="valor == 'ESCALONADO'">ESCALONADO</when>
+                    <when test="valor == 'TIPO_NOMINAL'">TIPO_NOMINAL</when>
+                    <when test="valor == 'FIJA_LIQUIDA'">FIJA_LIQUIDA</when>
+                    <when test="valor == 'BOLSA_PUNTOS'">BOLSA_PUNTOS</when>
+                    <when test="valor == 'FIJA_LIQUIDA'">FIJA_LIQUIDA</when>
+                    <when test="valor == 'FECHA_OBSERVACION'">FECHA_OBSERVACION</when>
+                    <when test="valor == 'FECHA_ENTREGA'">FECHA_ENTREGA</when>
+                    <when test="valor == 'STRIKE'">STRIKE</when>
+                    <when test="valor == 'STRIKE_DOBLE'">STRIKE_DOBLE</when>
+                    <when test="valor == 'BARRERA'">BARRERA</when>
+                    <when test="valor == 'BARRERA_DOBLE'">BARRERA_DOBLE</when>
+                    <when test="valor == 'BARRERA_DESACTIVANTE'">BARRERA_DESACTIVANTE</when>
+                    <when test="valor == 'NIVEL_PIVOT'">NIVEL_PIVOT</when>
+                    <when test="valor == 'CLASF_MIFID'">CLASF_MIFID</when>
+                    <when test="valor == 'DIVISA_NOMINAL'">DIVISA_NOMINAL</when>
+                    <when test="valor == 'LIQUIDACION_DIFERENCIA'">LIQUIDACION_DIFERENCIA</when>
+                    <when test="valor == 'SALES_CREDIT'">SALES_CREDIT</when>
+                    <when test="valor == 'ID_LPA_WORKFLOW'">ID_LPA_WORKFLOW</when>
+                    <when test="valor == 'TIPO_SENTIDO'">TIPO_SENTIDO</when>
+                    <when test="valor == 'TIPO_SENTIDO'">TIPO_SENTIDO</when>
+                    <when test="valor == 'STRIKE_HIGH'">STRIKE_HIGH</when>
+                    <when test="valor == 'STRIKE_LOW'">STRIKE_LOW</when>
+                    <when test="valor == 'STRIKE_DOBLE_HIGH'">STRIKE_DOBLE_HIGH</when>
+                    <when test="valor == 'STRIKE_DOBLE_LOW'">STRIKE_DOBLE_LOW</when>
+                    <when test="valor == 'BARRERA_HIGH'">BARRERA_HIGH</when>
+                    <when test="valor == 'BARRERA_LOW'">BARRERA_LOW</when>
+                    <when test="valor == 'BARRERA_DOBLE_HIGH'">BARRERA_DOBLE_HIGH</when>
+                    <when test="valor == 'BARRERA_DOBLE_LOW'">BARRERA_DOBLE_LOW</when>
+                    <when test="valor == 'BARRERA_DESACTIVANTE'">BARRERA_DESACTIVANTE</when>
+                    <when test="valor == 'NIVEL_PIVOT'">NIVEL_PIVOT</when>
+                    <when test="valor == 'DIVISA_ENTREGA'">DIVISA_ENTREGA</when>
+                    <when test="valor == 'PRODUCT_NAME'">PRODUCT_NAME</when>
+                    <when test="valor == 'CANAL_INTERNO'">CANAL_INTERNO</when>
+                    <when test="valor == 'RENEGOCIACION'">RENEGOCIACION</when>
+                    <when test="valor == 'SIN_ACUMULACION'">SIN_ACUMULACION</when>
+                    <when test="valor == 'IMPORTE_CONSUMO'">IMPORTE_CONSUMO</when>
+                    <when test="valor == 'IMPORTE_PROPUESTA'">IMPORTE_PROPUESTA</when>
+                    <when test="valor == 'PROPUESTA_PMP'">PROPUESTA_PMP</when>
+                    <when test="valor == 'FECHA_FIRMA_PROPUESTA_PMP'">FECHA_FIRMA_PROPUESTA_PMP</when>
+                    <when test="valor == 'DIVISA_PROPUESTA'">DIVISA_PROPUESTA</when>
+                    <when test="valor == 'AJUSTE_STRIKE'">AJUSTE_STRIKE</when>                     
+                    <!-- CAMP_CAMPANYAS -->
+                    <when test="valor == 'NOMBRE_COMERCIAL'">NOMBRE_COMERCIAL</when>
+                    <when test="valor == 'SENTINEL_ID'">SENTINEL_ID</when>
+                    <when test="valor == 'ID_WORKFLOW_KID'">ID_WORKFLOW_KID</when>
+                    <when test="valor == 'ID_WORKFLOW_CONTRATO'">ID_WORKFLOW_CONTRATO</when>
+                    <when test="valor == 'ID_PRODUCTO'">ID_PRODUCTO</when>
+                    <when test="valor == 'ID_PRODUCTO_MIFID'">ID_PRODUCTO_MIFID</when>
+                    <when test="valor == 'FECHA_GENERACION_PRODUCT_MIFID'">FECHA_GENERACION_PRODUCT_MIFID</when>
+                    <when test="valor == 'DISPONIBLE'">DISPONIBLE</when>
+                    <when test="valor == 'ID_DOCUMENTO_KID'">ID_DOCUMENTO_KID</when>
+                    <when test="valor == 'NOMBRE_DOCUMENTO_KID'">NOMBRE_DOCUMENTO_KID</when>
+                    <when test="valor == 'FECHA_GENERACION_KID'">FECHA_GENERACION_KID</when>
+                    <when test="valor == 'ID_WORKFLOW_CONTRATO'">ID_WORKFLOW_CONTRATO</when>
+                    <when test="valor == 'ID_DOCUMENTO_CONTRATO'">ID_WORKFLOW_CONTRATO</when>
+                    <when test="valor == 'NOMBRE_DOCUMENTO_CONTRATO'">NOMBRE_DOCUMENTO_CONTRATO</when>
+                    <when test="valor == 'FECHA_GENERACION_CONTRATO'">FECHA_GENERACION_CONTRATO</when>
+                    <when test="valor == 'FECHA_FIN'">FECHA_FIN</when>                    
+                    <when test="valor == 'PAR_DIVISA_DOMINANTE'">PAR_DIVISA_DOMINANTE</when>
+                    <when test="valor == 'MARGEN_ANUAL'">MARGEN_ANUAL</when>                    
+                    <!-- CAMP_GRUPOS_CAMPANYA -->
+                    <when test="valor == 'NOM_INTERNO'">NOM_INTERNO</when>
+                    <when test="valor == 'DIVISA_OP'">DIVISA_OP</when>
+                    <when test="valor == 'DISP_INICIAL'">DISP_INICIAL</when>
+                    <when test="valor == 'NOM_MIN_OP'">NOM_MIN_OP</when>
+                    <when test="valor == 'NOM_MAX_OP'">NOM_MAX_OP</when>
+                    <when test="valor == 'LISTA_CERRADA'">LISTA_CERRADA</when>
+                    <when test="valor == 'CANALES'">CANALES</when>
+                    <when test="valor == 'PROD_SGC'">PROD_SGC</when>
+                    <when test="valor == 'POR_GARANTIZADO'">POR_GARANTIZADO</when>
+                    <when test="valor == 'IMP_MULTIPLO'">IMP_MULTIPLO</when>
+                    <when test="valor == 'SUBYACENTE'">SUBYACENTE</when>
+                    <when test="valor == 'ACTIVA'">ACTIVA</when>
+                    <when test="valor == 'TRAD_SENTINEL'">TRAD_SENTINEL</when>
+                    <when test="valor == 'PORTFOLIO'">PORTFOLIO</when>                    
+                    <!-- CAMP_PRODUCTOS -->
+                    <when test="valor == 'NOMINAL_PRIMA_TITULOS'">NOMINAL_PRIMA_TITULOS</when>
+                    <when test="valor == 'TIENE_CONTRATO_MARCO'">TIENE_CONTRATO_MARCO</when>
+                    <when test="valor == 'PRODUCTO_CONTRATO_MARCO'">PRODUCTO_CONTRATO_MARCO</when>
+                    <when test="valor == 'NUMERO_CUENTAS'">NUMERO_CUENTAS</when>
+                    <when test="valor == 'TIENE_PROPUESTA_RIESGO'">TIENE_PROPUESTA_RIESGO</when>
+                    <when test="valor == 'PRODUCTO_PROPUESTA'">PRODUCTO_PROPUESTA</when>
+                    <when test="valor == 'TIENE_CUENTA_VALORES'">TIENE_CUENTA_VALORES</when>
+                    <when test="valor == 'PRODUCTO_CCV'">PRODUCTO_CCV</when>
+                    <when test="valor == 'TIENE_PRESTAMOS'">TIENE_PRESTAMOS</when>
+                    <when test="valor == 'PRODUCTO_PRESTAMO'">PRODUCTO_PRESTAMO</when>
+                    <when test="valor == 'TIENE_CUENTA_VALORES'">TIENE_CUENTA_VALORES</when>
+                    <when test="valor == 'GRUPO'">GRUPO</when>
+                    <when test="valor == 'TIPO_PRODUCTO_PLANTILLA'">TIPO_PRODUCTO_PLANTILLA</when>
+                    <!-- CAMP_TIPOS_PRODUCTOS -->
+                    <when test="valor == 'DFA'">DFA</when>
+                    <when test="valor == 'ID_FFVV'">ID_FFVV</when>
+                    <!-- CAMP_OPERACIONES -->
+                    <when test="valor == 'ID_BROKER'">ID_BROKER</when>
+                    <when test="valor == 'ID_CAMPANYA'">ID_CAMPANYA</when>
+                    <when test="valor == 'PRIMA_CALCULADA'">PRIMA_CALCULADA</when>
+                    <when test="valor == 'PRESTAMO'">PRESTAMO</when>
+                    <when test="valor == 'ID_FFVV'">ID_FFVV</when>
+                    <when test="valor == 'CCC1'">CCC1</when>
+                    <when test="valor == 'CCC2'">CCC2</when>
+                    <when test="valor == 'FECHA_CONTRATACION'">FECHA_CONTRATACION</when>
+                    <when test="valor == 'CAMP_OPERACIONES.ID'">CAMP_OPERACIONES.ID</when>
+                    <when test="valor == 'DIVISA'">DIVISA</when>   
+                    <when test="valor == 'REF_SIGA'">REF_SIGA</when>
+                    <when test="valor == 'CAMP_OPERACIONES.SENTINEL_ID'">CAMP_OPERACIONES.SENTINEL_ID</when>                                     
+                    <when test="valor == 'CAMP_OPERACIONES.APLICACION'">CAMP_OPERACIONES.APLICACION</when>
+                    <when test="valor == 'VENTAS'">VENTAS</when>
+                    <when test="valor == 'ID_EXTERNAL_MX'">ID_EXTERNAL_MX</when>
+                    <when test="valor == 'ALTERNATE_ID_MX'">ALTERNATE_ID_MX</when>
+                    <when test="valor == 'TRADE_GLOBAL_ID_MX'">TRADE_GLOBAL_ID_MX</when>
+                    <when test="valor == 'PRIMARY_ID_MX'">PRIMARY_ID_MX</when>
+                    <when test="valor == 'CAMP_CAMPANYAS.SENTINEL_ID'">CAMP_CAMPANYAS.SENTINEL_ID</when>
+                    <when test="valor == 'IS_DIGITAL_SIGNED'">IS_DIGITAL_SIGNED</when>
+                    <!-- CAMP_MIFID -->
+                    <when test="valor == 'CAMP_MIFID.EXPEDIENTE'">CAMP_MIFID.EXPEDIENTE</when>
+                    <when test="valor == 'CAMP_MIFID.CDEXPEDI'">CAMP_MIFID.CDEXPEDI</when>
+                    <!--  CAMP_SGC_DOCUMENTS -->
+                    <when test="valor == 'GET_JSON_VALUE'">GET_JSON_VALUE</when>
+                    <when test="valor == 'CAMP_SGC_DOCUMENTS.DOCUMENTO'">CAMP_SGC_DOCUMENTS.DOCUMENTO</when>
+
+                    <!--  GLOBAL -->
+                     <when test="valor == 'ORIGEN_CONTRAPARTIDA_TIT'">ORIGEN_CONTRAPARTIDA_TIT</when>                 
+
+                    <!--  RENEGOCIACION -->
+                    <when test="valor == 'TIPO_CANCELACION'">TIPO_CANCELACION</when>
+                    <when test="valor == 'VALOR_MERCADO'">VALOR_MERCADO</when>        
+                    <when test="valor == 'DESCRIPCION_LPA'">DESCRIPCION_LPA</when>
+                    <when test="valor == 'LIQUIDACION_CLIENTE'">LIQUIDACION_CLIENTE</when>
+                    <!--  VISTA_GRADOS_RF --> 
+                    <when test="valor == 'GRADO_MOODY'">GRADO_MOODY</when>
+                    <when test="valor == 'GRADO_DESC_MOODY'">GRADO_DESC_MOODY</when>        
+                    <when test="valor == 'GRADO_SP'">GRADO_SP</when>
+                    <when test="valor == 'GRADO_DESC_SP'">GRADO_DESC_SP</when>                     
+                    <when test="valor == 'GRADO_FITCH'">GRADO_FITCH</when>
+                    <when test="valor == 'GRADO_DESC_FITCH'">GRADO_DESC_FITCH</when>                                       
+                    <!-- ADDO_OPERACION -->
+                    <when test="valor == 'ADDO_OPERACION.ID_OPERACION'">ADDO_OPERACION.ID_OPERACION</when>
+                    <when test="valor == 'ADDO_OPERACION.TIN'">ADDO_OPERACION.TIN</when>
+                    <when test="valor == 'ADDO_OPERACION.DIVISA_CLIENTE'">ADDO_OPERACION.DIVISA_CLIENTE</when>
+                    <when test="valor == 'ADDO_OPERACION.CCC_DIVISA_CLIENTE'">ADDO_OPERACION.CCC_DIVISA_CLIENTE</when>
+                    <when test="valor == 'ADDO_OPERACION.TITULAR'">ADDO_OPERACION.TITULAR</when>
+                    <when test="valor == 'ADDO_OPERACION.IDCENT'">ADDO_OPERACION.IDCENT</when>
+                    <when test="valor == 'ADDO_OPERACION.CONTRATO_MARCO'">ADDO_OPERACION.CONTRATO_MARCO</when>
+                    <when test="valor == 'ADDO_OPERACION.ID_IPF'">ADDO_OPERACION.ID_IPF</when>
+                    <when test="valor == 'ADDO_OPERACION.CANAL'">ADDO_OPERACION.CANAL</when>
+                    <when test="valor == 'ADDO_OPERACION.MARGEN_DIVISA_CLIENTE'">ADDO_OPERACION.MARGEN_DIVISA_CLIENTE</when>
+                    <when test="valor == 'ADDO_OPERACION.FECHA_VENCIMIENTO'">ADDO_OPERACION.FECHA_VENCIMIENTO</when>
+                    <when test="valor == 'ADDO_OPERACION.FECHA_INICIO'">ADDO_OPERACION.FECHA_INICIO</when>
+                    <when test="valor == 'ADDO_OPERACION.NOMINAL_CLIENTE_ENTREGA'">ADDO_OPERACION.NOMINAL_CLIENTE_ENTREGA</when>
+                    <when test="valor == 'ADDO_OPERACION.CONTRAPARTIDA_TIT'">ADDO_OPERACION.CONTRAPARTIDA_TIT</when>
+                    <when test="valor == 'ADDO_OPERACION.ID_ENTIDAD'">ADDO_OPERACION.ID_ENTIDAD</when>
+                    <when test="valor == 'ADDO_OPERACION.IMPORTE_INTERESES'">ADDO_OPERACION.IMPORTE_INTERESES</when>
+                    <when test="valor == 'ADDO_OPERACION.LPA_WF_ID'">ADDO_OPERACION.LPA_WF_ID</when>
+                    <when test="valor == 'ADDO_OPERACION.TAE'">ADDO_OPERACION.TAE</when>
+                    <when test="valor == 'ADDO_OPERACION.MARGEN_OPERACION'">ADDO_OPERACION.MARGEN_OPERACION</when>
+                    <when test="valor == 'ADDO_OPERACION.CLASF_MIFID_TIT'">ADDO_OPERACION.CLASF_MIFID_TIT</when>
+                    <when test="valor == 'ADDO_OPERACION.FECHA_OPERACION'">ADDO_OPERACION.FECHA_OPERACION</when>
+                    <when test="valor == 'ADDO_OPERACION.ORIGEN_CONTRAPARTIDA_TIT'">ADDO_OPERACION.ORIGEN_CONTRAPARTIDA_TIT</when>
+                    <when test="valor == 'ADDO_OPERACION.RATE_CANCELACION'">ADDO_OPERACION.RATE_CANCELACION</when>
+                    <when test="valor == 'ADDO_OPERACION.FORMA_INTERVENCION_CUENTA'">ADDO_OPERACION.FORMA_INTERVENCION_CUENTA</when>
+                    <when test="valor == 'ADDO_OPERACION.TTI'">ADDO_OPERACION.TTI</when>
+                    <!--  ADDO_DIVISAS_CONF_SWAP  -->
+                    <when test="valor == 'ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_SWAP'">ADDO_DIVISAS_CONF_SWAP.SWAP</when>
+                    <when test="valor == 'ADDO_DIVISAS_CONF_SWAP.CURRENCY_SWAP'">ADDO_DIVISAS_CONF_SWAP.CURRENCY_SWAP</when>
+                    <when test="valor == 'ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_STM'">ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_STM</when>
+                    <when test="valor == 'ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_ALCO'">ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_ALCO</when>
+                    <when test="valor == 'ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_FXSWAP'">ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_FXSWAP</when>
+                    <when test="valor == 'ADDO_DIVISAS_CONF_SWAP.RATE_CONVENTION'">ADDO_DIVISAS_CONF_SWAP.RATE_CONVENTION</when>
+                    <when test="valor == 'ADDO_DIVISAS_CONF_SWAP.DAYS'">ADDO_DIVISAS_CONF_SWAP.DAYS</when>  
+                    <when test="valor == 'ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_SPOT'">ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_SPOT</when>
+                    <when test="valor == 'ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_DEPOINT'">ADDO_DIVISAS_CONF_SWAP.PORTFOLIO_DEPOINT</when>                    
+                    <!--  ADDO_OPERACION_ALCO  -->
+                    <when test="valor == 'ADDO_OPERACION_ALCO.CURRENCY_ALCO'">ADDO_OPERACION_ALCO.CURRENCY_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_ALCO.VALUE_DATE'">ADDO_OPERACION_ALCO.VALUE_DATE</when>
+                    <when test="valor == 'ADDO_OPERACION_ALCO.MATURITY_DATE'">ADDO_OPERACION_ALCO.MATURITY_DATE</when>
+                    <when test="valor == 'ADDO_OPERACION_ALCO.INITIAL_AMOUNT_ALCO'">ADDO_OPERACION_ALCO.INITIAL_AMOUNT_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_ALCO.FINAL_AMOUNT_ALCO'">ADDO_OPERACION_ALCO.FINAL_AMOUNT_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_ALCO.INTEREST_RATE'">ADDO_OPERACION_ALCO.INTEREST_RATE</when>
+                    <when test="valor == 'ADDO_OPERACION_ALCO.REMAINING_AMOUNT_ALCO'">ADDO_OPERACION_ALCO.REMAINING_AMOUNT_ALCO</when>
+                    <!--  ADDO_OPERACION_TITULARES -->
+                    <when test="valor == 'ADDO_OPERACION_TITULARES.DOCUMENTO'">ADDO_OPERACION_TITULARES.DOCUMENTO</when>
+                    <when test="valor == 'ADDO_OPERACION_TITULARES.NOMBRE'">ADDO_OPERACION_TITULARES.NOMBRE</when>
+                    <when test="valor == 'ADDO_OPERACION_TITULARES.HOSTID'">ADDO_OPERACION_TITULARES.HOSTID</when>
+                    <when test="valor == 'ADDO_OPERACION_TITULARES.NACIONALIDAD'">ADDO_OPERACION_TITULARES.NACIONALIDAD</when>
+                    <when test="valor == 'ADDO_OPERACION_TITULARES.PAIS_RESIDENCIA'">ADDO_OPERACION_TITULARES.PAIS_RESIDENCIA</when>
+                    <when test="valor == 'ADDO_OPERACION_TITULARES.DOMICILIO'">ADDO_OPERACION_TITULARES.DOMICILIO</when>
+                    <when test="valor == 'ADDO_OPERACION_TITULARES.CNAE'">ADDO_OPERACION_TITULARES.CNAE</when>
+                    <when test="valor == 'ADDO_OPERACION_TITULARES.INTERVININTE'">ADDO_OPERACION_TITULARES.INTERVINIENTE</when>
+                    <when test="valor == 'ADDO_OPERACION_TITULARES.IND_TIPO_TRABAJO'">ADDO_OPERACION_TITULARES.IND_TIPO_TRABAJO</when>
+                    <!-- ADDO_OPERACION_APODERADOS -->
+                    <when test="valor == 'ADDO_OPERACION_APODERADOS.NOMBRE'">ADDO_OPERACION_APODERADOS.NOMBRE</when>
+                    <when test="valor == 'ADDO_OPERACION_APODERADOS.DOCUMENTO'">ADDO_OPERACION_APODERADOS.DOCUMENTO</when>
+                    <when test="valor == 'ADDO_OPERACION_APODERADOS.FIRMANTE'">ADDO_OPERACION_APODERADOS.FIRMANTE</when>
+                    <when test="valor == 'NUM_APODERADOS'">(SELECT COUNT(*) FROM ADDO_OPERACION_APODERADOS
+                        WHERE ADDO_OPERACION_APODERADOS.FIRMANTE = 'SI' AND ADDO_OPERACION_APODERADOS.ID_OPERACION = ADDO_OPERACION.ID_OPERACION)
+                    </when>
+                    <!-- ADDO_OPERACION_FXSWAP -->
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.INITIAL_AMOUNT_ALCO'">ADDO_OPERACION_FXSWAP.INITIAL_AMOUNT_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.INITIAL_AMOUNT_CLIENT'">ADDO_OPERACION_FXSWAP.INITIAL_AMOUNT_CLIENT</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.RATE_EXCHANGE_SPOT'">ADDO_OPERACION_FXSWAP.RATE_EXCHANGE_SPOT</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.FINAL_AMOUNT_CLIENT'">ADDO_OPERACION_FXSWAP.FINAL_AMOUNT_CLIENT</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.FINAL_AMOUNT_ALCO'">ADDO_OPERACION_FXSWAP.FINAL_AMOUNT_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.RATE_EXCHANGE_FORWARD'">ADDO_OPERACION_FXSWAP.RATE_EXCHANGE_FORWARD</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.TTI_CURRENCY_ALCO'">ADDO_OPERACION_FXSWAP.TTI_CURRENCY_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.CURRENCY_ALCO'">ADDO_OPERACION_FXSWAP.CURRENCY_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.CURRENCY_CLIENT'">ADDO_OPERACION_FXSWAP.CURRENCY_CLIENT</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.CURRENCY_PAIR'">ADDO_OPERACION_FXSWAP.CURRENCY_PAIR</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.SPOT_DATE'">ADDO_OPERACION_FXSWAP.SPOT_DATE</when>
+                    <when test="valor == 'ADDO_OPERACION_FXSWAP.FORWARD_DATE'">ADDO_OPERACION_FXSWAP.FORWARD_DATE</when>
+					<!-- ADDO_EVENT -->
+                    <when test="valor == 'ADDO_EVENT.ACCRUED_MARGIN'">ADDO_EVENT.ACCRUED_MARGIN</when>
+                    <when test="valor == 'ADDO_EVENT.PENDING_ACCRUED_MARGIN'">ADDO_EVENT.PENDING_ACCRUED_MARGIN</when>
+                    <when test="valor == 'ADDO_EVENT.PENALTY_AMOUNT'">ADDO_EVENT.PENALTY_AMOUNT</when>
+                    <when test="valor == 'ADDO_EVENT.AMOUNT_EVENT'">ADDO_EVENT.AMOUNT_EVENT</when>
+                    <when test="valor == 'ADDO_EVENT.VALUE_DATE_EVENT'">ADDO_EVENT.VALUE_DATE_EVENT</when>
+                    <when test="valor == 'ADDO_EVENT.DEPOSIT_MUREXID'">ADDO_EVENT.DEPOSIT_MUREXID</when>
+                    <when test="valor == 'ADDO_EVENT.DEPOSIT_TRADEID'">ADDO_EVENT.DEPOSIT_TRADEID</when>
+                    <when test="valor == 'ADDO_EVENT.ALCO_MUREXID'">ADDO_EVENT.ALCO_MUREXID</when>
+                    <when test="valor == 'ADDO_EVENT.FXSWAP_MUREXID'">ADDO_EVENT.FXSWAP_MUREXID</when>
+                    <when test="valor == 'ADDO_EVENT.REMAINING_AMOUNT'">ADDO_EVENT.REMAINING_AMOUNT</when>
+                    <!-- ADDO_OPERACION_CANC_FXSWAP -->
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.INITIAL_AMOUNT_ALCO'">ADDO_OPERACION_CANC_FXSWAP.INITIAL_AMOUNT_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.INITIAL_AMOUNT_CLIENT'">ADDO_OPERACION_CANC_FXSWAP.INITIAL_AMOUNT_CLIENT</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.RATE_EXCHANGE_SPOT'">ADDO_OPERACION_CANC_FXSWAP.RATE_EXCHANGE_SPOT</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.FINAL_AMOUNT_CLIENT'">ADDO_OPERACION_CANC_FXSWAP.FINAL_AMOUNT_CLIENT</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.FINAL_AMOUNT_ALCO'">ADDO_OPERACION_CANC_FXSWAP.FINAL_AMOUNT_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.RATE_EXCHANGE_FORWARD'">ADDO_OPERACION_CANC_FXSWAP.RATE_EXCHANGE_FORWARD</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.TTI_CURRENCY_ALCO'">ADDO_OPERACION_CANC_FXSWAP.TTI_CURRENCY_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.CURRENCY_ALCO'">ADDO_OPERACION_CANC_FXSWAP.CURRENCY_ALCO</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.CURRENCY_CLIENT'">ADDO_OPERACION_CANC_FXSWAP.CURRENCY_CLIENT</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.CURRENCY_PAIR'">ADDO_OPERACION_CANC_FXSWAP.CURRENCY_PAIR</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.SPOT_DATE'">ADDO_OPERACION_CANC_FXSWAP.SPOT_DATE</when>
+                    <when test="valor == 'ADDO_OPERACION_CANC_FXSWAP.FORWARD_DATE'">ADDO_OPERACION_CANC_FXSWAP.FORWARD_DATE</when>
+                    <!-- ADDO_OPERACION_EVENTO -->
+                    <when test="valor == 'ADDO_OPERACION_EVENTO.ALTERNATE_ID'">ADDO_OPERACION_EVENTO.ALTERNATE_ID</when>
+                    <when test="valor == 'ADDO_OPERACION_EVENTO.EVENTO'">ADDO_OPERACION_EVENTO.EVENTO</when>
+                    <when test="valor == 'ADDO_OPERACION_EVENTO.OPERACION'">ADDO_OPERACION_EVENTO.OPERACION</when>
+                    <when test="valor == 'ADDO_OPERACION_EVENTO.ESTADO'">ADDO_OPERACION_EVENTO.ESTADO</when>
+                    <otherwise>
+                        #{valor}
+                    </otherwise>
+                </choose>
+            </foreach>
+            ||'&#60;'||'&#47;'||#{lpaConfigPlantilla.lpaEtiqueta}||'&#62;'
+        </foreach>
+        <if test="etiquetaLista != null">||'&#60;'||'&#47;'||#{etiquetaLista}||'&#62;'</if>
+
+        FROM
+        <choose>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ISIN_RF'">ACE_ISIN_RF
+                INNER JOIN ACE_OPERACION_RF O ON O.ISIN = ACE_ISIN_RF.ISIN
+                AND ACE_ISIN_RF.FEC_SOLICITUD_BB = ( DECODE ( O.FECHA_ISIN, NULL,
+                (SELECT MAX(FEC_SOLICITUD_BB) FROM ACE_ISIN_RF WHERE ACE_ISIN_RF.ISIN = O.ISIN),
+                O.FECHA_ISIN ) )
+                INNER JOIN ACE_PERIODICIDAD_RF ON CPN_FREQ = ID_PERIODICIDAD AND ACE_PERIODICIDAD_RF.ID_ENTIDAD =
+                O.ID_ENTIDAD AND ACE_PERIODICIDAD_RF.IDIOMA = 'es'
+                INNER JOIN ACE_OPERACION OP ON OP.ID_OPERACION = O.ID_OPERACION AND OP.ID_ENTIDAD = O.ID_ENTIDAD
+                LEFT JOIN ACE_PAYMENT_RANK_RF ON ACE_PAYMENT_RANK_RF.ID_PAYMENT_RANK = ACE_ISIN_RF.PAYMENT_RANK AND
+                ACE_PAYMENT_RANK_RF.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad} AND ACE_PAYMENT_RANK_RF.IDIOMA =
+                'es' AND ACE_PAYMENT_RANK_RF.BAIL_IN_BOND_DESIGNATION = ACE_ISIN_RF.BAIL_IN_BOND_DESIGNATION
+                LEFT JOIN ACE_PAYMENT_NIVELRIESGO_RF ON ACE_PAYMENT_NIVELRIESGO_RF.ID_PAYMENT_RANK =
+                ACE_ISIN_RF.PAYMENT_RANK AND ACE_PAYMENT_NIVELRIESGO_RF.ID_ENTIDAD =
+                #{listalpaConfigPlantilla[0].entidad}
+                LEFT JOIN ACE_TIPO_ACTIVO ON DESCRIPCION_PAYMENT_RANK = ACE_PAYMENT_RANK_RF.DESCRIPCION
+                AND ID_CAMPOBB =
+                DECODE(INSTR(IS_SYNTH_CONV||IS_REVERSE_CONVERTIBLE||SECURITY_FACTORABLE||SINKABLE||IS_PERPETUAL||EXTENDIBLE||CALLABLE||MAKE_WHOLE_CALL||CONVERTIBLE||SURVIVOR_PUT_OPT_IND||POISON_PILL_RIGHTS||PUTABLE,'Y'),
+                0, NULL,
+                1, 'IS_SYNTH_CONV', 2, 'IS_REVERSE_CONVERTIBLE', 3, 'SECURITY_FACTORABLE', 4, 'SINKABLE', 5,
+                'IS_PERPETUAL', 6, 'EXTENDIBLE', 7, 'CALLABLE', 8, 'MAKE_WHOLE_CALL', 9, 'CONVERTIBLE', 10,
+                'SURVIVOR_PUT_OPT_IND', 11, 'POISON_PILL_RIGHTS', 12, 'PUTABLE')
+                LEFT JOIN ACE_DIVISA_RF ON ACE_DIVISA_RF.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad} AND
+                ACE_DIVISA_RF.CDSW = ACE_ISIN_RF.CRNCY
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_KID_TERCEROS'">ACE_KID_TERCEROS</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPCION_FX_CANCELACIONES'">
+                ACE_OPCION_FX_CANCELACIONES
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_MIFID'">ACE_MIFID</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_MIFID_EVENTO'">ACE_MIFID_EVENTO</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION'">ACE_OPERACION</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_RF'">ACE_OPERACION_RF</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_CLIENTE_DFA'">ACE_CLIENTE_DFA</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_CLIENTE'">ACE_ACUM_CLIENTE</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_COTIZACION'">ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_MIFID'">ACE_ACUM_MIFID</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_OPERACION'">ACE_ACUM_OPERACION</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_FX'">ACE_OPERACION_FX
+                INNER JOIN ACE_OPERACION O ON O.ID_OPERACION = ACE_OPERACION_FX.ID_OPERACION AND O.ID_ENTIDAD =
+                ACE_OPERACION_FX.ID_ENTIDAD
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_DEPO_SWAP'">ACE_OPERACION_DEPO_SWAP
+                INNER JOIN ACE_OPERACION O ON O.ID_OPERACION = ACE_OPERACION_DEPO_SWAP.ID_OPERACION AND O.ID_ENTIDAD =
+                ACE_OPERACION_DEPO_SWAP.ID_ENTIDAD
+                LEFT JOIN ACE_MIFID ON ACE_MIFID.ID_OPERACION = ACE_OPERACION_DEPO_SWAP.ID_OPERACION AND
+                ACE_MIFID.ID_ENTIDAD = ACE_OPERACION_DEPO_SWAP.ID_ENTIDAD
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_FWD'">ACE_OPERACION_FWD
+                INNER JOIN ACE_OPERACION O ON O.ID_OPERACION = ACE_OPERACION_FWD.ID_OPERACION AND O.ID_ENTIDAD =
+                ACE_OPERACION_FWD.ID_ENTIDAD
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_OPERACION_FWD_BIEN_SERVICIO'">ACE_OPERACION_FWD
+                <bind name="IDIOMA" value="@com.isb.acelera.util.WebUtils@getIdioma()"/>
+                LEFT JOIN ACE_COMBOS ON IDIOMA = #{IDIOMA} AND ACE_COMBOS.ID_ENTIDAD = ACE_OPERACION_FWD.ID_ENTIDAD AND
+                TIPO IN ( 'SERVICIO' , 'BIEN' ) AND VALOR = DESC_BI_SERV
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_APODERADOS_RF'">
+                ACE_OPERACION_APODERADOS_RF
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_ORDENANTES'">ACE_OPERACION_ORDENANTES
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_TITULARES'">ACE_OPERACION_TITULARES
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_TITULARES_ORDENANTES'">ACE_OPERACION_TITULARES
+                LEFT JOIN ACE_OPERACION_ORDENANTES ON ACE_OPERACION_TITULARES.HOSTID = ACE_OPERACION_ORDENANTES.HOSTID
+                AND ACE_OPERACION_TITULARES.ID_OPERACION = ACE_OPERACION_ORDENANTES.ID_OPERACION
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_PRECIO_SSCC'">ACE_OPERACION_PRECIO_SSCC
+                INNER JOIN ACE_OPERACION_FX O ON O.ID_OPERACION = ACE_OPERACION_PRECIO_SSCC.ID_OPERACION AND
+                O.ID_ENTIDAD = ACE_OPERACION_PRECIO_SSCC.ID_ENTIDAD
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_VARIABLES'">ACE_VARIABLES</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_COMBOS'">ACE_COMBOS</when>            
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_PRECIOS_FX'">ACE_PRECIOS_FX</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'BRANCH_INFO'">BRANCH_INFO
+                INNER JOIN ACE_OPERACION O ON O.IDCENT = BRANCH_INFO.IDCENT
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_PR_PROPUESTAS'">ACE_PR_PROPUESTAS</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_PROPUESTAS_FX'">ACE_PROPUESTAS_FX</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_PR_PROP_DOCS'">ACE_PR_PROP_DOCS</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_DOCUMENTOS'">ACE_DOCUMENTOS</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_EVENTO'">ACE_EVENTO
+                INNER JOIN BRANCH_INFO B ON ACE_EVENTO.IDCENT = B.IDCENT
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_OPERACION_RF_DOCUMENTOS_OM'">ACE_OPERACION_RF
+                INNER JOIN ACE_OPERACION ON ACE_OPERACION_RF.ID_OPERACION=ACE_OPERACION.ID_OPERACION
+                INNER JOIN ACE_OPERACION_ORDENANTES ON
+                ACE_OPERACION_RF.ID_OPERACION=ACE_OPERACION_ORDENANTES.ID_OPERACION AND
+                ACE_OPERACION_ORDENANTES.NUM_ORDEN='0'
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_OPERACION_RF_DOCUMENTOS_CO'">ACE_OPERACION_RF
+                INNER JOIN ACE_OPERACION ON ACE_OPERACION_RF.ID_OPERACION=ACE_OPERACION.ID_OPERACION
+                INNER JOIN ACE_ISIN_RF ON ACE_OPERACION_RF.ISIN=ACE_ISIN_RF.ISIN AND
+                ACE_OPERACION_RF.FECHA_ISIN=ACE_ISIN_RF.FEC_SOLICITUD_BB
+                INNER JOIN ACE_OPERACION_ORDENANTES ON
+                ACE_OPERACION_RF.ID_OPERACION=ACE_OPERACION_ORDENANTES.ID_OPERACION AND
+                ACE_OPERACION_ORDENANTES.NUM_ORDEN='0'
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ACUM_LISTA_FECHAS'">VISTA_ACUM_LISTA_FECHAS
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_OPER_FECHA_OBS'">ACE_ACUM_OPER_FECHA_OBS
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_OPER_RENEGOCIACION'">ACE_ACUM_OPER_RENEGOCIACION
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_CAMPANYAS' or listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_GRUPOS_CAMPANYA'">
+                CAMP_CAMPANYAS
+                INNER JOIN CAMP_GRUPOS_CAMPANYA ON CAMP_GRUPOS_CAMPANYA.ID = CAMP_CAMPANYAS.ID_GRUPO_CAMPANYA
+                LEFT JOIN CAMP_OPERACIONES ON CAMP_OPERACIONES.ID_CAMPANYA = CAMP_CAMPANYAS.ID AND CAMP_OPERACIONES.ID =
+                #{idOperacion}
+                LEFT JOIN CAMP_CLIENTES_OPERACIONES ON CAMP_CLIENTES_OPERACIONES.ID_OPERACION = #{idOperacion}  
+                LEFT JOIN CAMP_SGC_DOCUMENTS ON CAMP_SGC_DOCUMENTS.ID = #{idSgcDocCamp}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_PRODUCTOS'">CAMP_PRODUCTOS
+                INNER JOIN CAMP_GRUPOS_CAMPANYA ON CAMP_PRODUCTOS.ID = CAMP_GRUPOS_CAMPANYA.ID_PRODUCTO
+                INNER JOIN CAMP_CAMPANYAS ON CAMP_CAMPANYAS.ID_GRUPO_CAMPANYA = CAMP_GRUPOS_CAMPANYA.ID
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_TIPO_PRODUCTOS'">CAMP_TIPO_PRODUCTOS
+                INNER JOIN CAMP_PRODUCTOS ON CAMP_PRODUCTOS.TIPO_PRODUCTO = CAMP_TIPO_PRODUCTOS.ID
+                INNER JOIN CAMP_GRUPOS_CAMPANYA ON CAMP_PRODUCTOS.ID = CAMP_GRUPOS_CAMPANYA.ID_PRODUCTO
+                INNER JOIN CAMP_CAMPANYAS ON CAMP_CAMPANYAS.ID_GRUPO_CAMPANYA = CAMP_GRUPOS_CAMPANYA.ID
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_OPERACIONES'">CAMP_OPERACIONES
+                INNER JOIN CAMP_CAMPANYAS ON CAMP_OPERACIONES.ID_CAMPANYA = CAMP_CAMPANYAS.ID
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_CLIENTES_OPERACIONES'">
+                CAMP_CLIENTES_OPERACIONES
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_MIFID'">CAMP_MIFID
+            	INNER JOIN CAMP_OPERACIONES ON CAMP_MIFID.ID_OPERACION = CAMP_OPERACIONES.ID
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_OPERACION_EVENTO'">
+            	CAMP_OPERACIONES, CAMP_OPERACION_EVENTO
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_SGC_DOCUMENTS'">CAMP_SGC_DOCUMENTS</when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_EVENTO'">
+            	ACE_OPERACION,  ACE_OPERACION_EVENTO            
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ACUM_OPERACION_EVENTO'">
+            	ACE_ACUM_OPERACION,  ACE_OPERACION_EVENTO            
+            </when>           
+             <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ORDENES_CONDICIONADAS'">
+             	ACE_ORDENES_CONDICIONADAS
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ORDENES_CONDICIONADAS_AUD'">
+             	ACE_ORDENES_CONDICIONADAS_AUD
+            </when>
+             <when test="listalpaConfigPlantilla[0].tipoOrigen == 'BRANCH_INFO_ORDEN_CONDICIONADA'">BRANCH_INFO 
+                INNER JOIN ACE_ORDENES_CONDICIONADAS ON ACE_ORDENES_CONDICIONADAS.IDCENT = BRANCH_INFO.IDCENT
+            </when>
+             <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_GRADOS_RF'">
+                VISTA_GRADOS_RF
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ADDO_OPERACION'">
+                <bind name="IDIOMA" value="@com.isb.acelera.util.WebUtils@getIdioma()"/>
+                ADDO_OPERACION
+                INNER JOIN BRANCH_INFO ON ADDO_OPERACION.IDCENT = BRANCH_INFO.IDCENT
+                LEFT JOIN ACE_COMBOS ON ACE_COMBOS.ID_ENTIDAD = ADDO_OPERACION.ID_ENTIDAD AND ACE_COMBOS.TIPO = 'FORMA_INTERVENCION_CONTRATO'
+                AND ACE_COMBOS.VALOR = ADDO_OPERACION.FORMA_INTERVENCION_CUENTA AND ACE_COMBOS.IDIOMA = #{IDIOMA}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_TITULARES'">
+                ADDO_OPERACION_TITULARES
+                INNER JOIN ADDO_OPERACION ON ADDO_OPERACION_TITULARES.HOSTID = ADDO_OPERACION.TITULAR
+                AND ADDO_OPERACION_TITULARES.ID_OPERACION = ADDO_OPERACION.ID_OPERACION
+                AND ADDO_OPERACION_TITULARES.ID_ENTIDAD = ADDO_OPERACION.ID_ENTIDAD
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_APODERADOS'">
+                ADDO_OPERACION_APODERADOS
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ADDO_OPERACION_APODERADOS'"> ADDO_OPERACION_APODERADOS
+                <bind name="IDIOMA" value="@com.isb.acelera.util.WebUtils@getIdioma()"/>
+                LEFT JOIN ADDO_OPERACION ON ADDO_OPERACION_APODERADOS.ID_OPERACION = ADDO_OPERACION.ID_OPERACION
+                AND ADDO_OPERACION_APODERADOS.ID_ENTIDAD = ADDO_OPERACION.ID_ENTIDAD
+                LEFT JOIN ACE_COMBOS ON ACE_COMBOS.ID_ENTIDAD = ADDO_OPERACION.ID_ENTIDAD AND ACE_COMBOS.TIPO = 'FORMA_INTERVENCION'
+                AND ACE_COMBOS.VALOR = ADDO_OPERACION_APODERADOS.TIPO_INTERVENCION AND ACE_COMBOS.IDIOMA = #{IDIOMA}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ADDO_OPERACION_TITULARES'"> ADDO_OPERACION_TITULARES
+                <bind name="IDIOMA" value="@com.isb.acelera.util.WebUtils@getIdioma()"/>
+                LEFT JOIN ADDO_OPERACION ON ADDO_OPERACION_TITULARES.ID_OPERACION = ADDO_OPERACION.ID_OPERACION
+                AND ADDO_OPERACION_TITULARES.ID_ENTIDAD = ADDO_OPERACION.ID_ENTIDAD
+                LEFT JOIN ACE_COMBOS ON ACE_COMBOS.ID_ENTIDAD = ADDO_OPERACION.ID_ENTIDAD AND ACE_COMBOS.TIPO = 'CNAE'
+                AND ACE_COMBOS.VALOR = ADDO_OPERACION_TITULARES.CNAE AND ACE_COMBOS.IDIOMA = #{IDIOMA}
+                LEFT JOIN ACE_COMBOS D ON D.ID_ENTIDAD = ADDO_OPERACION.ID_ENTIDAD AND D.TIPO = 'IND_TIPO_TRABAJO'
+                AND D.VALOR = ADDO_OPERACION_TITULARES.IND_TIPO_TRABAJO AND D.IDIOMA = #{IDIOMA}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION' or
+            		listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_FXSWAP' or
+            		listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_CANC_FXSWAP' or
+            		listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_DIVISAS_CONF_SWAP'">
+            	ADDO_OPERACION INNER JOIN ADDO_DIVISAS_CONF_SWAP ON ADDO_OPERACION.DIVISA_CLIENTE = ADDO_DIVISAS_CONF_SWAP.CURRENCY 
+                	AND ADDO_OPERACION.ID_ENTIDAD = ADDO_DIVISAS_CONF_SWAP.ENTITY
+				LEFT JOIN ADDO_OPERACION_FXSWAP ON ADDO_OPERACION.ID_OPERACION = ADDO_OPERACION_FXSWAP.ID_OPERACION
+            		AND ADDO_OPERACION.ID_ENTIDAD = ADDO_OPERACION_FXSWAP.ID_ENTIDAD
+                LEFT JOIN ADDO_OPERACION_CANC_FXSWAP ON ADDO_OPERACION.ID_OPERACION = ADDO_OPERACION_CANC_FXSWAP.ID_OPERACION
+                    AND ADDO_OPERACION.ID_ENTIDAD = ADDO_OPERACION_CANC_FXSWAP.ID_ENTIDAD
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION' or
+            		listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_ALCO'">
+            	ADDO_OPERACION INNER JOIN ADDO_OPERACION_ALCO ON ADDO_OPERACION.ID_OPERACION = ADDO_OPERACION_ALCO.ID_OPERATION
+    				AND ADDO_OPERACION.ID_ENTIDAD = ADDO_OPERACION_ALCO.ENTITY
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_EVENT'">
+            	ADDO_OPERACION LEFT JOIN(
+ 					Select * FROM  ADDO_EVENT where ID_OPERATION = #{idOperacion} and ID_STATUS = 'PENDING_EVENT' order by ID desc FETCH FIRST 1 ROWS ONLY
+				)ADDO_EVENT
+				ON ADDO_OPERACION.ID_OPERACION = ADDO_EVENT.ID_OPERATION
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ADDO_EVENT_OPERACION_ALCO'"> ADDO_EVENT
+                <bind name="IDIOMA" value="@com.isb.acelera.util.WebUtils@getIdioma()"/>
+                LEFT JOIN ADDO_OPERACION ON ADDO_OPERACION.ID_OPERACION = ADDO_EVENT.ID_OPERATION
+                AND ADDO_OPERACION.ID_ENTIDAD = ADDO_EVENT.ENTITY
+                LEFT JOIN ADDO_OPERACION_ALCO ON ADDO_EVENT.ID_OPERATION = ADDO_OPERACION_ALCO.ID_OPERATION
+                AND ADDO_EVENT.ENTITY = ADDO_OPERACION_ALCO.ENTITY
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_EVENTO'">
+            	ADDO_OPERACION INNER JOIN ADDO_OPERACION_EVENTO
+				ON ADDO_OPERACION.ID_OPERACION = ADDO_OPERACION_EVENTO.ID_OPERACION
+					AND ADDO_OPERACION.ID_ENTIDAD = ADDO_OPERACION_EVENTO.ID_ENTIDAD
+            </when>
+        </choose>
+
+        WHERE
+
+        <choose>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_TITULARES_ORDENANTES'">
+                ACE_OPERACION_TITULARES.ID_OPERACION = #{idOperacion}
+                AND ACE_OPERACION_TITULARES.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_OPERACION_FWD_BIEN_SERVICIO'">
+                ID_OPERACION = #{idOperacion}
+                AND ACE_OPERACION_FWD.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_KID_TERCEROS'">
+                ID = #{idOperacion}
+                AND ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPCION_FX_CANCELACIONES'">
+                MUREX_ID = #{idOperacion}
+                AND ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+                AND FECHA_CANCELACION = (SELECT MAX(FECHA_CANCELACION) FROM ACE_OPCION_FX_CANCELACIONES WHERE  MUREX_ID = #{idOperacion})
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ISIN_RF'">
+                O.ID_OPERACION = #{idOperacion}
+                AND O.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'BRANCH_INFO'">
+                ID_OPERACION = #{idOperacion}
+                AND O.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_FX' or listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_FWD' or listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_PRECIO_SSCC' or listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_DEPO_SWAP'">
+                O.ID_OPERACION = #{idOperacion}
+                AND O.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_VARIABLES' or listalpaConfigPlantilla[0].tipoOrigen == 'ACE_COMBOS'">
+                ID_ENTIDAD= #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_PR_PROPUESTAS' or listalpaConfigPlantilla[0].tipoOrigen == 'ACE_PR_PROP_DOCS'">
+                ID_PROP_PORTAL = #{idAlternativo}
+                AND ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_EVENTO' or listalpaConfigPlantilla[0].tipoOrigen == 'ACE_MIFID_EVENTO'">
+                ID_EVENTO = #{idAlternativo}
+                AND ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_CLIENTE_DFA'">
+                ID = #{idOperacion}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_OPERACION_RF_DOCUMENTOS_OM' or listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_OPERACION_RF_DOCUMENTOS_CO'">
+                ACE_OPERACION_RF.ID_OPERACION = #{idOperacion}
+                AND ACE_OPERACION_RF.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_CLIENTE'">
+                ACE_ACUM_CLIENTE.ID_OPERACION = #{idOperacion}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_MIFID'">
+                ACE_ACUM_MIFID.ID_OPERACION = #{idOperacion}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_COTIZACION'">
+                ACE_ACUM_COTIZACION.ID_OPERACION = #{idOperacion}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ACUM_LISTA_FECHAS'">
+                VISTA_ACUM_LISTA_FECHAS.ID_OPERACION = #{idOperacion}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_OPER_FECHA_OBS'">
+                ACE_ACUM_OPER_FECHA_OBS.ID_OPERACION = #{idOperacion}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_OPER_RENEGOCIACION'">
+                ACE_ACUM_OPER_RENEGOCIACION.ID_OPERACION = #{idOperacion}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_CAMPANYAS' or listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_GRUPOS_CAMPANYA'
+	  	 		or listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_PRODUCTOS' or listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_TIPO_PRODUCTOS'">
+                CAMP_CAMPANYAS.ID = #{idAlternativo}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_OPERACIONES'">
+                CAMP_OPERACIONES.ID = #{idOperacion}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_CLIENTES_OPERACIONES' or listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_MIFID'">
+                ID_OPERACION = #{idOperacion}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_SGC_DOCUMENTS'">
+                ID = #{idSgcDocCamp}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_OPERACION_EVENTO'">
+            	ACE_OPERACION.ID_OPERACION = #{idOperacion} 
+				AND  ACE_OPERACION.ID_OPERACION  = ACE_OPERACION_EVENTO.ID_OPERACION (+) 
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ACUM_OPERACION_EVENTO'">
+            	ACE_ACUM_OPERACION.ID_OPERACION = #{idOperacion} 
+				AND  ACE_ACUM_OPERACION.ID_OPERACION  = ACE_OPERACION_EVENTO.ID_OPERACION (+) 
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_OPERACION_EVENTO'">
+            	CAMP_OPERACIONES.ID = #{idOperacion} 
+				AND  CAMP_OPERACIONES.ID  = CAMP_OPERACION_EVENTO.ID_OPERACION (+) 
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ORDENES_CONDICIONADAS' or listalpaConfigPlantilla[0].tipoOrigen == 'BRANCH_INFO_ORDEN_CONDICIONADA'">
+                ACE_ORDENES_CONDICIONADAS.ID_ORDEN = #{idAlternativo}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ORDENES_CONDICIONADAS_AUD'">
+                ACE_ORDENES_CONDICIONADAS_AUD.ID_ORDEN = #{idAlternativo}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_TITULARES'">
+                ADDO_OPERACION_TITULARES.ID_OPERACION = #{idOperacion}
+                AND ADDO_OPERACION_TITULARES.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_APODERADOS'">
+                ADDO_OPERACION_APODERADOS.ID_OPERACION = #{idOperacion}
+                AND ADDO_OPERACION_APODERADOS.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ADDO_OPERACION_TITULARES'">
+                ADDO_OPERACION_TITULARES.ID_OPERACION = #{idOperacion}
+                AND ADDO_OPERACION_TITULARES.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+                AND ACE_COMBOS.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+                AND ADDO_OPERACION_TITULARES.INTERVINIENTE = 'SI'
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ADDO_OPERACION_APODERADOS'">
+                ADDO_OPERACION_APODERADOS.ID_OPERACION = #{idOperacion}
+                AND ADDO_OPERACION_APODERADOS.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+                AND ADDO_OPERACION_APODERADOS.FIRMANTE = 'SI'
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ADDO_OPERACION'">
+                ADDO_OPERACION.ID_OPERACION = #{idOperacion}
+                AND ADDO_OPERACION.ID_ENTIDAD= #{listalpaConfigPlantilla[0].entidad}
+                AND ACE_COMBOS.ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION' or
+            		listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_FXSWAP' or
+            		listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_CANC_FXSWAP' or
+            		listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_DIVISAS_CONF_SWAP' or
+            		listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_EVENTO'">
+                ADDO_OPERACION.ID_OPERACION = #{idOperacion}
+                AND ADDO_OPERACION.ID_ENTIDAD= #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION' or
+            		listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_OPERACION_ALCO'">
+                ADDO_OPERACION.ID_OPERACION = #{idOperacion}
+                AND ADDO_OPERACION.ID_ENTIDAD= #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ADDO_EVENT'">
+            	ADDO_EVENT.ID_OPERATION = #{idOperacion}
+            	AND ADDO_EVENT.ENTITY = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_ADDO_EVENT_OPERACION_ALCO'">
+                ADDO_EVENT.ID_OPERATION = #{idOperacion}
+                AND ADDO_EVENT.ENTITY = #{listalpaConfigPlantilla[0].entidad}
+            </when>
+            
+            <otherwise>
+                ID_OPERACION = #{idOperacion}
+                AND ID_ENTIDAD= #{listalpaConfigPlantilla[0].entidad}
+            </otherwise>
+        </choose>
+
+        <if test="listalpaConfigPlantilla[0].listaCondicion != null">
+            AND
+            <foreach item="valor" index="index" collection="listalpaConfigPlantilla[0].listaCondicion" open=""
+                     separator="" close="">
+                <choose>
+                    <!-- COLUMNAS Y TABLAS USADAS EN CONDICIONES  -->
+                    <when test="valor == 'ID_OPERACION'">ID_OPERACION = #{idOperacion}</when>
+                    <when test="valor == 'ID_ENTIDAD'">ID_ENTIDAD = #{listalpaConfigPlantilla[0].entidad}</when>
+                    <when test="valor == 'ID'">ID = #{idOperacion}</when>
+                    <when test="valor == 'ENTIDAD'">ENTIDAD = #{listalpaConfigPlantilla[0].entidad}</when>
+                    <when test="valor == 'ID_ESTADO'">ID_ESTADO</when>
+                    <when test="valor == 'USUALTA'">USUALTA</when>
+                    <when test="valor == 'VALOR'">VALOR</when>
+                    <when test="valor == 'EVENTO'">EVENTO</when>
+                    <when test="valor == 'NOMBRE'">NOMBRE</when>
+                    <when test="valor == 'IDIOMA'">IDIOMA</when>
+                    <when test="valor == 'TIPO'">TIPO</when>
+                    <when test="valor == 'MESA'">MESA</when>
+                    <when test="valor == 'TIPO_TITULARIDAD'">TIPO_TITULARIDAD</when>
+                    <when test="valor == 'FECALTA'">FECALTA</when>
+                    <when test="valor == 'PAR_DIVISAS'">PAR_DIVISAS</when>
+                    <when test="valor == 'ACE_HIST_OPERACION'">ACE_HIST_OPERACION</when>
+                    <when test="valor == 'ACE_OPERACION_FWD'">ACE_OPERACION_FWD</when>
+                    <when test="valor == 'ACE_OPERACION_TITULARES'">ACE_OPERACION_TITULARES</when>
+                    <when test="valor == 'NUM_ORDER'">NUM_ORDER</when>
+                    <when test="valor == 'ID_TIPDOC'">ID_TIPDOC</when>
+                    <when test="valor == 'ACE_OPERACION_FX'">ACE_OPERACION_FX</when>
+                    <when test="valor == 'PAR_DIVISAS_FW'">PAR_DIVISAS_FW</when>
+                    <when test="valor == 'TIPO_NOMINAL'">TIPO_NOMINAL</when>
+                    <when test="valor == 'TIPO_SENTIDO'">TIPO_SENTIDO</when>
+                    <when test="valor == 'TIPO_BARRERA'">TIPO_BARRERA</when>
+                    <when test="valor == 'PRODUCT_NAME'">PRODUCT_NAME</when>
+                    <when test="valor == 'NOMBRE'">NOMBRE</when>
+                    <when test="valor == 'ACE_ACUM_OPERACION'">ACE_ACUM_OPERACION</when>   
+                    <when test="valor == 'GET_JSON_VALUE'">GET_JSON_VALUE</when>
+                    <when test="valor == 'CLOB_RESPUESTA'">CLOB_RESPUESTA</when>
+                    <when test="valor == 'ACE_OPERACION_PRECIO_SSCC'">ACE_OPERACION_PRECIO_SSCC</when>
+                    <when test="valor == 'ADDO_OPERACION_EVENTO.EVENTO'">ADDO_OPERACION_EVENTO.EVENTO</when>
+                    <when test="valor == 'ADDO_OPERACION_EVENTO.OPERACION'">ADDO_OPERACION_EVENTO.OPERACION</when>
+                    <when test="valor == 'ADDO_OPERACION_EVENTO.ESTADO'">ADDO_OPERACION_EVENTO.ESTADO</when>
+                    <when test="valor == 'ADDO_OPERACION'">ADDO_OPERACION</when>
+                    <when test="valor == 'NUMGESTOR'">NUMGESTOR</when>
+                    <!-- FUNCIONES Y CARACTERES ORACLE EN LAS CONDICIONES -->
+                    <when test="valor == '= '">=</when>
+                    <when test="valor == '( '">(</when>
+                    <when test="valor == ') '">)</when>
+                    <when test="valor == ', '">,</when>
+                    <when test="valor == 'SELECT'">SELECT</when>
+                    <when test="valor == 'FROM'">FROM</when>
+                    <when test="valor == 'WHERE'">WHERE</when>
+                    <when test="valor == 'AND'">AND</when>
+                    <when test="valor == 'OR'">OR</when>
+                    <when test="valor == 'IN'">IN</when>
+                    <when test="valor == 'NOT'">NOT</when>
+                    <when test="valor == 'ROWNUM'">ROWNUM</when>
+                    <when test="valor == 'MAX'">MAX</when>
+                    <when test="valor == 'ORDERBY'">ORDER BY</when>
+                    <when test="valor == 'UPPER'">UPPER</when>
+                    <when test="valor == '(+)'">(+)</when>                    
+                    <otherwise>
+                        #{valor}
+                    </otherwise>
+                </choose>
+            </foreach>
+        </if>
+
+        <choose>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'VISTA_TITULARES_ORDENANTES'">
+                ORDER BY ACE_OPERACION_ORDENANTES.NUM_ORDEN
+            </when>
+            <when test="listalpaConfigPlantilla[0].tipoOrigen == 'CAMP_OPERACION_EVENTO'">
+                ORDER BY FECHA_EJECUCION DESC
+            </when>
+        </choose>
+
+
+    </select>
+
+
+    <select id="getValueTable" parameterType="lpaConfigPlantilla" resultType="String">
+        SELECT
+        <foreach item="valor" index="index" collection="lpaConfigPlantilla.listaValorOrigen" open="" separator="" close="">
+	        <choose>
+	            <when test="valor == 'HOSTID'">HOSTID</when>
+	            <when test="valor == 'NOMINAL'">NOMINAL</when>
+	            <when test="valor == 'NOMBRE'">NOMBRE</when>
+	            <when test="valor == 'DOCUMENTO'">DOCUMENTO</when>
+	            <when test="valor == 'CLIENTE_DOCUMENTO'">CLIENTE_DOCUMENTO</when>
+	            <when test="valor == 'CLIENTE_NOMBRE'">CLIENTE_NOMBRE</when>
+	            <when test="valor == 'CLIENTE_CODIGOJ'">CLIENTE_CODIGOJ</when>
+	            <when test="valor == 'COUNTERPARTY_DESC'">COUNTERPARTY_DESC</when>
+	            <when test="valor == 'HOST_ID'">HOST_ID</when>            
+	            <!-- ORDENES CONDICIONADAS -->
+	            <when test="valor == 'TITULAR'">TITULAR</when>
+	            <when test="valor == 'SENTIDO'">SENTIDO</when>
+	            <when test="valor == 'NOMINAL_CLIENTE_VENDE'">NOMINAL_CLIENTE_VENDE</when>
+	            <when test="valor == 'NOMINAL_CLIENTE_COMPRA'">NOMINAL_CLIENTE_COMPRA</when>
+	            <when test="valor == 'DOCUMENTO_TIT'">DOCUMENTO_TIT</when>
+	            <when test="valor == 'NOMBRE_TITULAR'">NOMBRE_TITULAR</when>
+	            <!-- FALTAN FUNCIONES Y CARACTERES ORACLE EN LAS CONDICIONES -->
+	            <when test="valor == 'RTRIM'">RTRIM</when>
+			    <when test="valor == 'TO_CHAR'">TO_CHAR</when>
+			    <when test="valor == 'DECODE'">DECODE</when>
+			    <when test="valor == '( '">(</when>
+			    <when test="valor == ') '">)</when>
+			    <when test="valor == ', '">,</when>
+			    <otherwise>
+					#{valor}
+			    </otherwise>                         
+	        </choose>
+	      
+        </foreach>
+        FROM
+        <choose>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'ACE_OPCION_FX_CANCELACIONES'">ACE_OPCION_FX_CANCELACIONES
+            </when>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'ACE_KID_TERCEROS'">ACE_KID_TERCEROS</when>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'ACE_OPERACION'">ACE_OPERACION</when>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'ACE_OPERACION_TITULARES'">ACE_OPERACION_TITULARES</when>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'CAMP_CLIENTES_OPERACIONES'">CAMP_CLIENTES_OPERACIONES</when>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'CAMP_OPERACIONES'">CAMP_OPERACIONES</when>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'ACE_ORDENES_CONDICIONADAS'">ACE_ORDENES_CONDICIONADAS</when>
+        </choose>
+        WHERE
+        <choose>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'ACE_KID_TERCEROS'">ENTIDAD = #{lpaConfigPlantilla.entidad} AND
+                ID = #{idOperacion}
+            </when>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'ACE_OPCION_FX_CANCELACIONES'">ENTIDAD =
+                #{lpaConfigPlantilla.entidad} AND MUREX_ID = #{idOperacion}
+            </when>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'CAMP_CLIENTES_OPERACIONES'">ID_OPERACION = #{idOperacion}
+            </when>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'CAMP_OPERACIONES'">ID = #{idOperacion}
+            </when>
+            <when test="lpaConfigPlantilla.tipoOrigen == 'ACE_ORDENES_CONDICIONADAS'">
+                ACE_ORDENES_CONDICIONADAS.ID_ORDEN = #{idAlternativo}
+            </when>     
+            <otherwise>ID_ENTIDAD = #{lpaConfigPlantilla.entidad} AND ID_OPERACION = #{idOperacion}</otherwise>
+        </choose>
+
+        <if test="lpaConfigPlantilla.tipoOrigen == 'ACE_OPERACION_TITULARES'">
+            AND TIPO_TITULARIDAD = 'T'
+        </if>
+        AND ROWNUM = 1
+    </select>
+
+    <!-- LA VARIABLE A BUSCAR SOLO DEBE ESTAR EN CAMPAÑAS O EN GRUPO DE CAMPAÑAS NUNCA EN AMBOS-->
+    <select id="getValueTableCampanyas" parameterType="lpaConfigPlantilla" resultType="String">
+        SELECT CAST(REPLACE(VALOR, ',', NM.CARACTER) AS VARCHAR2(2000 CHAR))
+        FROM CAMP_CAMPANYAS_VALOR_VARIABLE
+                 INNER JOIN CAMP_CAMPOS_VARIABLES_PROD
+                            ON CAMP_CAMPANYAS_VALOR_VARIABLE.ID_CAMPO_VARIABLE_PRODUCTO = CAMP_CAMPOS_VARIABLES_PROD.ID
+                 INNER JOIN CAMP_CAMPOS_DISPONIBLES_PROD ON CAMP_CAMPOS_VARIABLES_PROD.ID_CAMPO_DISPONIBLE_PRODUCTO =
+                                                            CAMP_CAMPOS_DISPONIBLES_PROD.ID,
+             (SELECT SUBSTR(VALUE, 0, 1) CARACTER
+              FROM NLS_SESSION_PARAMETERS
+              WHERE PARAMETER = 'NLS_NUMERIC_CHARACTERS') NM
+        WHERE ID_CAMPANYA = #{idCampanya}
+          AND NOMBRE = #{nombre}
+        UNION ALL
+        SELECT CAST(REPLACE(VALOR, ',', NM.CARACTER) AS VARCHAR2(2000 CHAR))
+        FROM CAMP_GRUPO_VALOR_VARIABLE
+                 INNER JOIN CAMP_CAMPOS_VARIABLES_PROD
+                            ON CAMP_GRUPO_VALOR_VARIABLE.ID_CAMPO_VARIABLE_PRODUCTO = CAMP_CAMPOS_VARIABLES_PROD.ID
+                 INNER JOIN CAMP_CAMPOS_DISPONIBLES_PROD
+                            ON CAMP_CAMPOS_VARIABLES_PROD.ID_CAMPO_DISPONIBLE_PRODUCTO = CAMP_CAMPOS_DISPONIBLES_PROD.ID
+                 INNER JOIN CAMP_GRUPOS_CAMPANYA ON CAMP_GRUPO_VALOR_VARIABLE.ID_CONFIGURACION = CAMP_GRUPOS_CAMPANYA.ID
+                 INNER JOIN CAMP_CAMPANYAS ON CAMP_GRUPOS_CAMPANYA.ID = CAMP_CAMPANYAS.ID_GRUPO_CAMPANYA,
+             (SELECT SUBSTR(VALUE, 0, 1) CARACTER
+              FROM NLS_SESSION_PARAMETERS
+              WHERE PARAMETER = 'NLS_NUMERIC_CHARACTERS') NM
+        WHERE CAMP_CAMPANYAS.ID = #{idCampanya}
+          AND NOMBRE = #{nombre}
+    </select>
+
+    <select id="getStringsContainingCamposDisponiblesFromPlantillasCampanyas" parameterType="String"
+            resultType="String">
+        select VALOR_ORIGEN
+        from ACELER.ACE_LPA_CONFIG_PLANT LPA_CONFIG
+                  INNER JOIN ACELER.ACE_PROD_DOC_PLANT PROD_DOC ON LPA_CONFIG.ID_PLANTILLALPA = PROD_DOC.ID_PLANTILLALPA
+        where VALOR_ORIGEN LIKE '%CD\_%' ESCAPE '\' AND
+                                                PROD_DOC.ID_PRODUCTO = #{tipoProductoPlantillaCampaña}
+    </select>
+    
+    <select id="getValueFromPlantillaAndEtiqueta" parameterType="String"
+            resultType="String">
+        select VALOR_ORIGEN 
+        from ACELER.ACE_LPA_CONFIG_PLANT                  
+        where ID_PLANTILLALPA = #{plantilla} AND LPA_ETIQUETA = #{etiqueta}  
+    </select>
+
+</mapper>
