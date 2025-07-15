@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -39,9 +40,10 @@ public class LpaConfigPlantillaMapperTest {
         }
 
         @Bean
-        public String typeAliasesPackage() {
-            return "com.isb.acelera.type,com.isb.acelera.domain";
-        }
+//        public String typeAliasesPackage() {
+//            return "com.isb.acelera.type,com.isb.acelera.domain";
+//        }
+        public String typeAliasesPackage() { return "com.isb.acumuladores.model";}
 
         @Bean
         public Class<?>[] typeAliases() {
@@ -55,15 +57,18 @@ public class LpaConfigPlantillaMapperTest {
 
     @Test
     public void testGetValueTableXml() {
+
+        List<LpaConfigPlantilla> listaConfigPorTipo = new ArrayList<LpaConfigPlantilla>();
         LpaConfigPlantilla lpaConfigPlantilla = new LpaConfigPlantilla();
         lpaConfigPlantilla.setEntidad("0049");
-        lpaConfigPlantilla.setId("ACUM_UDF_TODOS");
-        lpaConfigPlantilla.setLpaEtiqueta("ADDCHRG__character");
-        lpaConfigPlantilla.setValorOrigen("DIVISA_GRIEGA || '#CT=' || RTRIM ( TO_CHAR ( ( NVL ( ABS ( MARGEN_NETO ) , 0 ) + NVL ( CVA , 0 ) + NVL ( ABS ( SALES_CREDIT ) , 0 ) + DECODE ( CLIENT_FAIR_VALUE_SCOPE , 'Y' , NVL ( ADDON_AMOUNT , 0 ) + DECODE ( RENEGOCIACION , 'Y' , NVL ( VALOR_MERCADO_TOTAL , 0 ) ,0 ) , 0 ) ) , 'FM99999999999999999990.99999999' ) , '.' ) || '#0#0#0#0#0#0#0#0#0#0#' || RTRIM ( TO_CHAR ( DECODE ( CLIENT_FAIR_VALUE_SCOPE , 'Y' , NVL ( ADDON_AMOUNT , 0 ) + DECODE ( RENEGOCIACION , 'Y' , NVL ( VALOR_MERCADO_TOTAL , 0 ) ,0 ) , 0 ) , 'FM99999999999999999990.99999999' ) , '.' ) || '#0#0#0#0#0#0#0#0#0#0#0#0'");
+        lpaConfigPlantilla.setId("MUREX_RF");
+        lpaConfigPlantilla.setLpaEtiqueta("idMurex");
+        lpaConfigPlantilla.setTipoOrigen("ACE_ACUM_OPERACION");
+        lpaConfigPlantilla.setValorOrigen("'ACE_' || LPAD ( ID_OPERACION , 12 , '0' ) ");
+        listaConfigPorTipo.add(lpaConfigPlantilla);
 
-        List<LpaConfigPlantilla> listaConfig = List.of(lpaConfigPlantilla);
-
-        List<String> result = lpaConfigPlantillaMapper.getValueTableXml(listaConfig, null, "1", null, null);
+        List<String> result = lpaConfigPlantillaMapper.getValueTableXml(
+                listaConfigPorTipo, "ETIQUETA", "1", null, "CAMPO");
 
         assertThat(result.toString()).contains("DIVISA");
     }
