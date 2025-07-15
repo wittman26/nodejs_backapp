@@ -77,3 +77,18 @@ java.lang.IllegalStateException: Could not detect default SQL script for test cl
 
 
 Process finished with exit code -1
+
+
+
+CREATE TABLE ACE_LPA_CONFIG_PLANT (
+    ID_PLANTILLALPA VARCHAR(50),
+    ID_ENTIDAD VARCHAR(10),
+    LPA_ETIQUETA VARCHAR(100),
+    TIPO_ORIGEN VARCHAR(50),
+    VALOR_ORIGEN VARCHAR(4000),
+    CONDICION VARCHAR(100)
+);
+
+-- Puedes añadir datos de prueba si lo necesitas
+INSERT INTO ACE_LPA_CONFIG_PLANT (ID_PLANTILLALPA, ID_ENTIDAD, LPA_ETIQUETA, TIPO_ORIGEN, VALOR_ORIGEN, CONDICION)
+VALUES ('ACUM_UDF_TODOS', '0049', 'ADDCHRG__character', 'ACE_OPERACION', 'DBMS_RANDOM.VALUE', null);
