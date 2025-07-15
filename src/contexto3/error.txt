@@ -1,34 +1,115 @@
-C:\Users\x612243\Documents\Programas\jdk-17\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\lib\idea_rt.jar=50808:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\bin" -Dfile.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file1573150387 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit4 com.isb.acelera.persistence.LpaConfigPlantillaMapperTest
-2025-07-15 11:56:11,396 DEBUG -- [      main] reactor.util.Loggers                              :254  - Using Slf4j logging framework
-2025-07-15 11:56:11,402 DEBUG -- [      main] reactor.core.publisher.Hooks                      :259  - Hooking onLastOperator: org.springframework.security.core.context.SecurityContext
+2025-07-15 13:56:55,212 DEBUG -- [      main] reactor.util.Loggers                              :254  - Using Slf4j logging framework
+2025-07-15 13:56:55,218 DEBUG -- [      main] reactor.core.publisher.Hooks                      :259  - Hooking onLastOperator: org.springframework.security.core.context.SecurityContext
 Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
-2025-07-15 11:56:12,576 DEBUG -- [      main] sistence.LpaConfigPlantillaMapper.getValueTableXml:135  - ==>  Preparing: SELECT '<'||?||'>'|| '<'||?||'>'|| ? || LPAD ( ID_OPERACION , ? , ? ) ||'<'||'/'||?||'>' ||'<'||'/'||?||'>' FROM ACE_ACUM_OPERACION WHERE ID_OPERACION = ? AND ID_ENTIDAD= ?
-2025-07-15 11:56:12,648 DEBUG -- [      main] reactor.core.publisher.Hooks                      :259  - Reset onLastOperator: org.springframework.security.core.context.SecurityContext
+2025-07-15 13:56:56,743 DEBUG -- [      main] sistence.LpaConfigPlantillaMapper.getValueTableXml:135  - ==>  Preparing: SELECT '<'||?||'>'|| '<'||?||'>'|| DIVISA_GRIEGA || ? || RTRIM ( TO_CHAR ( ( NVL ( ABS ( MARGEN_NETO ) , ? ) + NVL ( CVA , ? ) + NVL ( ABS ( SALES_CREDIT ) , ? ) + DECODE ( CLIENT_FAIR_VALUE_SCOPE , ? , NVL ( DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT) , ? ) + DECODE ( RENEGOCIACION , ? , NVL ( VALOR_MERCADO_TOTAL , ? ) ? ) , ? ) ) , ? ) , ? ) || ? || RTRIM ( TO_CHAR ( DECODE ( CLIENT_FAIR_VALUE_SCOPE , ? , NVL ( DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT) , ? ) + DECODE ( RENEGOCIACION , ? , NVL ( VALOR_MERCADO_TOTAL , ? ) ? ) , ? ) , ? ) , ? ) || ? ||'<'||'/'||?||'>' ||'<'||'/'||?||'>' FROM ACE_ACUM_COTIZACION LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION WHERE ACE_ACUM_COTIZACION.ID_OPERACION = ?
+2025-07-15 13:56:56,862 DEBUG -- [      main] reactor.core.publisher.Hooks                      :259  - Reset onLastOperator: org.springframework.security.core.context.SecurityContext
 
 org.springframework.jdbc.BadSqlGrammarException: 
-### Error querying database.  Cause: org.h2.jdbc.JdbcSQLException: Tabla "ACE_ACUM_OPERACION" no encontrada
-Table "ACE_ACUM_OPERACION" not found; SQL statement:
-SELECT
+### Error querying database.  Cause: org.h2.jdbc.JdbcSQLException: Error de Sintaxis en sentencia SQL "SELECT
          '<'||?||'>'|| 
            
             '<'||?||'>'||
               
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
                   
                         ?
                      
              
                   || 
              
-                  LPAD 
+                  RTRIM 
              
                   ( 
              
-                  ID_OPERACION 
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
              
                   , 
              
                   
                         ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
                      
              
                   , 
@@ -38,46 +119,907 @@ SELECT
                      
              
                   ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?[*]
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
               
             ||'<'||'/'||?||'>'
           
          ||'<'||'/'||?||'>' 
 
         FROM
-         ACE_ACUM_OPERACION 
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
 
         WHERE
 
          
-                ID_OPERACION = ?
-                AND ID_ENTIDAD= ? [42102-196]
+                ACE_ACUM_COTIZACION.ID_OPERACION = ?"; se esperaba "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, ILIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"
+Syntax error in SQL statement "SELECT
+         '<'||?||'>'|| 
+           
+            '<'||?||'>'||
+              
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?[*]
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+              
+            ||'<'||'/'||?||'>'
+          
+         ||'<'||'/'||?||'>' 
+
+        FROM
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
+
+        WHERE
+
+         
+                ACE_ACUM_COTIZACION.ID_OPERACION = ?"; expected "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, ILIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"; SQL statement:
+SELECT
+         '<'||?||'>'|| 
+           
+            '<'||?||'>'||
+              
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+              
+            ||'<'||'/'||?||'>'
+          
+         ||'<'||'/'||?||'>' 
+
+        FROM
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
+
+        WHERE
+
+         
+                ACE_ACUM_COTIZACION.ID_OPERACION = ? [42001-196]
 ### The error may exist in com/isb/acelera/persistence/LpaConfigPlantillaMapper.xml
 ### The error may involve com.isb.acelera.persistence.LpaConfigPlantillaMapper.getValueTableXml
 ### The error occurred while executing a query
-### SQL: SELECT          '<'||?||'>'||                          '<'||?||'>'||                                                           ?                                                       ||                                  LPAD                                  (                                  ID_OPERACION                                  ,                                                           ?                                                       ,                                                           ?                                                       )                             ||'<'||'/'||?||'>'                     ||'<'||'/'||?||'>'           FROM          ACE_ACUM_OPERACION           WHERE                            ID_OPERACION = ?                 AND ID_ENTIDAD= ?
-### Cause: org.h2.jdbc.JdbcSQLException: Tabla "ACE_ACUM_OPERACION" no encontrada
-Table "ACE_ACUM_OPERACION" not found; SQL statement:
-SELECT
+### SQL: SELECT          '<'||?||'>'||                          '<'||?||'>'||                                  DIVISA_GRIEGA                                  ||                                                           ?                                                       ||                                  RTRIM                                  (                                  TO_CHAR                                  (                                  (                                  NVL                                  (                                  ABS                                  (                                  MARGEN_NETO                                  )                                  ,                                                           ?                                                       )                                  +                                  NVL                                  (                                  CVA                                  ,                                                           ?                                                       )                                  +                                  NVL                                  (                                  ABS                                  (                                  SALES_CREDIT                                  )                                  ,                                                           ?                                                       )                                  +                                  DECODE                                  (                                  CLIENT_FAIR_VALUE_SCOPE                                  ,                                                           ?                                                       ,                                  NVL                                  (                                                           DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)                                                       ,                                                           ?                                                       )                                  +                                  DECODE                                  (                                  RENEGOCIACION                                  ,                                                           ?                                                       ,                                  NVL                                  (                                  VALOR_MERCADO_TOTAL                                  ,                                                           ?                                                       )                                                           ?                                                       )                                  ,                                                           ?                                                       )                                  )                                  ,                                                           ?                                                       )                                  ,                                                           ?                                                       )                                  ||                                                           ?                                                       ||                                  RTRIM                                  (                                  TO_CHAR                                  (                                  DECODE                                  (                                  CLIENT_FAIR_VALUE_SCOPE                                  ,                                                           ?                                                       ,                                  NVL                                  (                                                           DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)                                                       ,                                                           ?                                                       )                                  +                                  DECODE                                  (                                  RENEGOCIACION                                  ,                                                           ?                                                       ,                                  NVL                                  (                                  VALOR_MERCADO_TOTAL                                  ,                                                           ?                                                       )                                                           ?                                                       )                                  ,                                                           ?                                                       )                                  ,                                                           ?                                                       )                                  ,                                                           ?                                                       )                                  ||                                                           ?                                                  ||'<'||'/'||?||'>'                     ||'<'||'/'||?||'>'           FROM          ACE_ACUM_COTIZACION                 LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION                        WHERE                            ACE_ACUM_COTIZACION.ID_OPERACION = ?
+### Cause: org.h2.jdbc.JdbcSQLException: Error de Sintaxis en sentencia SQL "SELECT
          '<'||?||'>'|| 
            
             '<'||?||'>'||
               
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
                   
                         ?
                      
              
                   || 
              
-                  LPAD 
+                  RTRIM 
              
                   ( 
              
-                  ID_OPERACION 
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
              
                   , 
              
                   
                         ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
                      
              
                   , 
@@ -87,42 +1029,105 @@ SELECT
                      
              
                   ) 
-              
-            ||'<'||'/'||?||'>'
-          
-         ||'<'||'/'||?||'>' 
-
-        FROM
-         ACE_ACUM_OPERACION 
-
-        WHERE
-
-         
-                ID_OPERACION = ?
-                AND ID_ENTIDAD= ? [42102-196]
-; bad SQL grammar []; nested exception is org.h2.jdbc.JdbcSQLException: Tabla "ACE_ACUM_OPERACION" no encontrada
-Table "ACE_ACUM_OPERACION" not found; SQL statement:
-SELECT
-         '<'||?||'>'|| 
-           
-            '<'||?||'>'||
-              
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?[*]
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
                   
                         ?
                      
              
                   || 
              
-                  LPAD 
+                  RTRIM 
              
                   ( 
              
-                  ID_OPERACION 
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
              
                   , 
              
                   
                         ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
                      
              
                   , 
@@ -132,19 +1137,1596 @@ SELECT
                      
              
                   ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
               
             ||'<'||'/'||?||'>'
           
          ||'<'||'/'||?||'>' 
 
         FROM
-         ACE_ACUM_OPERACION 
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
 
         WHERE
 
          
-                ID_OPERACION = ?
-                AND ID_ENTIDAD= ? [42102-196]
+                ACE_ACUM_COTIZACION.ID_OPERACION = ?"; se esperaba "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, ILIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"
+Syntax error in SQL statement "SELECT
+         '<'||?||'>'|| 
+           
+            '<'||?||'>'||
+              
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?[*]
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+              
+            ||'<'||'/'||?||'>'
+          
+         ||'<'||'/'||?||'>' 
+
+        FROM
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
+
+        WHERE
+
+         
+                ACE_ACUM_COTIZACION.ID_OPERACION = ?"; expected "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, ILIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"; SQL statement:
+SELECT
+         '<'||?||'>'|| 
+           
+            '<'||?||'>'||
+              
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+              
+            ||'<'||'/'||?||'>'
+          
+         ||'<'||'/'||?||'>' 
+
+        FROM
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
+
+        WHERE
+
+         
+                ACE_ACUM_COTIZACION.ID_OPERACION = ? [42001-196]
+; bad SQL grammar []; nested exception is org.h2.jdbc.JdbcSQLException: Error de Sintaxis en sentencia SQL "SELECT
+         '<'||?||'>'|| 
+           
+            '<'||?||'>'||
+              
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?[*]
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+              
+            ||'<'||'/'||?||'>'
+          
+         ||'<'||'/'||?||'>' 
+
+        FROM
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
+
+        WHERE
+
+         
+                ACE_ACUM_COTIZACION.ID_OPERACION = ?"; se esperaba "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, ILIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"
+Syntax error in SQL statement "SELECT
+         '<'||?||'>'|| 
+           
+            '<'||?||'>'||
+              
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?[*]
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+              
+            ||'<'||'/'||?||'>'
+          
+         ||'<'||'/'||?||'>' 
+
+        FROM
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
+
+        WHERE
+
+         
+                ACE_ACUM_COTIZACION.ID_OPERACION = ?"; expected "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, ILIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"; SQL statement:
+SELECT
+         '<'||?||'>'|| 
+           
+            '<'||?||'>'||
+              
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+              
+            ||'<'||'/'||?||'>'
+          
+         ||'<'||'/'||?||'>' 
+
+        FROM
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
+
+        WHERE
+
+         
+                ACE_ACUM_COTIZACION.ID_OPERACION = ? [42001-196]
 
 	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:236)
 	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
@@ -157,7 +2739,7 @@ SELECT
 	at org.apache.ibatis.binding.MapperProxy$PlainMethodInvoker.invoke(MapperProxy.java:142)
 	at org.apache.ibatis.binding.MapperProxy.invoke(MapperProxy.java:86)
 	at jdk.proxy2/jdk.proxy2.$Proxy83.getValueTableXml(Unknown Source)
-	at com.isb.acelera.persistence.LpaConfigPlantillaMapperTest.testGetValueTableXml(LpaConfigPlantillaMapperTest.java:78)
+	at com.isb.acelera.persistence.LpaConfigPlantillaMapperTest.testGetValueTableXml_MX(LpaConfigPlantillaMapperTest.java:91)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -192,29 +2774,111 @@ SELECT
 	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35)
 	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:232)
 	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:55)
-Caused by: org.h2.jdbc.JdbcSQLException: Tabla "ACE_ACUM_OPERACION" no encontrada
-Table "ACE_ACUM_OPERACION" not found; SQL statement:
-SELECT
+Caused by: org.h2.jdbc.JdbcSQLException: Error de Sintaxis en sentencia SQL "SELECT
          '<'||?||'>'|| 
            
             '<'||?||'>'||
               
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
                   
                         ?
                      
              
                   || 
              
-                  LPAD 
+                  RTRIM 
              
                   ( 
              
-                  ID_OPERACION 
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
              
                   , 
              
                   
                         ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
                      
              
                   , 
@@ -224,32 +2888,849 @@ SELECT
                      
              
                   ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?[*]
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
               
             ||'<'||'/'||?||'>'
           
          ||'<'||'/'||?||'>' 
 
         FROM
-         ACE_ACUM_OPERACION 
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
 
         WHERE
 
          
-                ID_OPERACION = ?
-                AND ID_ENTIDAD= ? [42102-196]
+                ACE_ACUM_COTIZACION.ID_OPERACION = ?"; se esperaba "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, ILIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"
+Syntax error in SQL statement "SELECT
+         '<'||?||'>'|| 
+           
+            '<'||?||'>'||
+              
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?[*]
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+              
+            ||'<'||'/'||?||'>'
+          
+         ||'<'||'/'||?||'>' 
+
+        FROM
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
+
+        WHERE
+
+         
+                ACE_ACUM_COTIZACION.ID_OPERACION = ?"; expected "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, ILIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"; SQL statement:
+SELECT
+         '<'||?||'>'|| 
+           
+            '<'||?||'>'||
+              
+                  DIVISA_GRIEGA 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  ( 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  MARGEN_NETO 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  CVA 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  NVL 
+             
+                  ( 
+             
+                  ABS 
+             
+                  ( 
+             
+                  SALES_CREDIT 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+             
+                  || 
+             
+                  RTRIM 
+             
+                  ( 
+             
+                  TO_CHAR 
+             
+                  ( 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  CLIENT_FAIR_VALUE_SCOPE 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                     
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  + 
+             
+                  DECODE 
+             
+                  ( 
+             
+                  RENEGOCIACION 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  , 
+             
+                  NVL 
+             
+                  ( 
+             
+                  VALOR_MERCADO_TOTAL 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  , 
+             
+                  
+                        ?
+                     
+             
+                  ) 
+             
+                  || 
+             
+                  
+                        ?
+                     
+              
+            ||'<'||'/'||?||'>'
+          
+         ||'<'||'/'||?||'>' 
+
+        FROM
+         ACE_ACUM_COTIZACION
+                LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+             
+
+        WHERE
+
+         
+                ACE_ACUM_COTIZACION.ID_OPERACION = ? [42001-196]
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
-	at org.h2.message.DbException.get(DbException.java:179)
-	at org.h2.message.DbException.get(DbException.java:155)
-	at org.h2.command.Parser.readTableOrView(Parser.java:5552)
-	at org.h2.command.Parser.readTableFilter(Parser.java:1266)
-	at org.h2.command.Parser.parseSelectSimpleFromPart(Parser.java:1946)
-	at org.h2.command.Parser.parseSelectSimple(Parser.java:2095)
+	at org.h2.message.DbException.getSyntaxError(DbException.java:205)
+	at org.h2.command.Parser.getSyntaxError(Parser.java:541)
+	at org.h2.command.Parser.read(Parser.java:3258)
+	at org.h2.command.Parser.readFunction(Parser.java:2694)
+	at org.h2.command.Parser.readTerm(Parser.java:2876)
+	at org.h2.command.Parser.readFactor(Parser.java:2390)
+	at org.h2.command.Parser.readSum(Parser.java:2380)
+	at org.h2.command.Parser.readConcat(Parser.java:2347)
+	at org.h2.command.Parser.readCondition(Parser.java:2178)
+	at org.h2.command.Parser.readAnd(Parser.java:2150)
+	at org.h2.command.Parser.readExpression(Parser.java:2142)
+	at org.h2.command.Parser.readFunction(Parser.java:2692)
+	at org.h2.command.Parser.readTerm(Parser.java:2876)
+	at org.h2.command.Parser.readFactor(Parser.java:2390)
+	at org.h2.command.Parser.readSum(Parser.java:2380)
+	at org.h2.command.Parser.readConcat(Parser.java:2347)
+	at org.h2.command.Parser.readCondition(Parser.java:2178)
+	at org.h2.command.Parser.readAnd(Parser.java:2150)
+	at org.h2.command.Parser.readExpression(Parser.java:2142)
+	at org.h2.command.Parser.readTerm(Parser.java:2968)
+	at org.h2.command.Parser.readFactor(Parser.java:2390)
+	at org.h2.command.Parser.readSum(Parser.java:2377)
+	at org.h2.command.Parser.readConcat(Parser.java:2347)
+	at org.h2.command.Parser.readCondition(Parser.java:2178)
+	at org.h2.command.Parser.readAnd(Parser.java:2150)
+	at org.h2.command.Parser.readExpression(Parser.java:2142)
+	at org.h2.command.Parser.readFunction(Parser.java:2692)
+	at org.h2.command.Parser.readTerm(Parser.java:2876)
+	at org.h2.command.Parser.readFactor(Parser.java:2390)
+	at org.h2.command.Parser.readSum(Parser.java:2377)
+	at org.h2.command.Parser.readConcat(Parser.java:2347)
+	at org.h2.command.Parser.readCondition(Parser.java:2178)
+	at org.h2.command.Parser.readAnd(Parser.java:2150)
+	at org.h2.command.Parser.readExpression(Parser.java:2142)
+	at org.h2.command.Parser.readFunction(Parser.java:2692)
+	at org.h2.command.Parser.readTerm(Parser.java:2876)
+	at org.h2.command.Parser.readFactor(Parser.java:2390)
+	at org.h2.command.Parser.readSum(Parser.java:2377)
+	at org.h2.command.Parser.readConcat(Parser.java:2350)
+	at org.h2.command.Parser.readCondition(Parser.java:2178)
+	at org.h2.command.Parser.readAnd(Parser.java:2150)
+	at org.h2.command.Parser.readExpression(Parser.java:2142)
+	at org.h2.command.Parser.parseSelectSimpleSelectPart(Parser.java:2053)
+	at org.h2.command.Parser.parseSelectSimple(Parser.java:2085)
 	at org.h2.command.Parser.parseSelectSub(Parser.java:1940)
 	at org.h2.command.Parser.parseSelectUnion(Parser.java:1755)
 	at org.h2.command.Parser.parseSelect(Parser.java:1743)
 	at org.h2.command.Parser.parsePrepared(Parser.java:449)
 	at org.h2.command.Parser.parse(Parser.java:321)
-	at org.h2.command.Parser.parse(Parser.java:293)
+	at org.h2.command.Parser.parse(Parser.java:297)
 	at org.h2.command.Parser.prepareCommand(Parser.java:258)
 	at org.h2.engine.Session.prepareLocal(Session.java:578)
 	at org.h2.engine.Session.prepareCommand(Session.java:519)
@@ -280,5 +3761,3 @@ SELECT
 	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:425)
 	... 42 more
 
-
-Process finished with exit code -1
