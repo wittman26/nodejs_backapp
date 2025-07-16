@@ -77,7 +77,11 @@ public class LpaConfigPlantillaMapperTest {
     @Test
     public void testGetValueTableXml_MX() {
         final String TIPO_ORIGEN = "ACE_ACUM_COTIZACION";
-        final String VALOR_ORIGEN = "DIVISA_GRIEGA || '#CT=' || RTRIM ( TO_CHAR ( ( NVL ( ABS ( MARGEN_NETO ) , 0 ) + NVL ( CVA , 0 ) + NVL ( ABS ( SALES_CREDIT ) , 0 ) + DECODE ( CLIENT_FAIR_VALUE_SCOPE , 'Y' , NVL ( ADDON_AMOUNT , 0 ) + DECODE ( RENEGOCIACION , 'Y' , NVL ( VALOR_MERCADO_TOTAL , 0 ) ,0 ) , 0 ) ) , 'FM99999999999999999990.99999999' ) , '.' ) || '#0#0#0#0#0#0#0#0#0#0#' || RTRIM ( TO_CHAR ( DECODE ( CLIENT_FAIR_VALUE_SCOPE , 'Y' , NVL ( ADDON_AMOUNT , 0 ) + DECODE ( RENEGOCIACION , 'Y' , NVL ( VALOR_MERCADO_TOTAL , 0 ) ,0 ) , 0 ) , 'FM99999999999999999990.99999999' ) , '.' ) || '#0#0#0#0#0#0#0#0#0#0#0#0'";
+        //final String VALOR_ORIGEN = "DIVISA_GRIEGA || '#CT=' || RTRIM ( TO_CHAR ( ( NVL ( ABS ( MARGEN_NETO ) , 0 ) + NVL ( CVA , 0 ) + NVL ( ABS ( SALES_CREDIT ) , 0 ) + DECODE ( CLIENT_FAIR_VALUE_SCOPE , 'Y' , NVL ( ADDON_AMOUNT , 0 ) + DECODE ( RENEGOCIACION , 'Y' , NVL ( VALOR_MERCADO_TOTAL , 0 ) , 0 ) , 0 ) ) , 'FM99999999999999999990.99999999' ) , '.' ) || '#0#0#0#0#0#0#0#0#0#0#' || RTRIM ( TO_CHAR ( DECODE ( CLIENT_FAIR_VALUE_SCOPE , 'Y' , NVL ( ADDON_AMOUNT , 0 ) + DECODE ( RENEGOCIACION , 'Y' , NVL ( VALOR_MERCADO_TOTAL , 0 ) , 0 ) , 0 ) , 'FM99999999999999999990.99999999' ) , '.' ) || '#0#0#0#0#0#0#0#0#0#0#0#0'";
+
+        final String VALOR_ORIGEN = "RENEGOCIACION";
+
+        //final String VALOR_ORIGEN = "DIVISA_GRIEGA || '#CT=' || RTRIM ( TO_CHAR ( ( NVL ( ABS ( MARGEN_NETO ) , 0 ) + NVL ( CVA , 0 ) + NVL ( ABS ( SALES_CREDIT ) , 0 ) + DECODE ( CLIENT_FAIR_VALUE_SCOPE , 'Y' , NVL ( ABS ( ADDON_AMOUNT ) , 0 ) , 0 ) ) , 'FM99999999999999999990.99999999' ) , '.' ) || '#0#0#0#0#0#0#0#0#0#0#' || RTRIM ( TO_CHAR ( DECODE ( CLIENT_FAIR_VALUE_SCOPE , 'Y' , NVL ( ABS ( ADDON_AMOUNT ) , 0 ) , 0 ) , 'FM99999999999999999990.99999999' ) , '.' ) || '#0#0#0#0#0#0#0#0#0#0#0#0'";
 
         List<LpaConfigPlantilla> listaConfigPorTipo = new ArrayList<LpaConfigPlantilla>();
         LpaConfigPlantilla lpaConfigPlantilla = new LpaConfigPlantilla();
@@ -89,7 +93,7 @@ public class LpaConfigPlantillaMapperTest {
         listaConfigPorTipo.add(lpaConfigPlantilla);
 
         List<String> result = lpaConfigPlantillaMapper.getValueTableXml(
-                listaConfigPorTipo, "ETIQUETA", "26960", null, null);
+                listaConfigPorTipo, "ETIQUETA", "27531", null, null);
 
         assertThat(result.toString()).contains("ACE_000000026960");
         assertThat(result.toString()).contains("ETIQUETA");
