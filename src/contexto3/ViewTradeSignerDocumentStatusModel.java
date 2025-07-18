@@ -1,65 +1,60 @@
 package com.acelera.fx.db.infrastructure.adapter.persistence.jpa.model;
 
-import lombok.*;
 import org.hibernate.annotations.Immutable;
+import lombok.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Immutable
-@Table(name = "FX_VIEW_TRADE_SIGNATURE_EXPEDIENT")
+@Table(name = "FX_VIEW_TRADE_SIGNER_DOCUMENT_STATUS")
+@IdClass(TradeSignerDocumentStatusModelId.class)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Setter
-@Getter
-public class ViewTradeSignatureExpedientModel {
+public class ViewTradeSignerDocumentStatusModel {
 
     @Id
     @Column(name = "TRADE_SIGNATURE_ID")
     private Long tradeSignatureId;
 
-    @Column(name = "ENTITY")
-    private String entity;
-
-    @Column(name = "ORIGIN_ID")
-    private Long originId;
-
-    @Column(name = "ORIGIN")
-    private String origin;
-
-    @Column(name = "PRODUCT_ID")
-    private String productId;
-
-    @Column(name = "SIGNATURE_TYPE")
-    private String signatureType;
-
-    @Column(name = "VALIDATED_BO")
-    private String validatedBo;
-
-    @Column(name = "INDICATOR_SSCC")
-    private String indicatorSSCC;
-
     @Column(name = "EXPEDIENT_ID")
     private Long expedientId;
 
-    @Column(name = "START_DATE")
-    private LocalDateTime startDate;
+    @Column(name = "SIGNER_ID")
+    private String signerId;
 
-    @Column(name = "END_DATE")
-    private LocalDateTime endDate;
+    @Column(name = "DOCUMENT_TYPE")
+    private String documentType;
 
-    @Column(name = "EXPEDIENT_STATUS")
-    private String expedientStatus;
+    @Column(name = "DOCUMENT_NUMBER")
+    private String documentNumber;
 
-    @Column(name = "HAS_CLAUSES", columnDefinition = "CHAR(1)")
-    private String hasClauses;
+    @Column(name = "NAME")
+    private String name;
 
-    @Column(name = "SIGNATURE_EXPEDIENT_STATUS")
-    private String signatureExpedientStatus;
+    @Column(name = "IS_CLIENT")
+    private String isClient;
 
+    @Column(name = "INTERVENTION_TYPE")
+    private String interventionType;
+
+    @Column(name = "GN_ID")
+    private String gnId;
+
+    @Column(name = "DOCUMENTAL_TYPE_DOC")
+    private String documentalTypeDoc;
+
+    @Column(name = "INDICATOR_PRECONTRACTUAL", columnDefinition = "CHAR(1)")
+    private String indicatorPrecontractual;
+
+    @Column(name = "SIGNED_DOC", columnDefinition = "CHAR(1)")
+    private String signedDoc;
+
+    @Column(name = "SIGN_DATE")
+    private LocalDateTime signDate;
 }
