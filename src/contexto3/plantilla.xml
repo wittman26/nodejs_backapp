@@ -379,7 +379,9 @@
                     <when test="valor == 'BENEFICIO'">BENEFICIO</when>
                     <when test="valor == 'BENEFICIO_PORCENTAJE'">BENEFICIO_PORCENTAJE</when>
                     <when test="valor == 'ID_DEAL'">ID_DEAL</when>
-                    <when test="valor == 'ADDON_AMOUNT'">ADDON_AMOUNT</when>
+                    <when test="valor == 'ADDON_AMOUNT'">
+                        DECODE(ACE_ACUM_OPERACION.RENEGOCIACION, 'Y', NVL(ADDON_AMOUNT, 0) + NVL(VALOR_MERCADO_TOTAL, 0), ADDON_AMOUNT)
+                    </when>
                     <when test="valor == 'MID_PRICE'">MID_PRICE</when>
                     <!-- ACE_OPERACION_EVENTO -->
                     <when test="valor == 'FECHA_EJECUCION'">FECHA_EJECUCION</when>
@@ -954,6 +956,7 @@
             <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_CLIENTE'">ACE_ACUM_CLIENTE</when>
             <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_COTIZACION'">ACE_ACUM_COTIZACION
                 LEFT JOIN ACE_ACUM_CLIENTE ON ACE_ACUM_CLIENTE.ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
+                LEFT JOIN ACE_ACUM_OPERACION ON ACE_ACUM_OPERACION .ID_OPERACION = ACE_ACUM_COTIZACION.ID_OPERACION
             </when>
             <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_MIFID'">ACE_ACUM_MIFID</when>
             <when test="listalpaConfigPlantilla[0].tipoOrigen == 'ACE_ACUM_OPERACION'">ACE_ACUM_OPERACION</when>
