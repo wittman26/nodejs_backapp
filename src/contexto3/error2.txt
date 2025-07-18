@@ -1,0 +1,5 @@
+10:23:03.559 [http-nio-8080-exec-3] INFO  n.s.s.s.c.SecurityInterceptor - Checking requires any Roles[[Ljava.lang.String;@3d0764d2]
+10:23:03.709 [http-nio-8080-exec-3] ERROR c.i.a.web.actions.SpotFxActionBean - 
+### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: ORA-00904: "VALOR_MERCADO_TOTAL": invalid identifier
+ 
+### The error may exist in class path resource [com/isb/acelera/persistence/LpaConfigPlantillaMapper.xml]
