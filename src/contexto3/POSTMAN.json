@@ -1,0 +1,116 @@
+{
+  "info": {
+    "name": "Acelera FX Digital Signature",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Trade Signature by tradeSignatureId",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "accept", "value": "*/*" },
+          { "key": "Accept-Language", "value": "es" },
+          { "key": "X-ACELERA-ENTITY", "value": "0049" },
+          { "key": "Authorization", "value": "Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1Mjc0NTI5NSwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzUyNzQ4OTAwLCJpYXQiOjE3NTI3NDUzMDAsImp0aSI6ImZiNWNjMWQwLTRiM2QtNDMxNC1iNjFkLThmMGFjY2FhY2E4NCIsInNpZCI6IjBBNzUxMDBCMDVCRjk1NDcxNzkzQzI5OCJ9.tD_zKswIQ1xkXHTyIJB0fMiIQ9dOuADzJqzWK03iJn-OrLKoWxgmcdA2j1JNg-63MOK1UjbRFODPoTyOEVuDbUp6XKsrFXDn9gZcCau6jum67bMEsyWSi6PH5F_23yXbqKyRfO6CFpncFLgv3UYqBJbpM4KA9sVj2NF3rj-nqoX7TL7Z1m_UzoSbg2_M8UR7eMaOM_expDuVJUypLPQ2pxMEIAcHD5FQLAZMOCDsrCuQUhkdsZgaBETVcWs3gUXQtBIn8nFzJ0WwCKo0m315--sSCf2fqHEiaMktNaz830jEsC1VdGpcQLJnokzm3YwJP2rsU9r7G_6PRKtmFEcFsg" }
+        ],
+        "url": {
+          "raw": "https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/v1/trades-signatures/view?tradeSignatureId=1",
+          "protocol": "https",
+          "host": [
+            "conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp"
+          ],
+          "path": [
+            "v1",
+            "trades-signatures",
+            "view"
+          ],
+          "query": [
+            { "key": "tradeSignatureId", "value": "1" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Trade Signature by originId",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "accept", "value": "*/*" },
+          { "key": "Accept-Language", "value": "es" },
+          { "key": "X-ACELERA-ENTITY", "value": "0049" },
+          { "key": "Authorization", "value": "Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1Mjc0NTI5NSwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzUyNzQ4OTAwLCJpYXQiOjE3NTI3NDUzMDAsImp0aSI6ImZiNWNjMWQwLTRiM2QtNDMxNC1iNjFkLThmMGFjY2FhY2E4NCIsInNpZCI6IjBBNzUxMDBCMDVCRjk1NDcxNzkzQzI5OCJ9.tD_zKswIQ1xkXHTyIJB0fMiIQ9dOuADzJqzWK03iJn-OrLKoWxgmcdA2j1JNg-63MOK1UjbRFODPoTyOEVuDbUp6XKsrFXDn9gZcCau6jum67bMEsyWSi6PH5F_23yXbqKyRfO6CFpncFLgv3UYqBJbpM4KA9sVj2NF3rj-nqoX7TL7Z1m_UzoSbg2_M8UR7eMaOM_expDuVJUypLPQ2pxMEIAcHD5FQLAZMOCDsrCuQUhkdsZgaBETVcWs3gUXQtBIn8nFzJ0WwCKo0m315--sSCf2fqHEiaMktNaz830jEsC1VdGpcQLJnokzm3YwJP2rsU9r7G_6PRKtmFEcFsg" }
+        ],
+        "url": {
+          "raw": "https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/v1/trades-signatures/view?originId=123450&origin=TRADE",
+          "protocol": "https",
+          "host": [
+            "conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp"
+          ],
+          "path": [
+            "v1",
+            "trades-signatures",
+            "view"
+          ],
+          "query": [
+            { "key": "originId", "value": "123450" },
+            { "key": "origin", "value": "TRADE" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Trade Signature",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "accept", "value": "*/*" },
+          { "key": "Accept-Language", "value": "es" },
+          { "key": "X-ACELERA-ENTITY", "value": "0049" },
+          { "key": "Authorization", "value": "Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1Mjc0NTI5NSwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzUyNzQ4OTAwLCJpYXQiOjE3NTI3NDUzMDAsImp0aSI6ImZiNWNjMWQwLTRiM2QtNDMxNC1iNjFkLThmMGFjY2FhY2E4NCIsInNpZCI6IjBBNzUxMDBCMDVCRjk1NDcxNzkzQzI5OCJ9.tD_zKswIQ1xkXHTyIJB0fMiIQ9dOuADzJqzWK03iJn-OrLKoWxgmcdA2j1JNg-63MOK1UjbRFODPoTyOEVuDbUp6XKsrFXDn9gZcCau6jum67bMEsyWSi6PH5F_23yXbqKyRfO6CFpncFLgv3UYqBJbpM4KA9sVj2NF3rj-nqoX7TL7Z1m_UzoSbg2_M8UR7eMaOM_expDuVJUypLPQ2pxMEIAcHD5FQLAZMOCDsrCuQUhkdsZgaBETVcWs3gUXQtBIn8nFzJ0WwCKo0m315--sSCf2fqHEiaMktNaz830jEsC1VdGpcQLJnokzm3YwJP2rsU9r7G_6PRKtmFEcFsg" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tradeSignatureId\": 1,\n  \"productId\": \"FW\",\n  \"signatureType\": \"DIGITAL\",\n  \"indicatorSSCC\": false,\n  \"signers\": [\n    {\n      \"signerId\": \"F000000583\",\n      \"isClient\": true,\n      \"document\": {\n        \"type\": \"N\",\n        \"number\": \"12345678R\"\n      },\n      \"name\": \"RMV VALORES OLC SAN CLIENTE NO SPB\",\n      \"interventionType\": \"01\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/v1/trades-signatures",
+          "protocol": "https",
+          "host": [
+            "conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp"
+          ],
+          "path": [
+            "v1",
+            "trades-signatures"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Product Document Types",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "accept", "value": "*/*" },
+          { "key": "Accept-Language", "value": "es" },
+          { "key": "X-ACELERA-ENTITY", "value": "0049" },
+          { "key": "Authorization", "value": "Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1Mjc0NTI5NSwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzUyNzQ4OTAwLCJpYXQiOjE3NTI3NDUzMDAsImp0aSI6ImZiNWNjMWQwLTRiM2QtNDMxNC1iNjFkLThmMGFjY2FhY2E4NCIsInNpZCI6IjBBNzUxMDBCMDVCRjk1NDcxNzkzQzI5OCJ9.tD_zKswIQ1xkXHTyIJB0fMiIQ9dOuADzJqzWK03iJn-OrLKoWxgmcdA2j1JNg-63MOK1UjbRFODPoTyOEVuDbUp6XKsrFXDn9gZcCau6jum67bMEsyWSi6PH5F_23yXbqKyRfO6CFpncFLgv3UYqBJbpM4KA9sVj2NF3rj-nqoX7TL7Z1m_UzoSbg2_M8UR7eMaOM_expDuVJUypLPQ2pxMEIAcHD5FQLAZMOCDsrCuQUhkdsZgaBETVcWs3gUXQtBIn8nFzJ0WwCKo0m315--sSCf2fqHEiaMktNaz830jEsC1VdGpcQLJnokzm3YwJP2rsU9r7G_6PRKtmFEcFsg" }
+        ],
+        "url": {
+          "raw": "https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/v1/products/FW/documents",
+          "protocol": "https",
+          "host": [
+            "conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp"
+          ],
+          "path": [
+            "v1",
+            "products",
+            "FW",
+            "documents"
+          ]
+        }
+      }
+    }
+  ]
+}
