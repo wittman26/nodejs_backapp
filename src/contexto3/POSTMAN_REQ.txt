@@ -1,0 +1,63 @@
+CIBCONAC-4680 [Firma digital Acelera FX] - 4 - Back - Datos de Firma digital - Consulta
+
+https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/webjars/swagger-ui/index.html#/trade-signature-rest-controller/getTradeSignature
+
+curl -X 'GET' \
+  'https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/v1/trades-signatures/view?tradeSignatureId=1' \
+  -H 'accept: */*' \
+  -H 'Accept-Language: es' \
+  -H 'X-ACELERA-ENTITY: 0049' \
+  -H 'Authorization: Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1Mjc0NTI5NSwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzUyNzQ4OTAwLCJpYXQiOjE3NTI3NDUzMDAsImp0aSI6ImZiNWNjMWQwLTRiM2QtNDMxNC1iNjFkLThmMGFjY2FhY2E4NCIsInNpZCI6IjBBNzUxMDBCMDVCRjk1NDcxNzkzQzI5OCJ9.tD_zKswIQ1xkXHTyIJB0fMiIQ9dOuADzJqzWK03iJn-OrLKoWxgmcdA2j1JNg-63MOK1UjbRFODPoTyOEVuDbUp6XKsrFXDn9gZcCau6jum67bMEsyWSi6PH5F_23yXbqKyRfO6CFpncFLgv3UYqBJbpM4KA9sVj2NF3rj-nqoX7TL7Z1m_UzoSbg2_M8UR7eMaOM_expDuVJUypLPQ2pxMEIAcHD5FQLAZMOCDsrCuQUhkdsZgaBETVcWs3gUXQtBIn8nFzJ0WwCKo0m315--sSCf2fqHEiaMktNaz830jEsC1VdGpcQLJnokzm3YwJP2rsU9r7G_6PRKtmFEcFsg'
+
+curl -X 'GET' \
+  'https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/v1/trades-signatures/view?originId=123450&origin=TRADE' \
+  -H 'accept: */*' \
+  -H 'Accept-Language: es' \
+  -H 'X-ACELERA-ENTITY: 0049' \
+  -H 'Authorization: Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1Mjc0NTI5NSwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzUyNzQ4OTAwLCJpYXQiOjE3NTI3NDUzMDAsImp0aSI6ImZiNWNjMWQwLTRiM2QtNDMxNC1iNjFkLThmMGFjY2FhY2E4NCIsInNpZCI6IjBBNzUxMDBCMDVCRjk1NDcxNzkzQzI5OCJ9.tD_zKswIQ1xkXHTyIJB0fMiIQ9dOuADzJqzWK03iJn-OrLKoWxgmcdA2j1JNg-63MOK1UjbRFODPoTyOEVuDbUp6XKsrFXDn9gZcCau6jum67bMEsyWSi6PH5F_23yXbqKyRfO6CFpncFLgv3UYqBJbpM4KA9sVj2NF3rj-nqoX7TL7Z1m_UzoSbg2_M8UR7eMaOM_expDuVJUypLPQ2pxMEIAcHD5FQLAZMOCDsrCuQUhkdsZgaBETVcWs3gUXQtBIn8nFzJ0WwCKo0m315--sSCf2fqHEiaMktNaz830jEsC1VdGpcQLJnokzm3YwJP2rsU9r7G_6PRKtmFEcFsg'
+
+/*******************************************************/
+
+
+CIBCONAC-4678 [Firma digital Acelera FX] - 3 - Back - Datos de Firma digital - Alta/Update
+
+https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/webjars/swagger-ui/index.html#/trade-signature-rest-controller/updateTradeSignature
+
+curl -X 'PUT' \
+  'https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/v1/trades-signatures' \
+  -H 'accept: */*' \
+  -H 'Accept-Language: es' \
+  -H 'X-ACELERA-ENTITY: 0049' \
+  -H 'Authorization: Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1Mjc0NTI5NSwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzUyNzQ4OTAwLCJpYXQiOjE3NTI3NDUzMDAsImp0aSI6ImZiNWNjMWQwLTRiM2QtNDMxNC1iNjFkLThmMGFjY2FhY2E4NCIsInNpZCI6IjBBNzUxMDBCMDVCRjk1NDcxNzkzQzI5OCJ9.tD_zKswIQ1xkXHTyIJB0fMiIQ9dOuADzJqzWK03iJn-OrLKoWxgmcdA2j1JNg-63MOK1UjbRFODPoTyOEVuDbUp6XKsrFXDn9gZcCau6jum67bMEsyWSi6PH5F_23yXbqKyRfO6CFpncFLgv3UYqBJbpM4KA9sVj2NF3rj-nqoX7TL7Z1m_UzoSbg2_M8UR7eMaOM_expDuVJUypLPQ2pxMEIAcHD5FQLAZMOCDsrCuQUhkdsZgaBETVcWs3gUXQtBIn8nFzJ0WwCKo0m315--sSCf2fqHEiaMktNaz830jEsC1VdGpcQLJnokzm3YwJP2rsU9r7G_6PRKtmFEcFsg' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "tradeSignatureId": 1,
+  "productId": "FW",
+  "signatureType": "DIGITAL",
+  "indicatorSSCC": false,
+  "signers": [
+    {
+      "signerId": "F000000583",
+      "isClient": true,
+      "document": {
+        "type": "N",
+        "number": "12345678R"
+      },
+      "name": "RMV VALORES OLC SAN CLIENTE NO SPB",
+      "interventionType": "01"
+    }
+  ]
+}'
+
+/*******************************************************/
+
+CIBCONAC-4959 [Firma digital Acelera FX] - 5 - Back - Datos de Firma digital - Servicio obtención tipos de documento
+
+https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/webjars/swagger-ui/index.html#/product-documents-rest-controller/findProductDocumentType
+
+curl -X 'GET' \
+  'https://conac-springboot-fx-route-cib-clcross-acelera-dev.apps.cib01.cib.dev.bo1.paas.cloudcenter.corp/v1/products/FW/documents' \
+  -H 'accept: */*' \
+  -H 'Accept-Language: es' \
+  -H 'X-ACELERA-ENTITY: 0049' \
+  -H 'Authorization: Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1Mjc0NTI5NSwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzUyNzQ4OTAwLCJpYXQiOjE3NTI3NDUzMDAsImp0aSI6ImZiNWNjMWQwLTRiM2QtNDMxNC1iNjFkLThmMGFjY2FhY2E4NCIsInNpZCI6IjBBNzUxMDBCMDVCRjk1NDcxNzkzQzI5OCJ9.tD_zKswIQ1xkXHTyIJB0fMiIQ9dOuADzJqzWK03iJn-OrLKoWxgmcdA2j1JNg-63MOK1UjbRFODPoTyOEVuDbUp6XKsrFXDn9gZcCau6jum67bMEsyWSi6PH5F_23yXbqKyRfO6CFpncFLgv3UYqBJbpM4KA9sVj2NF3rj-nqoX7TL7Z1m_UzoSbg2_M8UR7eMaOM_expDuVJUypLPQ2pxMEIAcHD5FQLAZMOCDsrCuQUhkdsZgaBETVcWs3gUXQtBIn8nFzJ0WwCKo0m315--sSCf2fqHEiaMktNaz830jEsC1VdGpcQLJnokzm3YwJP2rsU9r7G_6PRKtmFEcFsg'
