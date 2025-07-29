@@ -28,21 +28,34 @@ public class TradeSignatureServicePostImpl implements TradeSignatureServicePost 
         // 1. documentos del producto:
         return productDocumentClient.findProductDocumentParameters(
                 new ProductDocumentParametersRequest(entity, dto.getProductId()))
-                .doOnNext(doc -> generarDocumentos(doc, originId, dto.getProductId()))
-                .then(
-                        generarExpediente(originId, dto.getProductId())
-                            .map(expedient -> StartSignatureResponseDto.builder().expedientId(expedient.getExpedientId()).build())
-                );
+                .flatMap(doc -> generarDocumentos(doc, originId, dto.getProductId()))
+                .onErrorResume(e -> {
+                    log.error("Error en generación de documentación: {}", e.getMessage());
+                    return Mono.error(new RuntimeException("Error de generación de documentación"));
+                })
+            .then(generarExpediente(originId, dto.getProductId())
+                .onErrorResume(e -> {
+                    log.error("Error en generación de expediente: {}", e.getMessage());
+                    return Mono.error(new RuntimeException("Error de generación de expediente"));
+                })
+            )
+            .map(expedient -> StartSignatureResponseDto.builder().expedientId(expedient.getExpedientId()).build());
     }
 
     private Mono<DocumentName> generarDocumentos(ProductDocumentParameters document, Long originId, String productId) {
         log.info("Documento Base: {} - {} - {}", document.getDocumentType(), document.getDocumentalTypeDoc(), document.getIsPrecontractual());
+        if ("ERROR".equals(document.getDocumentType())) { // Simulación de error
+            return Mono.error(new RuntimeException("Error de generación de documentación"));
+        }
         log.info("Documento GENERADO - {}", document.getDocumentType() + originId + productId + ".pdf");
         return Mono.just(new DocumentName(document.getDocumentType() + originId + productId + ".pdf"));
     }
 
     private Mono<Expedient> generarExpediente(Long originId, String productId) {
         log.info("Generar Expediente: {} - {}", originId, productId);
+        if (originId < 0) { // Simulación de error
+            return Mono.error(new RuntimeException("Error de generación de expediente"));
+        }
         return Mono.just(new Expedient(998547 + originId));
     }
 
