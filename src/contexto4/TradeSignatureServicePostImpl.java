@@ -29,18 +29,15 @@ public class TradeSignatureServicePostImpl implements TradeSignatureServicePost 
         return productDocumentClient.findProductDocumentParameters(
                 new ProductDocumentParametersRequest(entity, dto.getProductId()))
                 .doOnNext(doc -> generarDocumentos(doc, originId, dto.getProductId()))
-                .then(Mono.fromSupplier( () -> generarExpediente(originId, dto.getProductId())  ))
-                .map(resultExpediente -> StartSignatureResponseDto.builder().expedientId(resultExpediente).build());
+                .then(
+                        generarExpediente(originId, dto.getProductId())
+                            .map(expedient -> StartSignatureResponseDto.builder().expedientId(expedient.getExpedientId()).build())
+                );
     }
 
     private Mono<DocumentName> generarDocumentos(ProductDocumentParameters document, Long originId, String productId) {
-        if(document.getIsPrecontractual().equals("Y")) {
-            log.info("Documento TRUE: {} - {} - {}", document.getDocumentType(), document.getDocumentalTypeDoc(), document.getIsPrecontractual());
-        } else {
-            log.info("Documento FALSE: {} - {} - {}", document.getDocumentType(), document.getDocumentalTypeDoc(), document.getIsPrecontractual());
-        }
+        log.info("Documento Base: {} - {} - {}", document.getDocumentType(), document.getDocumentalTypeDoc(), document.getIsPrecontractual());
         log.info("Documento GENERADO - {}", document.getDocumentType() + originId + productId + ".pdf");
-
         return Mono.just(new DocumentName(document.getDocumentType() + originId + productId + ".pdf"));
     }
 

@@ -1,0 +1,5 @@
+Si falla el método generarDocumentos (quiero simular que se está llamando a un microservicio).
+Quiero devolver error de generación de documentación.
+
+Si falla el método generarExpediente (quiero simular que se está llamando a un microservicio).
+Quiero devolver error de generación de documentación.
