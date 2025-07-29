@@ -6,6 +6,7 @@ import com.acelera.broker.fx.db.domain.port.ProductDocumentParametersRepositoryC
 import com.acelera.fx.digitalsignature.domain.port.dto.StartSignatureRequestDto;
 import com.acelera.fx.digitalsignature.domain.port.dto.StartSignatureResponseDto;
 import com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureServicePost;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,23 +29,41 @@ public class TradeSignatureServicePostImpl implements TradeSignatureServicePost 
         return productDocumentClient.findProductDocumentParameters(
                 new ProductDocumentParametersRequest(entity, dto.getProductId()))
                 .doOnNext(doc -> generarDocumentos(doc, originId, dto.getProductId()))
-                .then(
-                    Mono.just(StartSignatureResponseDto.builder().expedientId(originId).build())
-                );
+                .then(Mono.fromSupplier( () -> generarExpediente(originId, dto.getProductId())  ))
+                .map(resultExpediente -> StartSignatureResponseDto.builder().expedientId(resultExpediente).build());
     }
 
-    private String generarDocumentos(ProductDocumentParameters document, Long originId, String productId) {
+    private Mono<DocumentName> generarDocumentos(ProductDocumentParameters document, Long originId, String productId) {
         if(document.getIsPrecontractual().equals("Y")) {
             log.info("Documento TRUE: {} - {} - {}", document.getDocumentType(), document.getDocumentalTypeDoc(), document.getIsPrecontractual());
         } else {
             log.info("Documento FALSE: {} - {} - {}", document.getDocumentType(), document.getDocumentalTypeDoc(), document.getIsPrecontractual());
         }
+        log.info("Documento GENERADO - {}", document.getDocumentType() + originId + productId + ".pdf");
 
-        return document.getDocumentType() + originId + productId + ".pdf";
+        return Mono.just(new DocumentName(document.getDocumentType() + originId + productId + ".pdf"));
     }
 
-    private String generarExpediente(Long originId, String productId, String documentName) {
-        log.info("Generar Expediente: {} - {} - Document Name: {}", originId, productId, documentName);
-        return "998547";
+    private Mono<Expedient> generarExpediente(Long originId, String productId) {
+        log.info("Generar Expediente: {} - {}", originId, productId);
+        return Mono.just(new Expedient(998547 + originId));
+    }
+
+    @Getter
+    static class DocumentName {
+        private final String documentName;
+
+        public DocumentName(String documentName) {
+            this.documentName = documentName;
+        }
+    }
+
+    @Getter
+    static class Expedient {
+        private final Long expedientId;
+
+        public Expedient(Long expedientId) {
+            this.expedientId = expedientId;
+        }
     }
 }
