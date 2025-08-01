@@ -12,6 +12,7 @@ import com.acelera.locale.LocaleConstants;
 import com.acelera.locale.MessageSourceHolder;
 import io.rsocket.exceptions.ApplicationErrorException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,118 +32,102 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class FxTradeSignatureServiceImplTest {
+    private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
+    private static final String GET_EXCEPTION = "TradeSignature exception";
+    private static final String GET_EXCEPTION_MESSAGE = "Se produjo un error en TradeSignature";
+    private static final String BEARER_TOKEN = "Bearer Token";
+    private static final Long TEST_ORIGIN_ID = 123L;
+
     private @InjectMocks FxTradeSignatureServiceImpl impl;
     private @Mock TradeSignatureClient client;
     private @Mock ServerHttpRequest serverHttpRequest;
 
-    private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
-
-    private final String GET_EXCEPTION = "TradeSignature exception";
-
-    private final String GET_EXCEPTION_MESSAGE = "Se produjo un error en TradeSignature";
-
     @BeforeEach
     void setup() {
+        setupMessageSource();
+        setupHttpHeaders();
+    }
+
+    private void setupMessageSource() {
         var ms = new StaticMessageSource();
-        ms.addMessage(GET_EXCEPTION, LocaleConstants.DEFAULT_LOCALE,
-                GET_EXCEPTION_MESSAGE);
+        ms.addMessage(GET_EXCEPTION, LocaleConstants.DEFAULT_LOCALE, GET_EXCEPTION_MESSAGE);
         MessageSourceHolder.setMessageSource(ms);
     }
 
-    @Test
-    void testPutTradeSignature() {
-        var response = PODAM_FACTORY.manufacturePojo(TradeSignatureResponse.class);
-
-        var locale = LocaleConstants.DEFAULT_LOCALE;
-        var entity = LocaleConstants.ENTITY_0049;
-        var request = PODAM_FACTORY.manufacturePojo(TradeSignatureRequest.class);
-
+    private void setupHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer Token");
+        headers.set(HttpHeaders.AUTHORIZATION, BEARER_TOKEN);
         when(serverHttpRequest.getHeaders()).thenReturn(headers);
-
-        when(client.updateTradeSignature(any())).thenReturn(Mono.just(response));
-
-        impl.updateTradeSignature(entity, locale, request, serverHttpRequest).as(StepVerifier::create).expectNext(response)
-                .verifyComplete();
     }
 
-    @Test
-    void testPutTradeSignature_whenException() {
-
-        var locale = LocaleConstants.DEFAULT_LOCALE;
-        var entity = LocaleConstants.ENTITY_0049;
-        var request = PODAM_FACTORY.manufacturePojo(TradeSignatureRequest.class);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer Token");
-        when(serverHttpRequest.getHeaders()).thenReturn(headers);
-
-        when(client.updateTradeSignature(any())).thenReturn(Mono.error(new ApplicationErrorException(GET_EXCEPTION)));
-
-        impl.updateTradeSignature(entity, locale, request, serverHttpRequest).as(StepVerifier::create)
-                .expectErrorSatisfies(x -> assertThat(x)
-                        .isInstanceOf(CustomErrorException.class).hasMessageContaining(GET_EXCEPTION_MESSAGE))
-                .verify();
-
+    private <T> T createTestRequest(Class<T> clazz) {
+        return PODAM_FACTORY.manufacturePojo(clazz);
     }
 
-    @Test
-    void testPostTradeSignature_whenException() {
+    @Nested
+    class UpdateTradeSignatureTests {
+        @Test
+        void shouldSucceed() {
+            var response = PODAM_FACTORY.manufacturePojo(TradeSignatureResponse.class);
 
-        var locale = LocaleConstants.DEFAULT_LOCALE;
-        var entity = LocaleConstants.ENTITY_0049;
-        var request = PODAM_FACTORY.manufacturePojo(TradeSignatureRequest.class);
+            var locale = LocaleConstants.DEFAULT_LOCALE;
+            var entity = LocaleConstants.ENTITY_0049;
+            var request = PODAM_FACTORY.manufacturePojo(TradeSignatureRequest.class);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer Token");
-        when(serverHttpRequest.getHeaders()).thenReturn(headers);
 
-        when(client.updateTradeSignature(any())).thenReturn(Mono.error(new ApplicationErrorException(GET_EXCEPTION)));
+            when(client.updateTradeSignature(any())).thenReturn(Mono.just(response));
 
-        impl.updateTradeSignature(entity, locale, request, serverHttpRequest).as(StepVerifier::create)
-                .expectErrorSatisfies(x -> assertThat(x)
-                        .isInstanceOf(CustomErrorException.class).hasMessageContaining(GET_EXCEPTION_MESSAGE))
-                .verify();
+            impl.updateTradeSignature(entity, locale, request, serverHttpRequest).as(StepVerifier::create).expectNext(response)
+                    .verifyComplete();
+        }
 
+        @Test
+        void shouldHandleError() {
+            var locale = LocaleConstants.DEFAULT_LOCALE;
+            var entity = LocaleConstants.ENTITY_0049;
+            var request = PODAM_FACTORY.manufacturePojo(TradeSignatureRequest.class);
+
+
+            when(client.updateTradeSignature(any())).thenReturn(Mono.error(new ApplicationErrorException(GET_EXCEPTION)));
+
+            impl.updateTradeSignature(entity, locale, request, serverHttpRequest).as(StepVerifier::create)
+                    .expectErrorSatisfies(x -> assertThat(x)
+                            .isInstanceOf(CustomErrorException.class).hasMessageContaining(GET_EXCEPTION_MESSAGE))
+                    .verify();
+        }
     }
 
-    @Test
-    void testGetTradeSignature() {
-        var response = PODAM_FACTORY.manufacturePojo(GetTradeSignatureResponse.class);
+    @Nested
+    class GetTradeSignatureTests {
+        @Test
+        void shouldSucceed() {
+            var response = PODAM_FACTORY.manufacturePojo(GetTradeSignatureResponse.class);
 
-        var locale = LocaleConstants.DEFAULT_LOCALE;
-        var entity = LocaleConstants.ENTITY_0049;
-        var request = PODAM_FACTORY.manufacturePojo(GetTradeSignatureRequestParameter.class);
+            var locale = LocaleConstants.DEFAULT_LOCALE;
+            var entity = LocaleConstants.ENTITY_0049;
+            var request = PODAM_FACTORY.manufacturePojo(GetTradeSignatureRequestParameter.class);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer Token");
-        when(serverHttpRequest.getHeaders()).thenReturn(headers);
 
-        when(client.getTradeSignature(any())).thenReturn(Mono.just(response));
+            when(client.getTradeSignature(any())).thenReturn(Mono.just(response));
 
-        impl.getTradeSignature(entity, locale, request, serverHttpRequest).as(StepVerifier::create).expectNext(response)
-                .verifyComplete();
-    }
+            impl.getTradeSignature(entity, locale, request, serverHttpRequest).as(StepVerifier::create).expectNext(response)
+                    .verifyComplete();
+        }
 
-    @Test
-    void testGetTradeSignature_whenException() {
+        @Test
+        void shouldHandleError() {
+            var response = PODAM_FACTORY.manufacturePojo(StartSignatureResponse.class);
 
-        var response = PODAM_FACTORY.manufacturePojo(StartSignatureResponse.class);
+            var locale = LocaleConstants.DEFAULT_LOCALE;
+            var entity = LocaleConstants.ENTITY_0049;
+            var request = PODAM_FACTORY.manufacturePojo(StartSignatureRequest.class);
+            var originId = 123L;
 
-        var locale = LocaleConstants.DEFAULT_LOCALE;
-        var entity = LocaleConstants.ENTITY_0049;
-        var request = PODAM_FACTORY.manufacturePojo(StartSignatureRequest.class);
-        var originId = 123L;
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer Token");
-        when(serverHttpRequest.getHeaders()).thenReturn(headers);
+            when(client.postStartSignatureWorkflow(any())).thenReturn(Mono.just(response));
 
-        when(client.postStartSignatureWorkflow(any())).thenReturn(Mono.just(response));
-
-        impl.postStartSignatureWorkflow(entity, locale, request, originId, serverHttpRequest).as(StepVerifier::create).expectNext(response)
-                .verifyComplete();
-
+            impl.postStartSignatureWorkflow(entity, locale, request, originId, serverHttpRequest).as(StepVerifier::create).expectNext(response)
+                    .verifyComplete();
+        }
     }
 }
