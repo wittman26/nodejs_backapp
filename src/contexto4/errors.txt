@@ -12,3 +12,11 @@
 
 java.lang.RuntimeException: Error de generación de documentación
 	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.lambda$startSignatureWorkflow$1(TradeSignatureServicePostImpl.java:34) ~[classes/:na]
+
+
+	return productDocumentClient.findProductDocumentParameters(
+        new ProductDocumentParametersRequest(entity, dto.getProductId()))
+        .doOnNext(doc -> log.info("DocumentParameters: id={}, product={}, entity={}", 
+            doc.getId(), doc.getProduct(), doc.getEntity()))
+        .flatMap(doc -> generarDocumentos(doc, originId, dto.getProductId()))
+        // ...existing code...
