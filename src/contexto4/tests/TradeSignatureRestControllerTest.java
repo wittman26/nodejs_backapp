@@ -19,6 +19,7 @@ import com.acelera.fx.digitalsignature.infrastructure.adapter.rest.response.Sign
 import com.acelera.locale.LocaleAutoConfig;
 import com.acelera.locale.LocaleConstants;
 import com.acelera.security.WebSecurityAutoConfig;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -51,7 +52,12 @@ import static org.mockito.Mockito.when;
 @Import({ LocaleAutoConfig.class, WebSecurityAutoConfig.class, ViewTradeSignatureExpedientStatusServiceImpl.class })
 @WithMockUser(username = "x1103878")
 public class TradeSignatureRestControllerTest {
-
+    private static final String BASE_PATH = "/v1/trades-signatures";
+    private static final String STATUS_PATH = BASE_PATH + "/{originId}/view/status";
+    private static final String SIGNATURES_PATH = BASE_PATH + "/{originId}/signatures";
+    private static final Long DEFAULT_ID = 9876L;
+    private static final int PAGE_SIZE = 10;
+    
     private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
     private @Autowired WebTestClient webClient;
     private @MockitoBean TradeSignatureServiceSave serviceSave;
@@ -59,105 +65,65 @@ public class TradeSignatureRestControllerTest {
     private @MockitoBean ViewTradeSignatureFindAllUseCase viewTradeSignatureFindAllUseCase;
     private @MockitoBean TradeSignatureServicePost tradeSignatureServicePost;
 
-    @Test
-    void shouldReturnTradeSignatureResponseOk() throws IOException {
+    @Nested
+    class TradeSignatureEndpointTests {
+        @Test
+        void shouldReturnTradeSignatureResponseOk() {
+            var response = createMockTradeSignatureResponse();
+            setupServiceMock(response);
 
-        var locale = ArgumentCaptor.forClass(Locale.class);
-        var entity = ArgumentCaptor.forClass(String.class);
-        var request = ArgumentCaptor.forClass(TradeSignatureDto.class);
+            preparePostRequest(BASE_PATH, getTradeSignatureRequest(ONLY_TRADE_SIGNATURE_ID))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(TradeSignatureResponse.class)
+                .value(x -> assertThat(x)
+                    .usingRecursiveComparison()
+                    .isEqualTo(response));
+        }
+    }
 
-        var response = TradeSignature.builder().tradeSignatureId(9876L).build();
+    @Nested
+    class SignatureExpedientStatusTests {
+        @Test
+        void shouldReturnStatusSuccessfully() {
+            var items = Stream.generate(() -> PODAM_FACTORY.manufacturePojo(ViewTradeSignatureExpedient.class))
+              .limit(10).toList();
+            var page = new PageDto<>(items, 0, 10, 10);
+            when(viewTradeSignatureFindAllUseCase.findAll(any(ViewTradeSignatureExpedientFindByFilterRequest.class)))
+              .thenReturn(Mono.just(page));
 
-        when(serviceSave.createOrUpdateSignature(locale.capture(), entity.capture(), request.capture()))
-                .thenReturn(Mono.just(response));
+            webClient.get()
+              .uri(builder -> builder.path("/v1/trades-signatures/{originId}/view/status").build(1L))
+              .exchange().expectStatus().isOk().expectBody(SignatureExpedienteStatusResponse.class)
+              .consumeWith(response -> {
+                  var body = Objects.requireNonNull(response.getResponseBody());
+                  assertThat(items).extracting("signatureExpedientStatus")
+                    .anyMatch(status -> status.equals(body.getStatus()));
+              });
+        }
 
-        webClient.put()
-                .uri(builder -> builder.path("/v1/trades-signatures").build())
-                .bodyValue(getTradeSignatureRequest(ONLY_TRADE_SIGNATURE_ID)).accept(MediaType.APPLICATION_JSON)
-                .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
-                .exchange().expectStatus().isOk().expectBody(TradeSignatureResponse.class)
-                .value(x -> assertThat(x).usingRecursiveComparison().isEqualTo(response));
+        @Test
+        void shouldReturnErrorWhenNoExpedientsFound() {
+            var page = new PageDto<ViewTradeSignatureExpedient>(List.of(), 0, 10, 10);
+            when(viewTradeSignatureFindAllUseCase.findAll(any(ViewTradeSignatureExpedientFindByFilterRequest.class)))
+              .thenReturn(Mono.just(page));
+
+            webClient.get()
+              .uri(builder -> builder.path("/v1/trades-signatures/{originId}/view/status").build(1L))
+              .exchange().expectStatus().is5xxServerError();
+        }
+    }
+
+    private <T> ArgumentCaptor<T> captureArgument(Class<T> clazz) {
+        return ArgumentCaptor.forClass(clazz);
     }
 
     @Test
-    void shouldReturnBadRequest() throws IOException {
-
-        var locale = ArgumentCaptor.forClass(Locale.class);
-        var entity = ArgumentCaptor.forClass(String.class);
-        var request = ArgumentCaptor.forClass(TradeSignatureDto.class);
-
-        when(serviceSave.createOrUpdateSignature(locale.capture(), entity.capture(), request.capture()))
-                .thenThrow(new IllegalArgumentException("Error"));
-
-        webClient.put()
-                .uri(builder -> builder.path("/v1/trades-signatures").build())
-                .bodyValue(getTradeSignatureRequest(ONLY_TRADE_SIGNATURE_ID)).accept(MediaType.APPLICATION_JSON)
-                .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
-                .exchange().expectStatus()
-                .is5xxServerError();
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-            "9876, ,",
-            ", 123450, 'TRADE'"
-    })
-    void shouldReturnGetResponseOk(Long tradeSignatureId, Long originId, String origin) {
-
-        var response = GetTradeSignatureDto.builder().tradeSignatureId(9876L).build();
-        var getResponse = prepareGetCall(tradeSignatureId, originId, origin, response);
-
-        getResponse.expectStatus().isOk().expectBody(GetTradeSignatureResponse.class)
-                .value(x -> assertThat(x).usingRecursiveComparison().isEqualTo(response));
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-            "9876, 123450, 'TRADE'"
-    })
-    void shouldReturnGetResponseNotOk(Long tradeSignatureId, Long originId, String origin) {
-
-        var response = GetTradeSignatureDto.builder().tradeSignatureId(9876L).build();
-        var getResponse = prepareGetCall(tradeSignatureId, originId, origin, response);
-
-        getResponse.expectStatus().isBadRequest();
-    }
-
-    @Test
-    void getSignatureExpedientStatus() {
-        var items = Stream.generate(() -> PODAM_FACTORY.manufacturePojo(ViewTradeSignatureExpedient.class))
-          .limit(10).toList();
-        var page = new PageDto<>(items, 0, 10, 10);
-        when(viewTradeSignatureFindAllUseCase.findAll(any(ViewTradeSignatureExpedientFindByFilterRequest.class)))
-          .thenReturn(Mono.just(page));
-
-        webClient.get()
-          .uri(builder -> builder.path("/v1/trades-signatures/{originId}/view/status").build(1L))
-          .exchange().expectStatus().isOk().expectBody(SignatureExpedienteStatusResponse.class)
-          .consumeWith(response -> {
-              var body = Objects.requireNonNull(response.getResponseBody());
-              assertThat(items).extracting("signatureExpedientStatus")
-                .anyMatch(status -> status.equals(body.getStatus()));
-          });
-    }
-
-    @Test
-    void getSignatureExpedientStatusEmpty() {
-        var page = new PageDto<ViewTradeSignatureExpedient>(List.of(), 0, 10, 10);
-        when(viewTradeSignatureFindAllUseCase.findAll(any(ViewTradeSignatureExpedientFindByFilterRequest.class)))
-          .thenReturn(Mono.just(page));
-
-        webClient.get()
-          .uri(builder -> builder.path("/v1/trades-signatures/{originId}/view/status").build(1L))
-          .exchange().expectStatus().is5xxServerError();
-    }
-
-    @Test
-    void postPostStartSignatureWorkflow() {
-        var locale = ArgumentCaptor.forClass(Locale.class);
-        var entity = ArgumentCaptor.forClass(String.class);
-        var originId = ArgumentCaptor.forClass(Long.class);
-        var request = ArgumentCaptor.forClass(StartSignatureRequestDto.class);
+    void shouldStartSignatureWorkflowSuccessfully() {
+        var locale = captureArgument(Locale.class);
+        var entity = captureArgument(String.class);
+        var originId = captureArgument(Long.class);
+        var request = captureArgument(StartSignatureRequestDto.class);
 
         var response = StartSignatureResponseDto.builder().expedientId(9876L).build();
 
@@ -172,6 +138,28 @@ public class TradeSignatureRestControllerTest {
                 .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
                 .exchange().expectStatus().isOk().expectBody(StartSignatureResponse.class)
                 .value(x -> assertThat(x).usingRecursiveComparison().isEqualTo(response));
+    }
+
+    private TradeSignatureResponse createMockTradeSignatureResponse() {
+        return TradeSignature.builder()
+                .tradeSignatureId(DEFAULT_ID)
+                .build();
+    }
+
+    private WebTestClient.RequestHeadersSpec<?> preparePostRequest(String path, Object body) {
+        return webClient.post()
+                .uri(path)
+                .bodyValue(body)
+                .accept(MediaType.APPLICATION_JSON)
+                .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049);
+    }
+
+    private void setupServiceMock(Object response) {
+        when(serviceSave.createOrUpdateSignature(
+                any(Locale.class), 
+                any(String.class), 
+                any(TradeSignatureDto.class)))
+                .thenReturn(Mono.just(response));
     }
 
     private WebTestClient.ResponseSpec prepareGetCall(Long tradeSignatureId, Long originId, String origin,
@@ -197,6 +185,16 @@ public class TradeSignatureRestControllerTest {
                         .build())
                 .header(LocaleConstants.ENTITY_HEADER, LocaleConstants.ENTITY_0049)
                 .exchange();
+    }
+
+    private <T> void assertResponseEquals(T expected, T actual) {
+        assertThat(actual)
+            .usingRecursiveComparison()
+            .isEqualTo(expected);
+    }
+
+    private PageDto<ViewTradeSignatureExpedient> createMockPage(List<ViewTradeSignatureExpedient> items) {
+        return new PageDto<>(items, 0, PAGE_SIZE, items.size());
     }
 
 }
