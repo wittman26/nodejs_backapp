@@ -4,7 +4,6 @@ import com.acelera.broker.fx.db.domain.dto.ProductDocumentParameters;
 import com.acelera.fx.digitalsignature.domain.port.dto.StartSignatureRequestDto;
 import com.acelera.fx.digitalsignature.domain.port.dto.StartSignatureResponseDto;
 import com.acelera.fx.digitalsignature.domain.port.service.ProductDocumentsService;
-import com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureServiceSave;
 import com.acelera.fx.digitalsignature.infrastructure.request.CreateExpedientRequest;
 import com.acelera.fx.digitalsignature.infrastructure.response.CreateExpedientResponse;
 import com.acelera.locale.LocaleConstants;
@@ -35,7 +34,7 @@ public class TradeSignatureServicePostImplTest {
     ProductDocumentsService productDocumentsService;
 
     @Mock
-    TradeSignatureServiceSave tradeSignatureServiceSave;
+    TradeSignatureServiceSaveImpl tradeSignatureServiceSave;
 
     @InjectMocks
     TradeSignatureServicePostImpl impl;
@@ -48,12 +47,14 @@ public class TradeSignatureServicePostImplTest {
 
     private static final String ERROR_EXPEDIENT_MESSAGE = "Error de generación de expediente";
 
+    private static final String ERROR_FIND_PRODUCT_DOCUMENT = "Id no encontrado";
+
     @BeforeAll
     static void prepareMessages() {
         LocaleContextHolder.setLocale(LocaleConstants.DEFAULT_LOCALE);
 
         var ms = new StaticMessageSource();
-        ms.addMessage("error.fx.product.document.id.notFound", LocaleConstants.DEFAULT_LOCALE, "Id no encontrado");
+        ms.addMessage("error.fx.product.document.id.notFound", LocaleConstants.DEFAULT_LOCALE, ERROR_FIND_PRODUCT_DOCUMENT);
         ms.addMessage("error.fx.tradesignature.generacion.documentos", LocaleConstants.DEFAULT_LOCALE, ERROR_DOCUMENTATION_MESSAGE);
         ms.addMessage("error.fx.tradesignature.generacion.expediente", LocaleConstants.DEFAULT_LOCALE, ERROR_EXPEDIENT_MESSAGE);
         MessageSourceHolder.setMessageSource(ms);
@@ -76,7 +77,12 @@ public class TradeSignatureServicePostImplTest {
                 .thenReturn(Mono.just(expedient));
 
         StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
-        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(LocaleConstants.ENTITY_0049, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, request);
+
+        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(
+                LocaleConstants.ENTITY_0049,
+                LocaleConstants.DEFAULT_LOCALE,
+                ORIGIN_ID,
+                request);
 
         StepVerifier.create(result)
                 .expectNextMatches(resp -> resp.getExpedientId() != null)
@@ -92,7 +98,11 @@ public class TradeSignatureServicePostImplTest {
         StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
 
         // originId >300 para simular error en documentación
-        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(LocaleConstants.ENTITY_0049, LocaleConstants.DEFAULT_LOCALE, 301L, request);
+        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(
+                LocaleConstants.ENTITY_0049,
+                LocaleConstants.DEFAULT_LOCALE,
+                301L,
+                request);
 
         StepVerifier.create(result)
                 .expectErrorMatches(e -> e.getMessage().contains(ERROR_DOCUMENTATION_MESSAGE))
@@ -114,11 +124,33 @@ public class TradeSignatureServicePostImplTest {
 
         StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
 
-        // originId negativo para simular error en expediente
-        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(LocaleConstants.ENTITY_0049, LocaleConstants.DEFAULT_LOCALE, -1L, request);
+        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(
+                LocaleConstants.ENTITY_0049,
+                LocaleConstants.DEFAULT_LOCALE,
+                ORIGIN_ID,
+                request);
 
         StepVerifier.create(result)
                 .expectErrorMatches(e -> e.getMessage().contains(ERROR_EXPEDIENT_MESSAGE))
+                .verify();
+    }
+
+    @Test
+    void testStartSignatureWorkflow_error_productDocument_NotFound() {
+        ProductDocumentParameters doc = PODAM_FACTORY.manufacturePojo(ProductDocumentParameters.class);
+        when(productDocumentsService.findProductDocumentType(any(String.class), any(Locale.class), any(String.class)))
+                .thenReturn(Flux.empty());
+
+        StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
+
+        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(
+                LocaleConstants.ENTITY_0049,
+                LocaleConstants.DEFAULT_LOCALE,
+                ORIGIN_ID,
+                request);
+
+        StepVerifier.create(result)
+                .expectErrorMatches(e -> e.getMessage().contains(ERROR_FIND_PRODUCT_DOCUMENT))
                 .verify();
     }
 }
