@@ -9,6 +9,7 @@ import com.acelera.fx.digitalsignature.infrastructure.response.CreateExpedientRe
 import com.acelera.locale.LocaleConstants;
 import com.acelera.locale.MessageSourceHolder;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -60,96 +61,76 @@ public class TradeSignatureServicePostImplTest {
         MessageSourceHolder.setMessageSource(ms);
     }
 
-    @Test
-    void testStartSignatureWorkflow_ok() {
-
+    @BeforeEach
+    void setUp() {
         ProductDocumentParameters doc = PODAM_FACTORY.manufacturePojo(ProductDocumentParameters.class);
-        when(productDocumentsService.findProductDocumentType(any(String.class), any(Locale.class), any(String.class)))
+        when(productDocumentsService.findProductDocumentType(any(), any(), any()))
                 .thenReturn(Flux.just(doc));
+    }
 
-        CreateExpedientResponse expedient = PODAM_FACTORY.manufacturePojo(CreateExpedientResponse.class);
+    private StartSignatureRequestDto createTestRequest() {
+        return PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
+    }
 
-        when(tradeSignatureServiceSave.createSignatureExpedient(
-                        any(Locale.class),
-                        any(String.class),
-                        any(Long.class),
-                        any(CreateExpedientRequest.class)))
-                .thenReturn(Mono.just(expedient));
-
-        StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
-
-        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(
+    private Mono<StartSignatureResponseDto> executeWorkflow(Long originId) {
+        return impl.startSignatureWorkflow(
                 LocaleConstants.ENTITY_0049,
                 LocaleConstants.DEFAULT_LOCALE,
-                ORIGIN_ID,
-                request);
+                originId,
+                createTestRequest());
+    }
 
-        StepVerifier.create(result)
+    private void mockCreateExpedient(CreateExpedientResponse response) {
+        when(tradeSignatureServiceSave.createSignatureExpedient(
+                any(), any(), any(), any()))
+                .thenReturn(Mono.just(response));
+    }
+
+    private void mockCreateExpedientError() {
+        when(tradeSignatureServiceSave.createSignatureExpedient(
+                any(), any(), any(), any()))
+                .thenReturn(Mono.error(new RuntimeException(ERROR_EXPEDIENT_MESSAGE)));
+    }
+
+    @Test
+    void testStartSignatureWorkflow_ok() {
+        // Given
+        CreateExpedientResponse expedient = PODAM_FACTORY.manufacturePojo(CreateExpedientResponse.class);
+        mockCreateExpedient(expedient);
+
+        // When/Then
+        StepVerifier.create(executeWorkflow(ORIGIN_ID))
                 .expectNextMatches(resp -> resp.getExpedientId() != null)
                 .verifyComplete();
     }
 
     @Test
     void testStartSignatureWorkflow_error_generacionDocumentacion() {
-        ProductDocumentParameters doc = PODAM_FACTORY.manufacturePojo(ProductDocumentParameters.class);
-        when(productDocumentsService.findProductDocumentType(any(String.class), any(Locale.class), any(String.class)))
-                .thenReturn(Flux.just(doc));
-
-        StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
-
-        // originId >300 para simular error en documentación
-        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(
-                LocaleConstants.ENTITY_0049,
-                LocaleConstants.DEFAULT_LOCALE,
-                301L,
-                request);
-
-        StepVerifier.create(result)
+        // When/Then
+        StepVerifier.create(executeWorkflow(301L))
                 .expectErrorMatches(e -> e.getMessage().contains(ERROR_DOCUMENTATION_MESSAGE))
                 .verify();
     }
 
     @Test
     void testStartSignatureWorkflow_error_generacionExpediente() {
-        ProductDocumentParameters doc = PODAM_FACTORY.manufacturePojo(ProductDocumentParameters.class);
-        when(productDocumentsService.findProductDocumentType(any(String.class), any(Locale.class), any(String.class)))
-                .thenReturn(Flux.just(doc));
+        // Given
+        mockCreateExpedientError();
 
-        when(tradeSignatureServiceSave.createSignatureExpedient(
-                any(Locale.class),
-                any(String.class),
-                any(Long.class),
-                any(CreateExpedientRequest.class)))
-                .thenReturn(Mono.error(new RuntimeException(ERROR_EXPEDIENT_MESSAGE)));
-
-        StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
-
-        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(
-                LocaleConstants.ENTITY_0049,
-                LocaleConstants.DEFAULT_LOCALE,
-                ORIGIN_ID,
-                request);
-
-        StepVerifier.create(result)
+        // When/Then
+        StepVerifier.create(executeWorkflow(ORIGIN_ID))
                 .expectErrorMatches(e -> e.getMessage().contains(ERROR_EXPEDIENT_MESSAGE))
                 .verify();
     }
 
     @Test
     void testStartSignatureWorkflow_error_productDocument_NotFound() {
-        ProductDocumentParameters doc = PODAM_FACTORY.manufacturePojo(ProductDocumentParameters.class);
-        when(productDocumentsService.findProductDocumentType(any(String.class), any(Locale.class), any(String.class)))
+        // Given
+        when(productDocumentsService.findProductDocumentType(any(), any(), any()))
                 .thenReturn(Flux.empty());
 
-        StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
-
-        Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(
-                LocaleConstants.ENTITY_0049,
-                LocaleConstants.DEFAULT_LOCALE,
-                ORIGIN_ID,
-                request);
-
-        StepVerifier.create(result)
+        // When/Then
+        StepVerifier.create(executeWorkflow(ORIGIN_ID))
                 .expectErrorMatches(e -> e.getMessage().contains(ERROR_FIND_PRODUCT_DOCUMENT))
                 .verify();
     }
