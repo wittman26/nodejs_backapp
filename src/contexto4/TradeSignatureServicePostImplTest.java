@@ -68,9 +68,12 @@ public class TradeSignatureServicePostImplTest {
 
         CreateExpedientResponse expedient = PODAM_FACTORY.manufacturePojo(CreateExpedientResponse.class);
 
-        when(tradeSignatureServiceSave.createSignatureExpedient(any(Locale.class) , any(String.class) , any(Long.class),
-                        any(CreateExpedientRequest.class))
-                .thenReturn(Mono.just(expedient)));
+        when(tradeSignatureServiceSave.createSignatureExpedient(
+                        any(Locale.class),
+                        any(String.class),
+                        any(Long.class),
+                        any(CreateExpedientRequest.class)))
+                .thenReturn(Mono.just(expedient));
 
         StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
         Mono<StartSignatureResponseDto> result = impl.startSignatureWorkflow(LocaleConstants.ENTITY_0049, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, request);
@@ -102,9 +105,12 @@ public class TradeSignatureServicePostImplTest {
         when(productDocumentsService.findProductDocumentType(any(String.class), any(Locale.class), any(String.class)))
                 .thenReturn(Flux.just(doc));
 
-        when(tradeSignatureServiceSave.createSignatureExpedient(any(Locale.class) , any(String.class) , any(Long.class),
-                        any(CreateExpedientRequest.class))
-                .thenReturn(Mono.error(new RuntimeException(ERROR_EXPEDIENT_MESSAGE))));
+        when(tradeSignatureServiceSave.createSignatureExpedient(
+                any(Locale.class),
+                any(String.class),
+                any(Long.class),
+                any(CreateExpedientRequest.class)))
+                .thenReturn(Mono.error(new RuntimeException(ERROR_EXPEDIENT_MESSAGE)));
 
         StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
 
