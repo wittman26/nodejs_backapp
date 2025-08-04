@@ -58,161 +58,75 @@ public class TradeSignatureServiceSaveImpl implements TradeSignatureServiceSave 
     }
 
     @Override
-    public Mono<CreateExpedientResponse> createSignatureExpedient(Locale locale, String entity, Long originId, CreateExpedientRequest request) {
-        // 0: Determinar origen (TRADE o EVENT) según productId
-        String origin = tradeSignerHelper.isEventProduct(request.getProductId()) ? "EVENT" : "TRADE";
+    public Mono<CreateExpedientResponse> createSignatureExpedient(Locale locale, String entity, Long originId, 
+        CreateExpedientRequest request) {
+        String origin = determineOrigin(request.getProductId());
+        
+        return getTradeSignatureWithSigners(entity, originId, request, origin)
+                .flatMap(signers -> processDocuments(entity, locale, originId, request.getProductId(), origin, signers))
+                .flatMap(context -> getOwnerAndCenterInfo(entity, originId, origin, context))
+                .flatMap(context -> getDisclaimerContent(entity, originId, request.getProductId(), context))
+                .flatMap(this::createDfdExpedient);
+    }
 
-        // 1: Obtener tradeSignatureId (ya encapsula toda la lógica interna)
+    private String determineOrigin(String productId) {
+        return tradeSignerHelper.isEventProduct(productId) ? "EVENT" : "TRADE";
+    }
+
+    private Mono<List<Signer>> getTradeSignatureWithSigners(String entity, Long originId, 
+        CreateExpedientRequest request, String origin) {
         return tradeSignatureServiceGet.getTradeSignature(entity, originId, request)
                 .flatMap(tradeSignature -> {
-                    Long tradeSignatureId = tradeSignature.getTradeSignatureId();
-
-                    // 2: Obtener firmantes (signers)
                     GetTradeSignatureParameterDto signerRequest = GetTradeSignatureParameterDto.builder()
-                            .tradeSignatureId(tradeSignatureId)
+                            .tradeSignatureId(tradeSignature.getTradeSignatureId())
                             .origin(origin)
                             .originId(originId)
                             .build();
-
                     return tradeSignatureServiceGet.getTradeSignature(locale, entity, signerRequest)
-                            .map(GetTradeSignatureDto::getSigners)
-                            .flatMap(signers ->
-
-                                    // 3: Obtener tipos de documentos por producto
-                                    productDocumentsService.findProductDocumentType(entity, locale, request.getProductId())
-                                            .collectList()
-                                            .flatMap(documentTypes -> {
-
-                                                //  Obtener los nombres de los documentos desde ACE_DOCUMENTOS o ACE_EVENT_DOC
-                                                List<Mono<DocumentSignature>> documentSignaturesMonos = documentTypes.stream()
-                                                        .map(docType -> {
-                                                            DocumentRequest docRequest = DocumentRequest.builder()
-                                                                    .entityId(entity)
-                                                                    .documentTypeId(docType.getDocumentType())
-                                                                    .operationId("TRADE".equals(origin) ? originId : null)
-                                                                    .eventId("EVENT".equals(origin) ? originId : null)
-                                                                    .build();
-
-                                                            return "TRADE".equals(origin)
-                                                                    ? documentSignatureRepositoryClient.findByEntityAndOperationAndDocumentType(docRequest)
-                                                                    : documentSignatureRepositoryClient.findByEntityAndEventAndDocumentType(docRequest);
-                                                        })
-                                                        .toList();
-
-                                                return Flux.mergeSequential(documentSignaturesMonos)
-                                                        .collectList()
-                                                        .flatMap(documentSignatures -> {
-                                                            if (documentSignatures.size() != documentTypes.size()) {
-                                                                return Mono.error(new RuntimeException("Some document names could not be found."));
-                                                            }
-
-                                                            //  Obtener titular y centro
-                                                            Mono<String> ownerNameMono;
-                                                            Mono<String> ownerDocumentMono;
-                                                            Mono<String> centerMono;
-
-                                                            if ("EVENT".equals(origin)) {
-                                                                EventRequest eventRequest = EventRequest.builder()
-                                                                        .eventId(originId)
-                                                                        .entityId(entity)
-                                                                        .build();
-
-                                                                Mono<Event> eventMono = eventRepositoryClient.findByEntityAndEvent(eventRequest);
-
-                                                                ownerNameMono = eventMono.map(Event::getOwnerName);
-                                                                ownerDocumentMono = eventMono.map(Event::getOwnerDocument);
-                                                                centerMono = eventMono.map(Event::getCenterId);
-
-                                                            } else {
-                                                                // TRADE: obtener desde ACE_OPERACION y ACE_OPERACION_TITULARES
-                                                                Mono<Operation> operationMono = operationRepositoryClient.findByOperationIdAndEntityId(
-                                                                        OperationRequest.builder()
-                                                                                .operationId(originId)
-                                                                                .entityId(entity)
-                                                                                .build());
-
-                                                                Mono<HeadlineOperation> headlineMono = headlineOperationRepositoryClient.findByOperationIdAndEntityId(
-                                                                        HeadlineOperationRequest.builder()
-                                                                                .operationId(originId)
-                                                                                .entityId(entity)
-                                                                                .build());
-
-                                                                ownerNameMono = headlineMono.map(HeadlineOperation::getName);
-                                                                ownerDocumentMono = headlineMono.map(HeadlineOperation::getDocument);
-                                                                centerMono = operationMono.map(Operation::getCenterId);
-                                                            }
-
-                                                            // Combinar los resultados
-                                                            return Mono.zip(ownerNameMono, ownerDocumentMono, centerMono)
-                                                                    .flatMap(tuple -> {
-                                                                        String ownerName = tuple.getT1();
-                                                                        String ownerDocument = tuple.getT2();
-                                                                        String center = tuple.getT3();
-
-                                                                        String productId = request.getProductId();
-                                                                        Mono<String> disclaimerContentMono;
-
-                                                                        if (tradeSignerHelper.isEventProduct(productId)) {
-                                                                            disclaimerContentMono = eventDisclaimerRepositoryClient.findByEntityAndEventId(
-                                                                                    EventDisclaimerRequest.builder()
-                                                                                            .entity(entity)
-                                                                                            .eventId(originId)
-                                                                                            .build()
-                                                                            ).map(EventDisclaimer::getContent);
-                                                                        } else {
-                                                                            disclaimerContentMono = operationDisclaimerRepositoryClient.findByEntityAndTradeId(
-                                                                                    OperationDisclaimerRequest.builder()
-                                                                                            .entity(entity)
-                                                                                            .tradeId(originId)
-                                                                                            .build()
-                                                                            ).map(OperationDisclaimer::getContent);
-                                                                        }
-
-                                                                        return disclaimerContentMono.flatMap(disclaimerContent -> {
-
-                                                                            List<ExpedientRequest.Document> documents = documentSignatures.stream()
-                                                                                    .map(doc -> ExpedientRequest.Document.builder()
-                                                                                            .typeDoc("DOCUMENT")
-                                                                                            .indPreContractual(true)
-                                                                                            .build()
-                                                                                    ).toList();
-
-                                                                            ExpedientRequest expedientRequest = ExpedientRequest.builder()
-                                                                                    .sourceApp(ExpedientRequest.SourceApp.builder()
-                                                                                            .code(Constants.ACELERA)
-                                                                                            .operCode(tradeSignerHelper.isEventProduct(request.getProductId()) ? "ACEV" : "ACE" + origin)
-                                                                                            .url("/v1/trades-signatures/expedients/{id}?status=" )
-                                                                                            .build())
-                                                                                    .startDate(ZonedDateTime.now())
-                                                                                    .endDate(ZonedDateTime.now().plusDays(5))
-                                                                                    .centre(center)
-                                                                                    .typeReference(Constants.DERIVADO_DIV)
-                                                                                    .customerId(ownerDocument)
-                                                                                    .productDesc(Constants.DERIVADO_DIV)
-                                                                                    .descExp(Constants.CONT_DER_DIV)
-                                                                                    .typeBox(Constants.B092)
-                                                                                    .catBox(Constants.DIVISAS)
-                                                                                    .channel(Constants.CHAN_OFI)
-                                                                                    .docs(documents)
-                                                                                    .build();
-
-                                                                            return restDfdClient.createExpedient(expedientRequest)
-                                                                                    .flatMap(expedientIdResponse -> {
-                                                                                        if ( expedientIdResponse == null) {
-                                                                                            return Mono.error(new RuntimeException("DFD response did not return expedientId"));
-                                                                                        }
-                                                                                        return Mono.just(
-                                                                                                CreateExpedientResponse.builder()
-                                                                                                        .expedientId(expedientIdResponse)
-                                                                                                        .build()
-                                                                                        );
-                                                                                    });
-                                                                        });
-                                                                    });
-                                                        });
-                                            })
-                            );
+                            .map(GetTradeSignatureDto::getSigners);
                 });
+    }
+
+    private Mono<ExpedientContext> processDocuments(String entity, Locale locale, Long originId, 
+        String productId, String origin, List<Signer> signers) {
+        return productDocumentsService.findProductDocumentType(entity, locale, productId)
+                .collectList()
+                .flatMap(documentTypes -> getDocumentSignatures(entity, originId, origin, documentTypes))
+                .map(documents -> new ExpedientContext(signers, documents));
+    }
+
+    private Mono<List<DocumentSignature>> getDocumentSignatures(String entity, Long originId, 
+        String origin, List<ProductDocumentType> documentTypes) {
+        List<Mono<DocumentSignature>> documentSignaturesMonos = documentTypes.stream()
+                .map(docType -> createDocumentRequest(entity, originId, docType, origin))
+                .map(request -> getDocumentSignature(request, origin))
+                .toList();
+
+        return Flux.mergeSequential(documentSignaturesMonos)
+                .collectList()
+                .flatMap(signatures -> validateDocumentSignatures(signatures, documentTypes.size()));
+    }
+
+    private Mono<ExpedientContext> getOwnerAndCenterInfo(String entity, Long originId, 
+        String origin, ExpedientContext context) {
+        if ("EVENT".equals(origin)) {
+            return getEventOwnerInfo(entity, originId, context);
+        }
+        return getTradeOwnerInfo(entity, originId, context);
+    }
+
+    private Mono<ExpedientContext> getDisclaimerContent(String entity, Long originId, 
+        String productId, ExpedientContext context) {
+        if (tradeSignerHelper.isEventProduct(productId)) {
+            return getEventDisclaimerContent(entity, originId, context);
+        }
+        return getTradeDisclaimerContent(entity, originId, context);
+    }
+
+    private Mono<CreateExpedientResponse> createDfdExpedient(ExpedientContext context) {
+        ExpedientRequest expedientRequest = buildExpedientRequest(context);
+        return restDfdClient.createExpedient(expedientRequest)
+                .flatMap(this::handleDfdResponse);
     }
 
     public Mono<TradeSignature> upsertTradeSignature(TradeSignature tradeSignatureFound, TradeSignatureDto dto, String entity) {
@@ -240,5 +154,22 @@ public class TradeSignatureServiceSaveImpl implements TradeSignatureServiceSave 
                 .forEach(signer -> signer.setTradeSignatureId(tradeSignature.getTradeSignatureId()));
 
         return tradeSignatureRepositoryClient.save(tradeSignature);
+    }
+
+    // Clase auxiliar para mantener el contexto entre operaciones
+    @Data
+    @AllArgsConstructor
+    private static class ExpedientContext {
+        private List<Signer> signers;
+        private List<DocumentSignature> documents;
+        private String ownerName;
+        private String ownerDocument;
+        private String center;
+        private String disclaimerContent;
+        
+        public ExpedientContext(List<Signer> signers, List<DocumentSignature> documents) {
+            this.signers = signers;
+            this.documents = documents;
+        }
     }
 }
