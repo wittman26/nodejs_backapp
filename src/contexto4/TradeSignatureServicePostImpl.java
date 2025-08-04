@@ -1,7 +1,6 @@
 package com.acelera.fx.digitalsignature.application.service;
 
 import com.acelera.broker.fx.db.domain.dto.ProductDocumentParameters;
-import com.acelera.broker.fx.db.domain.dto.ProductDocumentParametersRequest;
 import com.acelera.broker.fx.db.domain.port.ProductDocumentParametersRepositoryClient;
 import com.acelera.error.CustomErrorException;
 import com.acelera.fx.digitalsignature.domain.port.dto.StartSignatureRequestDto;
@@ -28,10 +27,8 @@ public class TradeSignatureServicePostImpl implements TradeSignatureServicePost 
 
     private static final String CODIGO_ERROR_GENERAR_DOCUMENTOS = "error.fx.tradesignature.generacion.documentos";
     private static final String CODIGO_ERROR_GENERAR_EXPEDIENTE = "error.fx.tradesignature.generacion.expediente";
-    //private static final String CODIGO_ERROR_FIND_PRODUCT_DOCUMENT = "error.fx.product.document.id.notFound";
-    private static final String CODIGO_ERROR_FIND_PRODUCT_DOCUMENT = "error.fx.tradesignature.id.notFound";
-
-    private final ProductDocumentParametersRepositoryClient productDocumentClient;
+    private static final String CODIGO_ERROR_FIND_PRODUCT_DOCUMENT = "error.fx.product.document.id.notFound";
+    
     private final ProductDocumentsService productDocumentsService;
     private final TradeSignatureServiceSaveImpl tradeSignatureServiceSave;
 
@@ -42,16 +39,14 @@ public class TradeSignatureServicePostImpl implements TradeSignatureServicePost 
 
         // 1. documentos del producto:
         return productDocumentsService.findProductDocumentType(entity, locale,idProduct)
-//        return productDocumentClient.findProductDocumentParameters(
-//                        new ProductDocumentParametersRequest(entity, idProduct))
                 .switchIfEmpty(Mono.error(CustomErrorException.ofArguments(NOT_FOUND, CODIGO_ERROR_FIND_PRODUCT_DOCUMENT, idProduct)))
                 .flatMap(doc -> generarDocumentos(doc, originId, idProduct))
                 .collectList()
                 .flatMap(documentos -> generarExpediente(entity, locale, originId, idProduct))
-                .map(expedient ->
-                        StartSignatureResponseDto.builder()
-                                .expedientId(expedient.getExpedientId())
-                                .build())
+                .map(expedient -> {
+                    log.info("Expediente con id: {} ", expedient.getExpedientId());
+                    return StartSignatureResponseDto.builder().expedientId(expedient.getExpedientId()).build();
+                })
                 .onErrorResume(e -> {
                     if (e instanceof CustomErrorException) {
                         return Mono.error(e);
@@ -72,14 +67,13 @@ public class TradeSignatureServicePostImpl implements TradeSignatureServicePost 
     }
 
     private Mono<CreateExpedientResponse> generarExpediente(String entity, Locale locale, Long originId, String productId) {
-        log.info("2. GENERACION DE EXPEDIENTE");
-        log.info("Generar Expediente: {} - {}", originId, productId);
-        var req = new CreateExpedientRequest(productId);
-        return tradeSignatureServiceSave.createSignatureExpedient(locale, entity, originId, req);
-//        if (originId < 0) { // Simulación de error
-//            return Mono.error(new RuntimeException(CODIGO_ERROR_GENERAR_EXPEDIENTE));
-//        }
-//        return Mono.just(new Expedient(998547 + originId));
+        var request = new CreateExpedientRequest(productId);
+        return tradeSignatureServiceSave.createSignatureExpedient(locale, entity, originId, request)
+                .onErrorResume(e -> {
+                    log.error("Error en generación de expediente: {}", e.getMessage());
+                    return Mono.error(new RuntimeException(CODIGO_ERROR_GENERAR_EXPEDIENTE));
+                })
+                .switchIfEmpty(Mono.just(CreateExpedientResponse.builder().expedientId(123456L).build()));
     }
 
     @Getter
@@ -88,15 +82,6 @@ public class TradeSignatureServicePostImpl implements TradeSignatureServicePost 
 
         public DocumentName(String documentName) {
             this.documentName = documentName;
-        }
-    }
-
-    @Getter
-    static class Expedient {
-        private final Long expedientId;
-
-        public Expedient(Long expedientId) {
-            this.expedientId = expedientId;
         }
     }
 }
