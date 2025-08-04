@@ -102,6 +102,10 @@ public class TradeSignatureServicePostImplTest {
         when(productDocumentsService.findProductDocumentType(any(String.class), any(Locale.class), any(String.class)))
                 .thenReturn(Flux.just(doc));
 
+        when(tradeSignatureServiceSave.createSignatureExpedient(any(Locale.class) , any(String.class) , any(Long.class),
+                        any(CreateExpedientRequest.class))
+                .thenReturn(Mono.error(new RuntimeException(ERROR_EXPEDIENT_MESSAGE))));
+
         StartSignatureRequestDto request = PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
 
         // originId negativo para simular error en expediente
