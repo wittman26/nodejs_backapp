@@ -57,76 +57,48 @@ public class TradeSignatureServiceSaveImpl implements TradeSignatureServiceSave 
                 .switchIfEmpty(Mono.defer(() -> upsertTradeSignature(null, dto, entity))); // Logica de salvar
     }
 
+    private GetTradeSignatureParameterDto getSignerRequest(Long tradeSignatureId, Long originId, String origin) {
+        return GetTradeSignatureParameterDto.builder()
+                .tradeSignatureId(tradeSignatureId)
+                .origin(origin)
+                .originId(originId)
+                .build();
+    }
+
+
+
     @Override
-    public Mono<CreateExpedientResponse> createSignatureExpedient(Locale locale, String entity, Long originId, 
-        CreateExpedientRequest request) {
-        String origin = determineOrigin(request.getProductId());
-        
-        return getTradeSignatureWithSigners(entity, originId, request, origin)
-                .flatMap(signers -> processDocuments(entity, locale, originId, request.getProductId(), origin, signers))
-                .flatMap(context -> getOwnerAndCenterInfo(entity, originId, origin, context))
-                .flatMap(context -> getDisclaimerContent(entity, originId, request.getProductId(), context))
-                .flatMap(this::createDfdExpedient);
-    }
+    public Mono<CreateExpedientResponse> createSignatureExpedient(Locale locale, String entity, Long originId, CreateExpedientRequest request) {
+        // 0: Determinar origen (TRADE o EVENT) según productId
+        String origin = tradeSignerHelper.isEventProduct(request.getProductId()) ? "EVENT" : "TRADE";
 
-    private String determineOrigin(String productId) {
-        return tradeSignerHelper.isEventProduct(productId) ? "EVENT" : "TRADE";
-    }
-
-    private Mono<List<Signer>> getTradeSignatureWithSigners(String entity, Long originId, 
-        CreateExpedientRequest request, String origin) {
+        // 1: Obtener tradeSignatureId (ya encapsula toda la lógica interna)
         return tradeSignatureServiceGet.getTradeSignature(entity, originId, request)
+                .switchIfEmpty(Mono.error(new RuntimeException("tradeSignature Not found.")))
                 .flatMap(tradeSignature -> {
-                    GetTradeSignatureParameterDto signerRequest = GetTradeSignatureParameterDto.builder()
-                            .tradeSignatureId(tradeSignature.getTradeSignatureId())
-                            .origin(origin)
-                            .originId(originId)
-                            .build();
+                    log.info("1: Obtener tradeSignatureId : {}", tradeSignature.getTradeSignatureId());
+                    // 2: Obtener firmantes (signers)
+                    var signerRequest = getSignerRequest(tradeSignature.getTradeSignatureId(), originId, origin);
                     return tradeSignatureServiceGet.getTradeSignature(locale, entity, signerRequest)
-                            .map(GetTradeSignatureDto::getSigners);
+                            .map(GetTradeSignatureDto::getSigners)
+                            .flatMap(signers -> {
+                                        log.info("2: Obtener firmantes (signers): {} ", signers.size() );
+                                        signers.forEach( signer ->
+                                                log.info("Signer: {}", signer.getSignerId())
+                                        );
+                                        // 3: Obtener tipos de documentos por producto
+                                        return productDocumentsService.findProductDocumentType(entity, locale, request.getProductId())
+                                                .collectList()
+                                                .flatMap(documentTypes -> {
+                                                    log.info("3: Obtener tipos de documentos por producto: {} ", documentTypes.size());
+                                                    documentTypes.forEach( documentType ->
+                                                            log.info("documentType: {} - {}", documentType.getProduct(), documentType.getDocumentType())
+                                                    );
+                                                    return Mono.just(CreateExpedientResponse.builder().expedientId(123L).build());
+                                                });
+                                    }
+                            );
                 });
-    }
-
-    private Mono<ExpedientContext> processDocuments(String entity, Locale locale, Long originId, 
-        String productId, String origin, List<Signer> signers) {
-        return productDocumentsService.findProductDocumentType(entity, locale, productId)
-                .collectList()
-                .flatMap(documentTypes -> getDocumentSignatures(entity, originId, origin, documentTypes))
-                .map(documents -> new ExpedientContext(signers, documents));
-    }
-
-    private Mono<List<DocumentSignature>> getDocumentSignatures(String entity, Long originId, 
-        String origin, List<ProductDocumentType> documentTypes) {
-        List<Mono<DocumentSignature>> documentSignaturesMonos = documentTypes.stream()
-                .map(docType -> createDocumentRequest(entity, originId, docType, origin))
-                .map(request -> getDocumentSignature(request, origin))
-                .toList();
-
-        return Flux.mergeSequential(documentSignaturesMonos)
-                .collectList()
-                .flatMap(signatures -> validateDocumentSignatures(signatures, documentTypes.size()));
-    }
-
-    private Mono<ExpedientContext> getOwnerAndCenterInfo(String entity, Long originId, 
-        String origin, ExpedientContext context) {
-        if ("EVENT".equals(origin)) {
-            return getEventOwnerInfo(entity, originId, context);
-        }
-        return getTradeOwnerInfo(entity, originId, context);
-    }
-
-    private Mono<ExpedientContext> getDisclaimerContent(String entity, Long originId, 
-        String productId, ExpedientContext context) {
-        if (tradeSignerHelper.isEventProduct(productId)) {
-            return getEventDisclaimerContent(entity, originId, context);
-        }
-        return getTradeDisclaimerContent(entity, originId, context);
-    }
-
-    private Mono<CreateExpedientResponse> createDfdExpedient(ExpedientContext context) {
-        ExpedientRequest expedientRequest = buildExpedientRequest(context);
-        return restDfdClient.createExpedient(expedientRequest)
-                .flatMap(this::handleDfdResponse);
     }
 
     public Mono<TradeSignature> upsertTradeSignature(TradeSignature tradeSignatureFound, TradeSignatureDto dto, String entity) {
@@ -154,22 +126,5 @@ public class TradeSignatureServiceSaveImpl implements TradeSignatureServiceSave 
                 .forEach(signer -> signer.setTradeSignatureId(tradeSignature.getTradeSignatureId()));
 
         return tradeSignatureRepositoryClient.save(tradeSignature);
-    }
-
-    // Clase auxiliar para mantener el contexto entre operaciones
-    @Data
-    @AllArgsConstructor
-    private static class ExpedientContext {
-        private List<Signer> signers;
-        private List<DocumentSignature> documents;
-        private String ownerName;
-        private String ownerDocument;
-        private String center;
-        private String disclaimerContent;
-        
-        public ExpedientContext(List<Signer> signers, List<DocumentSignature> documents) {
-            this.signers = signers;
-            this.documents = documents;
-        }
     }
 }
