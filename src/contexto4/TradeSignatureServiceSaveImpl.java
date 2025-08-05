@@ -13,6 +13,7 @@ import com.acelera.fx.digitalsignature.domain.helper.TradeSignerHelper;
 import com.acelera.fx.digitalsignature.domain.port.dto.GetTradeSignatureDto;
 import com.acelera.fx.digitalsignature.domain.port.dto.GetTradeSignatureParameterDto;
 import com.acelera.fx.digitalsignature.domain.port.dto.TradeSignatureDto;
+import com.acelera.fx.digitalsignature.domain.port.dto.TradeSignerDto;
 import com.acelera.fx.digitalsignature.domain.port.service.ProductDocumentsService;
 import com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureServiceGet;
 import com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureServiceSave;
@@ -57,16 +58,6 @@ public class TradeSignatureServiceSaveImpl implements TradeSignatureServiceSave 
                 .switchIfEmpty(Mono.defer(() -> upsertTradeSignature(null, dto, entity))); // Logica de salvar
     }
 
-    private GetTradeSignatureParameterDto getSignerRequest(Long tradeSignatureId, Long originId, String origin) {
-        return GetTradeSignatureParameterDto.builder()
-                .tradeSignatureId(tradeSignatureId)
-                .origin(origin)
-                .originId(originId)
-                .build();
-    }
-
-
-
     @Override
     public Mono<CreateExpedientResponse> createSignatureExpedient(Locale locale, String entity, Long originId, CreateExpedientRequest request) {
         String origin = tradeSignerHelper.isEventProduct(request.getProductId()) ? "EVENT" : "TRADE";
@@ -85,7 +76,7 @@ public class TradeSignatureServiceSaveImpl implements TradeSignatureServiceSave 
                 .switchIfEmpty(Mono.error(new RuntimeException("TradeSignature no encontrado")));
     }
 
-    private Mono<List<TradeSigner>> obtenerFirmantes(Locale locale, String entity, TradeSignature tradeSignature, Long originId, String origin) {
+    private Mono<List<TradeSignerDto>> obtenerFirmantes(Locale locale, String entity, TradeSignature tradeSignature, Long originId, String origin) {
         var signerRequest = getSignerRequest(tradeSignature.getTradeSignatureId(), originId, origin);
         return tradeSignatureServiceGet.getTradeSignature(locale, entity, signerRequest)
                 .map(GetTradeSignatureDto::getSigners)
@@ -94,6 +85,13 @@ public class TradeSignatureServiceSaveImpl implements TradeSignatureServiceSave 
                     signers.forEach(signer -> log.info("SignerId: {}", signer.getSignerId()));
                 });
     }
+    private GetTradeSignatureParameterDto getSignerRequest(Long tradeSignatureId, Long originId, String origin) {
+        return GetTradeSignatureParameterDto.builder()
+                .tradeSignatureId(tradeSignatureId)
+                .origin(origin)
+                .originId(originId)
+                .build();
+    }    
 
     private Mono<List<ProductDocumentParameters>> obtenerTiposDeDocumento(String entity, Locale locale, String productId) {
         return productDocumentsService.findProductDocumentType(entity, locale, productId)
@@ -104,15 +102,143 @@ public class TradeSignatureServiceSaveImpl implements TradeSignatureServiceSave 
                 });
     }
 
-    private CreateExpedientResponse construirRespuesta(TradeSignature ts, List<TradeSigner> signers, List<ProductDocumentParameters> docs) {
-        // Aquí puedes construir la lógica real de creación del expediente con los datos obtenidos
-        // Por ahora es fijo:
+    private CreateExpedientResponse construirRespuesta(TradeSignature ts, List<TradeSignerDto> signers, List<ProductDocumentParameters> docs) {
+        // TODO Contruiri lógica
         return CreateExpedientResponse.builder()
                 .expedientId(123L)
                 .build();
     }
+    
+    private Mono<CreateExpedientResponse> transformacion(List<ProductDocumentParameters> documentTypes, Locale locale, String entity, Long originId, CreateExpedientRequest request, String origin) {
 
+        //  Obtener los nombres de los documentos desde ACE_DOCUMENTOS o ACE_EVENT_DOC
+        List<Mono<DocumentSignature>> documentSignaturesMonos = documentTypes.stream()
+                .map(docType -> {
+                    DocumentRequest docRequest = DocumentRequest.builder()
+                            .entityId(entity)
+                            .documentTypeId(docType.getDocumentType())
+                            .operationId("TRADE".equals(origin) ? originId : null)
+                            .eventId("EVENT".equals(origin) ? originId : null)
+                            .build();
 
+                    return "TRADE".equals(origin)
+                            ? documentSignatureRepositoryClient.findByEntityAndOperationAndDocumentType(docRequest)
+                            : documentSignatureRepositoryClient.findByEntityAndEventAndDocumentType(docRequest);
+                })
+                .toList();
+
+        return Flux.mergeSequential(documentSignaturesMonos)
+                .collectList()
+                .flatMap(documentSignatures -> {
+                    if (documentSignatures.size() != documentTypes.size()) {
+                        return Mono.error(new RuntimeException("Some document names could not be found."));
+                    }
+
+                    //  Obtener titular y centro
+                    Mono<String> ownerNameMono;
+                    Mono<String> ownerDocumentMono;
+                    Mono<String> centerMono;
+
+                    if ("EVENT".equals(origin)) {
+                        EventRequest eventRequest = EventRequest.builder()
+                                .eventId(originId)
+                                .entityId(entity)
+                                .build();
+
+                        Mono<Event> eventMono = eventRepositoryClient.findByEntityAndEvent(eventRequest);
+
+                        ownerNameMono = eventMono.map(Event::getOwnerName);
+                        ownerDocumentMono = eventMono.map(Event::getOwnerDocument);
+                        centerMono = eventMono.map(Event::getCenterId);
+
+                    } else {
+                        // TRADE: obtener desde ACE_OPERACION y ACE_OPERACION_TITULARES
+                        Mono<Operation> operationMono = operationRepositoryClient.findByOperationIdAndEntityId(
+                                OperationRequest.builder()
+                                        .operationId(originId)
+                                        .entityId(entity)
+                                        .build());
+
+                        Mono<HeadlineOperation> headlineMono = headlineOperationRepositoryClient.findByOperationIdAndEntityId(
+                                HeadlineOperationRequest.builder()
+                                        .operationId(originId)
+                                        .entityId(entity)
+                                        .build());
+
+                        ownerNameMono = headlineMono.map(HeadlineOperation::getName);
+                        ownerDocumentMono = headlineMono.map(HeadlineOperation::getDocument);
+                        centerMono = operationMono.map(Operation::getCenterId);
+                    }
+
+                    // Combinar los resultados
+                    return Mono.zip(ownerNameMono, ownerDocumentMono, centerMono)
+                            .flatMap(tuple -> {
+                                String ownerName = tuple.getT1();
+                                String ownerDocument = tuple.getT2();
+                                String center = tuple.getT3();
+
+                                String productId = request.getProductId();
+                                Mono<String> disclaimerContentMono;
+
+                                if (tradeSignerHelper.isEventProduct(productId)) {
+                                    disclaimerContentMono = eventDisclaimerRepositoryClient.findByEntityAndEventId(
+                                            EventDisclaimerRequest.builder()
+                                                    .entity(entity)
+                                                    .eventId(originId)
+                                                    .build()
+                                    ).map(EventDisclaimer::getContent);
+                                } else {
+                                    disclaimerContentMono = operationDisclaimerRepositoryClient.findByEntityAndTradeId(
+                                            OperationDisclaimerRequest.builder()
+                                                    .entity(entity)
+                                                    .tradeId(originId)
+                                                    .build()
+                                    ).map(OperationDisclaimer::getContent);
+                                }
+
+                                return disclaimerContentMono.flatMap(disclaimerContent -> {
+
+                                    List<ExpedientRequest.Document> documents = documentSignatures.stream()
+                                            .map(doc -> ExpedientRequest.Document.builder()
+                                                    .typeDoc("DOCUMENT")
+                                                    .indPreContractual(true)
+                                                    .build()
+                                            ).toList();
+
+                                    ExpedientRequest expedientRequest = ExpedientRequest.builder()
+                                            .sourceApp(ExpedientRequest.SourceApp.builder()
+                                                    .code(Constants.ACELERA)
+                                                    .operCode(tradeSignerHelper.isEventProduct(request.getProductId()) ? "ACEV" : "ACE" + origin)
+                                                    .url("/v1/trades-signatures/expedients/{id}?status=" )
+                                                    .build())
+                                            .startDate(ZonedDateTime.now())
+                                            .endDate(ZonedDateTime.now().plusDays(5))
+                                            .centre(center)
+                                            .typeReference(Constants.DERIVADO_DIV)
+                                            .customerId(ownerDocument)
+                                            .productDesc(Constants.DERIVADO_DIV)
+                                            .descExp(Constants.CONT_DER_DIV)
+                                            .typeBox(Constants.B092)
+                                            .catBox(Constants.DIVISAS)
+                                            .channel(Constants.CHAN_OFI)
+                                            .docs(documents)
+                                            .build();
+
+                                    return restDfdClient.createExpedient(expedientRequest)
+                                            .flatMap(expedientIdResponse -> {
+                                                if ( expedientIdResponse == null) {
+                                                    return Mono.error(new RuntimeException("DFD response did not return expedientId"));
+                                                }
+                                                return Mono.just(
+                                                        CreateExpedientResponse.builder()
+                                                                .expedientId(expedientIdResponse)
+                                                                .build()
+                                                );
+                                            });
+                                });
+                            });
+                });
+    }
 
     public Mono<TradeSignature> upsertTradeSignature(TradeSignature tradeSignatureFound, TradeSignatureDto dto, String entity) {
         // Lógica de actualización/creación
