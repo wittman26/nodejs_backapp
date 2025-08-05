@@ -1,120 +1,47 @@
-C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\lib\idea_rt.jar=62065:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\bin" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file511574634 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest
-Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
-Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
-WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
-WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
-WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
-WARNING: Dynamic loading of agents will be disallowed by default in a future release
-OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
-10:31:00.330 [main] INFO com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- 1. GENERACION DE DOCUMENTOS
-10:31:00.334 [main] INFO com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- Documento Base: ohoXuYdwg2 - g06xwQ72zp - tnEHAmPPTK
-10:31:00.338 [main] INFO com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- Documento GENERADO - ohoXuYdwg2-1APSCgsR5C_.pdf
-10:31:00.348 [main] ERROR com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- Error en generación de flujo de firma : Cannot invoke "com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.createSignatureExpedient(java.util.Locale, String, java.lang.Long, com.acelera.fx.digitalsignature.infrastructure.request.CreateExpedientRequest)" because "this.tradeSignatureServiceSave" is null
 
-java.lang.AssertionError: expectation "expectErrorMatches" failed (predicate failed on exception: org.springframework.context.NoSuchMessageException: No message found under code 'Cannot invoke "com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.createSignatureExpedient(java.util.Locale, String, java.lang.Long, com.acelera.fx.digitalsignature.infrastructure.request.CreateExpedientRequest)" because "this.tradeSignatureServiceSave" is null' for locale 'es_ES'.)
+INSERT INTO "ACELER"."ACE_OPERATION_DISCLAIMER" (ID, ENTITY, TRADE_ID, NAME) 
+VALUES ("ACELER"."ISEQ$$_497294".nextval, '0049', '106365', 'test')
 
-	at reactor.test.MessageFormatter.assertionError(MessageFormatter.java:115)
-	at reactor.test.MessageFormatter.failPrefix(MessageFormatter.java:104)
-	at reactor.test.MessageFormatter.fail(MessageFormatter.java:73)
-	at reactor.test.MessageFormatter.failOptional(MessageFormatter.java:88)
-	at reactor.test.DefaultStepVerifierBuilder.lambda$expectErrorMatches$8(DefaultStepVerifierBuilder.java:420)
-	at reactor.test.DefaultStepVerifierBuilder$SignalEvent.test(DefaultStepVerifierBuilder.java:2289)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSignal(DefaultStepVerifierBuilder.java:1529)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onExpectation(DefaultStepVerifierBuilder.java:1477)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onError(DefaultStepVerifierBuilder.java:1129)
-	at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:100)
-	at reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.onError(FluxMapFuseable.java:142)
-	at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:136)
-	at reactor.core.publisher.Operators$BaseFluxToMonoOperator.completePossiblyEmpty(Operators.java:2096)
-	at reactor.core.publisher.MonoCollectList$MonoCollectListSubscriber.onComplete(MonoCollectList.java:118)
-	at reactor.core.publisher.FluxFlatMap$FlatMapMain.checkTerminated(FluxFlatMap.java:850)
-	at reactor.core.publisher.FluxFlatMap$FlatMapMain.drainLoop(FluxFlatMap.java:612)
-	at reactor.core.publisher.FluxFlatMap$FlatMapMain.drain(FluxFlatMap.java:592)
-	at reactor.core.publisher.FluxFlatMap$FlatMapMain.onComplete(FluxFlatMap.java:469)
-	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onComplete(FluxSwitchIfEmpty.java:85)
-	at reactor.core.publisher.Operators$ScalarSubscription.request(Operators.java:2572)
-	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2366)
-	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.onSubscribe(Operators.java:2240)
-	at reactor.core.publisher.FluxJust.subscribe(FluxJust.java:68)
-	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.toVerifierAndSubscribe(DefaultStepVerifierBuilder.java:891)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:831)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:823)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest.testStartSignatureWorkflow_error_generacionExpediente(TradeSignatureServicePostImplTest.java:122)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	Suppressed: org.springframework.context.NoSuchMessageException: No message found under code 'Cannot invoke "com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.createSignatureExpedient(java.util.Locale, String, java.lang.Long, com.acelera.fx.digitalsignature.infrastructure.request.CreateExpedientRequest)" because "this.tradeSignatureServiceSave" is null' for locale 'es_ES'.
-		at org.springframework.context.support.AbstractMessageSource.getMessage(AbstractMessageSource.java:162)
-		at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:61)
-		at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:56)
-		at com.acelera.error.CustomErrorException.<init>(CustomErrorException.java:43)
-		at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61)
-		at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.lambda$startSignatureWorkflow$3(TradeSignatureServicePostImpl.java:55)
-		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:94)
-		... 21 more
-		Suppressed: java.lang.NullPointerException: Cannot invoke "com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.createSignatureExpedient(java.util.Locale, String, java.lang.Long, com.acelera.fx.digitalsignature.infrastructure.request.CreateExpedientRequest)" because "this.tradeSignatureServiceSave" is null
-			at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.generarExpediente(TradeSignatureServicePostImpl.java:71)
-			at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.lambda$startSignatureWorkflow$1(TradeSignatureServicePostImpl.java:45)
-			at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:132)
-			... 19 more
 
-10:31:00.394 [main] INFO com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- 1. GENERACION DE DOCUMENTOS
-10:31:00.394 [main] INFO com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- Documento Base: nNCgn80jNx - 7o3KdGmZfr - bx48E8TRNN
-10:31:00.394 [main] INFO com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- Documento GENERADO - nNCgn80jNx1cXM_wXtHkK.pdf
-10:31:00.394 [main] ERROR com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- Error en generación de flujo de firma : Cannot invoke "com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.createSignatureExpedient(java.util.Locale, String, java.lang.Long, com.acelera.fx.digitalsignature.infrastructure.request.CreateExpedientRequest)" because "this.tradeSignatureServiceSave" is null
+Se ha producido un error al guardar los cambios en la tabla "ACELER"."ACE_OPERATION_DISCLAIMER":
+Fila 1: ORA-01400: no se puede realizar una inserción NULL en ("ACELER"."ACE_OPERATION_DISCLAIMER"."CONTENT")
+ORA-06512: en línea 1
 
-java.lang.AssertionError: expectation "expectNextMatches" failed (expected: onNext(); actual: onError(org.springframework.context.NoSuchMessageException: No message found under code 'Cannot invoke "com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.createSignatureExpedient(java.util.Locale, String, java.lang.Long, com.acelera.fx.digitalsignature.infrastructure.request.CreateExpedientRequest)" because "this.tradeSignatureServiceSave" is null' for locale 'es_ES'.))
+INSERT INTO "ACELER"."ACE_OPERATION_DISCLAIMER" (ID, ENTITY, TRADE_ID, NAME) VALUES ('1', '0049', '106365', 'test')
+ORA-32795: no se puede insertar una columna de identidad siempre generada
+ORA-06512: en línea 1
 
-	at reactor.test.MessageFormatter.assertionError(MessageFormatter.java:115)
-	at reactor.test.MessageFormatter.failPrefix(MessageFormatter.java:104)
-	at reactor.test.MessageFormatter.fail(MessageFormatter.java:73)
-	at reactor.test.MessageFormatter.failOptional(MessageFormatter.java:88)
-	at reactor.test.DefaultStepVerifierBuilder.lambda$expectNextMatches$11(DefaultStepVerifierBuilder.java:556)
-	at reactor.test.DefaultStepVerifierBuilder$SignalEvent.test(DefaultStepVerifierBuilder.java:2289)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSignal(DefaultStepVerifierBuilder.java:1529)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onExpectation(DefaultStepVerifierBuilder.java:1477)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onError(DefaultStepVerifierBuilder.java:1129)
-	at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:100)
-	at reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.onError(FluxMapFuseable.java:142)
-	at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:136)
-	at reactor.core.publisher.Operators$BaseFluxToMonoOperator.completePossiblyEmpty(Operators.java:2096)
-	at reactor.core.publisher.MonoCollectList$MonoCollectListSubscriber.onComplete(MonoCollectList.java:118)
-	at reactor.core.publisher.FluxFlatMap$FlatMapMain.checkTerminated(FluxFlatMap.java:850)
-	at reactor.core.publisher.FluxFlatMap$FlatMapMain.drainLoop(FluxFlatMap.java:612)
-	at reactor.core.publisher.FluxFlatMap$FlatMapMain.drain(FluxFlatMap.java:592)
-	at reactor.core.publisher.FluxFlatMap$FlatMapMain.onComplete(FluxFlatMap.java:469)
-	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onComplete(FluxSwitchIfEmpty.java:85)
-	at reactor.core.publisher.Operators$ScalarSubscription.request(Operators.java:2572)
-	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2366)
-	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.onSubscribe(Operators.java:2240)
-	at reactor.core.publisher.FluxJust.subscribe(FluxJust.java:68)
-	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.toVerifierAndSubscribe(DefaultStepVerifierBuilder.java:891)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:831)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:823)
-	at reactor.test.DefaultStepVerifierBuilder.verifyComplete(DefaultStepVerifierBuilder.java:690)
-	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest.testStartSignatureWorkflow_ok(TradeSignatureServicePostImplTest.java:83)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	Suppressed: org.springframework.context.NoSuchMessageException: No message found under code 'Cannot invoke "com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.createSignatureExpedient(java.util.Locale, String, java.lang.Long, com.acelera.fx.digitalsignature.infrastructure.request.CreateExpedientRequest)" because "this.tradeSignatureServiceSave" is null' for locale 'es_ES'.
-		at org.springframework.context.support.AbstractMessageSource.getMessage(AbstractMessageSource.java:162)
-		at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:61)
-		at com.acelera.locale.MessageSourceHolder.getMessage(MessageSourceHolder.java:56)
-		at com.acelera.error.CustomErrorException.<init>(CustomErrorException.java:43)
-		at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61)
-		at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.lambda$startSignatureWorkflow$3(TradeSignatureServicePostImpl.java:55)
-		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:94)
-		... 22 more
-		Suppressed: java.lang.NullPointerException: Cannot invoke "com.acelera.fx.digitalsignature.application.service.TradeSignatureServiceSaveImpl.createSignatureExpedient(java.util.Locale, String, java.lang.Long, com.acelera.fx.digitalsignature.infrastructure.request.CreateExpedientRequest)" because "this.tradeSignatureServiceSave" is null
-			at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.generarExpediente(TradeSignatureServicePostImpl.java:71)
-			at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.lambda$startSignatureWorkflow$1(TradeSignatureServicePostImpl.java:45)
-			at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:132)
-			... 20 more
 
-10:31:00.412 [main] INFO com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- 1. GENERACION DE DOCUMENTOS
-10:31:00.412 [main] INFO com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- Documento Base: kLgFrNnnsB - bA6t13KoTb - nWLh2flqsm
-10:31:00.414 [main] ERROR com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl -- Error en generación de flujo de firma : error.fx.tradesignature.generacion.documentos
+  CREATE TABLE "ACELER"."ACE_OPERATION_DISCLAIMER" 
+   (	"ID" NUMBER(38,0) GENERATED ALWAYS AS IDENTITY MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  NOT NULL ENABLE, 
+	"ENTITY" VARCHAR2(4 CHAR) NOT NULL ENABLE, 
+	"TRADE_ID" NUMBER(38,0) NOT NULL ENABLE, 
+	"NAME" VARCHAR2(30 CHAR) NOT NULL ENABLE, 
+	"CONTENT" VARCHAR2(1500 CHAR) NOT NULL ENABLE, 
+	 CONSTRAINT "PK_ACE_OPERATION_DISCLAIMER" PRIMARY KEY ("ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "ACELER_DATOS"  ENABLE, 
+	 CONSTRAINT "FK_OPERATION_DISCLAIMER_ON_TRADE" FOREIGN KEY ("ENTITY", "TRADE_ID")
+	  REFERENCES "ACELER"."ACE_OPERACION_FX" ("ID_ENTIDAD", "ID_OPERACION") ENABLE
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "ACELER_DATOS" ;
 
-Process finished with exit code -1
+   COMMENT ON COLUMN "ACELER"."ACE_OPERATION_DISCLAIMER"."ID" IS 'CLAUSE ID';
+   COMMENT ON COLUMN "ACELER"."ACE_OPERATION_DISCLAIMER"."ENTITY" IS 'ENTITY CODE';
+   COMMENT ON COLUMN "ACELER"."ACE_OPERATION_DISCLAIMER"."TRADE_ID" IS 'TRADE ID';
+   COMMENT ON COLUMN "ACELER"."ACE_OPERATION_DISCLAIMER"."NAME" IS 'CLAUSE NAME';
+   COMMENT ON COLUMN "ACELER"."ACE_OPERATION_DISCLAIMER"."CONTENT" IS 'CLAUSE DESCRIPTION';
+
+
+  GRANT DELETE ON "ACELER"."ACE_OPERATION_DISCLAIMER" TO "ACELER_APL";
+  GRANT INSERT ON "ACELER"."ACE_OPERATION_DISCLAIMER" TO "ACELER_APL";
+  GRANT SELECT ON "ACELER"."ACE_OPERATION_DISCLAIMER" TO "ACELER_APL";
+  GRANT UPDATE ON "ACELER"."ACE_OPERATION_DISCLAIMER" TO "ACELER_APL";
