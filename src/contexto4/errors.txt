@@ -5,3 +5,23 @@ Java 8 date/time type `java.time.ZonedDateTime` not supported by default: add Mo
 com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.ZonedDateTime` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (through reference chain: com.acelera.broker.rest.dfd.domain.ExpedientRequest["endDate"])
 
 ExpedientRequest(sourceApp=ExpedientRequest.SourceApp(operCode=ACETRADE, code=ACELERA, url=/v1/trades-signatures/expedients/{id}?status=), endDate=2025-08-11T12:15:23.142061300+02:00[Europe/Madrid], centre=0001, typeReference=Derivado Divisa, indicatorBusinnessMailBox=false, indicatorParticularMailBox=false, clauses=null, customerId=A28269983, startDate=2025-08-06T12:15:23.142061300+02:00[Europe/Madrid], typeBox=B092, catBox=divisas, productDesc=Derivado Divisa, descExp=Contratación Derivado Divisa, channel=OFI, docs=[ExpedientRequest.Document(s3=null, personDocNumber=null, indPreContractual=true, signers=null, metadata=null, documentCode=null, typeDoc=DOCUMENT), ExpedientRequest.Document(s3=null, personDocNumber=null, indPreContractual=true, signers=null, metadata=null, documentCode=null, typeDoc=DOCUMENT)])
+
+
+new com.fasterxml.jackson.databind.ObjectMapper()
+    .registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule())
+    .writeValueAsString(expedientRequest)
+
+
+
+private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+    .registerModule(new JavaTimeModule());
+
+private Mono<CreateExpedientResponse> construirYCrearExpediente(...) {
+    // ...existing code...
+    ExpedientRequest expedientRequest = ExpedientRequest.builder()
+            // ...existing builder code...
+            .build();
+
+    log.info("Request JSON: {}", OBJECT_MAPPER.writeValueAsString(expedientRequest));
+    // ...existing code...
+}
