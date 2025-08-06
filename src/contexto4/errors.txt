@@ -25,3 +25,9 @@ private Mono<CreateExpedientResponse> construirYCrearExpediente(...) {
     log.info("Request JSON: {}", OBJECT_MAPPER.writeValueAsString(expedientRequest));
     // ...existing code...
 }
+
+    "startDate": "2025-07-06T11:23:20.943Z",  
+    "endDate": "2025-09-06T11:23:20.943Z",    
+
+    "endDate": 1754907323.142061300,
+    "startDate": 1754475323.142061300,    
