@@ -1,30 +1,32 @@
-Method threw 'com.fasterxml.jackson.databind.exc.InvalidDefinitionException' exception.
-Java 8 date/time type `java.time.ZonedDateTime` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling
+package com.acelera.broker.rest.dfd.domain;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ExpedientRequest {
+
+    private SourceApp sourceApp;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private ZonedDateTime startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private ZonedDateTime endDate;
 
 
-com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.ZonedDateTime` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (through reference chain: com.acelera.broker.rest.dfd.domain.ExpedientRequest["endDate"])
+org.springframework.messaging.handler.invocation.MethodArgumentResolutionException: Could not resolve method parameter at index 0 in public reactor.core.publisher.Mono<java.lang.Long> com.acelera.rest.dfd.infrastructure.adapter.rsocket.controller.DfdRSocketController.createExpedient(com.acelera.broker.rest.dfd.domain.ExpedientRequest): Failed to read HTTP message
+	at org.springframework.messaging.handler.annotation.reactive.PayloadMethodArgumentResolver.handleReadError(PayloadMethodArgumentResolver.java:274) ~[spring-messaging-6.2.7.jar:6.2.7]
+.....
 
-ExpedientRequest(sourceApp=ExpedientRequest.SourceApp(operCode=ACETRADE, code=ACELERA, url=/v1/trades-signatures/expedients/{id}?status=), endDate=2025-08-11T12:15:23.142061300+02:00[Europe/Madrid], centre=0001, typeReference=Derivado Divisa, indicatorBusinnessMailBox=false, indicatorParticularMailBox=false, clauses=null, customerId=A28269983, startDate=2025-08-06T12:15:23.142061300+02:00[Europe/Madrid], typeBox=B092, catBox=divisas, productDesc=Derivado Divisa, descExp=Contratación Derivado Divisa, channel=OFI, docs=[ExpedientRequest.Document(s3=null, personDocNumber=null, indPreContractual=true, signers=null, metadata=null, documentCode=null, typeDoc=DOCUMENT), ExpedientRequest.Document(s3=null, personDocNumber=null, indPreContractual=true, signers=null, metadata=null, documentCode=null, typeDoc=DOCUMENT)])
+Caused by: com.fasterxml.jackson.databind.exc.InvalidFormatException: Cannot deserialize value of type `java.time.ZonedDateTime` from String "2025-08-07T14:41:34.088Z": Failed to deserialize java.time.ZonedDateTime: (java.time.DateTimeException) Unable to obtain ZonedDateTime from TemporalAccessor: {},ISO resolved to 2025-08-07T14:41:34.088 of type java.time.format.Parsed
+ at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 121] (through reference chain: com.acelera.broker.rest.dfd.domain.ExpedientRequest["startDate"])
 
-
-new com.fasterxml.jackson.databind.ObjectMapper()
-    .registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule())
-    .writeValueAsString(expedientRequest)
-
-
-
-private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-    .registerModule(new JavaTimeModule());
-
-private Mono<CreateExpedientResponse> construirYCrearExpediente(...) {
-    // ...existing code...
-    ExpedientRequest expedientRequest = ExpedientRequest.builder()
-            // ...existing builder code...
-            .build();
-
-    log.info("Request JSON: {}", OBJECT_MAPPER.writeValueAsString(expedientRequest));
-    // ...existing code...
-}
 
     "startDate": "2025-07-06T11:23:20.943Z",  
     "endDate": "2025-09-06T11:23:20.943Z",    
