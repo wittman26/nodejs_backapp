@@ -279,3 +279,6 @@ Caused by: org.hibernate.tool.schema.spi.SchemaManagementException: Schema-valid
 
 
 Process finished with exit code 1
+
+
+username: '{cipher}8ea6ce78337060d7ac8eefc81484494bfba1d31232518659b5b33a0ab3b1d6b2'
