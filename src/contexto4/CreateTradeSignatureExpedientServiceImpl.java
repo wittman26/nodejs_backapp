@@ -1,5 +1,7 @@
 package com.acelera.fx.digitalsignature.application.service;
 
+import com.acelera.broker.cso.db.shared.domain.dto.OperationDocument;
+import com.acelera.broker.entidades.basicas.component.VariableClient;
 import com.acelera.broker.fx.db.domain.dto.*;
 import com.acelera.broker.fx.db.domain.port.*;
 import com.acelera.broker.rest.dfd.domain.ExpedientRequest;
@@ -15,6 +17,7 @@ import com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureService
 import com.acelera.fx.digitalsignature.infrastructure.Constants;
 import com.acelera.fx.digitalsignature.infrastructure.adapter.rest.request.CreateExpedientRequest;
 import com.acelera.fx.digitalsignature.infrastructure.adapter.rest.response.CreateExpedientResponse;
+import com.acelera.locale.LocaleConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +52,7 @@ public class CreateTradeSignatureExpedientServiceImpl implements CreateTradeSign
     private final RestDfdClient restDfdClient;
     private final TradeSignerHelper tradeSignerHelper;
     private final TradeSignatureRepositoryClient tradeSignatureRepositoryClient;
+    private final VariableClient variableClient;
 
     @Value("${create-expedient-request.source-app.url}")
     private String sourceAppUrlBasePath;
@@ -67,18 +71,21 @@ public class CreateTradeSignatureExpedientServiceImpl implements CreateTradeSign
 
     private Mono<CreateExpedientResponse> startExpedientWorkFlow(Locale locale, String entity, Long originId, CreateExpedientRequest request, String origin) {
         return obtainTradeSignature(entity, originId, request)
-                .map(tradeSignature -> {
-                    if(tradeSignature.getExpedientId() != null) {
-                        return CreateExpedientResponse.builder().expedientId(tradeSignature.getExpedientId()).build();
-                    }
-                    return tradeSignature;
-                })
-                .flatMap(tradeSignature -> obtainSigners(locale, entity, tradeSignature, originId, origin)
-                        .flatMap(signers -> obtainDocumentTypes(entity, locale, request.getProductId())
-                                .flatMap(documentTypes -> buildResponse(documentTypes, locale, entity,originId, request, origin, signers, tradeSignature))
-                        )
+                .flatMap(tradeSignature -> {
+                            if(tradeSignature.getExpedientId() != null) {
+                                log.info("Expediente encontrado para tradeSignatureId: {}", tradeSignature.getTradeSignatureId());
+                                return Mono.just(CreateExpedientResponse.builder()
+                                                .expedientId(tradeSignature.getExpedientId())
+                                        .build());
+                            }
+                            return obtainSigners(locale, entity, tradeSignature, originId, origin).flatMap(
+                                    signers -> obtainDocumentTypes(entity, locale, request.getProductId()).flatMap(
+                                            documentTypes -> buildResponse(documentTypes, locale, entity, originId, request,
+                                                    origin, signers, tradeSignature)));
+                        }
                 );
     }
+
 
     private Mono<TradeSignature> obtainTradeSignature(String entity, Long originId, CreateExpedientRequest request) {
         return tradeSignatureServiceGet.getTradeSignature(entity, originId, request)
@@ -117,22 +124,18 @@ public class CreateTradeSignatureExpedientServiceImpl implements CreateTradeSign
         return obtainDocumentSignatures(documentTypes, entity, originId, origin)
                 .flatMap(documentSignatures -> validateDocuments(documentSignatures, documentTypes)
                         .then(obtainTitleAndCenterData(entity, originId, origin))
-                        .flatMap(titleAndCenterData -> obtainClauses(entity, originId, request.getProductId())
-                                .flatMap(clauses -> buildAndCreateExpedient(titleAndCenterData, clauses, documentSignatures, request, origin, documentTypes, signers, originId))
-                                .flatMap(idExpedient -> updateTradeSignatureExpedient(idExpedient, tradeSignature))
+                        .flatMap(titleAndCenterData ->
+                                obtainClauses(entity, originId, request.getProductId())
+                                .flatMap(clauses ->
+                                        getValidityDays()
+                                            .doOnNext(validityDays -> {
+                                                var mesg = "Validity Days: " + validityDays;
+                                                log.info(mesg);
+                                                return buildAndCreateExpedient(titleAndCenterData, clauses, documentSignatures, request, origin, documentTypes, signers, originId, validityDays);
+                                            })
+                                        .flatMap(idExpedient -> updateTradeSignatureExpedient(idExpedient, tradeSignature))
                         )
                 );
-    }
-
-    private Mono<CreateExpedientResponse> updateTradeSignatureExpedient(Long idExpedient, TradeSignature tradeSignature) {
-        tradeSignature.setExpedientId(idExpedient);
-        return tradeSignatureRepositoryClient.save(tradeSignature)
-                .map(id -> CreateExpedientResponse.builder().expedientId(idExpedient).build())
-                        .onErrorResume(e -> {
-                            var errorMsg = "Error guardando tradesignature : " + e.getMessage();
-                            log.error(errorMsg);
-                            return Mono.error(CustomErrorException.ofArguments(INTERNAL_SERVER_ERROR, errorMsg));
-                        });
     }
 
     // obtenerNombreDocumentos
@@ -223,8 +226,22 @@ public class CreateTradeSignatureExpedientServiceImpl implements CreateTradeSign
         }
     }
 
+
+    private Mono<CreateExpedientResponse> updateTradeSignatureExpedient(Long idExpedient, TradeSignature tradeSignature) {
+
+        return Mono.just(CreateExpedientResponse.builder().expedientId(idExpedient).build());
+//        tradeSignature.setExpedientId(idExpedient);
+//        return tradeSignatureRepositoryClient.save(tradeSignature)
+//                .map(id -> CreateExpedientResponse.builder().expedientId(idExpedient).build())
+//                .onErrorResume(e -> {
+//                    var errorMsg = "Error guardando tradesignature : " + e.getMessage();
+//                    log.error(errorMsg);
+//                    return Mono.error(CustomErrorException.ofArguments(INTERNAL_SERVER_ERROR, errorMsg));
+//                });
+    }
+
     private Mono<Long> buildAndCreateExpedient(Tuple4<String, String, String, String> titleAndCenterData, List<ExpedientRequest.Clause> clauses, List<DocumentSignature> documentSignatures, CreateExpedientRequest request, String origin,
-            List<ProductDocumentParameters> documentTypes, List<TradeSignerDto> signers, Long originId) {
+            List<ProductDocumentParameters> documentTypes, List<TradeSignerDto> signers, Long originId, Long days) {
         log.info("7. Generar el expediente de firma de la operación y guardar su número en la bbdd");
         String ownerName = titleAndCenterData.getT1();
         String ownerDocument = titleAndCenterData.getT2();
@@ -243,7 +260,7 @@ public class CreateTradeSignatureExpedientServiceImpl implements CreateTradeSign
                         .build())
                 .startDate(LocalDateTime.now(ZoneOffset.UTC))
                 // + X días sobre startDate (en UTC), parámetro que se saca de ACELER_ENTIDADES.SAFE_VARIABLE.VALOR cuando ACELER_ENTIDADES.SAFE_VARIABLE.NOMBRE = "FX_SIGNATURE_VALIDITY_DAYS"
-                .endDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(5))
+                .endDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(days))
                 .centre(center)
                 .typeReference(Constants.DERIVADO_DIV)
                 .indicatorBusinnessMailBox(center.toUpperCase().startsWith("J")) //Si el cliente es una jurídica true
@@ -258,14 +275,31 @@ public class CreateTradeSignatureExpedientServiceImpl implements CreateTradeSign
                 .customerId(owner)
                 .build();
 
-        return restDfdClient.createExpedient(expedientRequest)
-                .switchIfEmpty(Mono.error(new RuntimeException("DFD no devolvió expedientId")))
+        return Mono.just(954274L);
+
+//        return restDfdClient.createExpedient(expedientRequest)
+//                .switchIfEmpty(Mono.error(new RuntimeException("DFD no devolvió expedientId")))
+//                .onErrorResume(e -> {
+//                    var errorMsg = "DFD calling error : " + e.getMessage();
+//                    log.error(errorMsg);
+//                    return Mono.just(954274L);
+//                    //return Mono.error(CustomErrorException.ofArguments(INTERNAL_SERVER_ERROR, errorMsg));
+//                });
+    }
+
+    private Mono<Long> getValidityDays() {
+        return variableClient.findValueByNameAndEntity("FX_SIGNATURE_VALIDITY_DAYS", LocaleConstants.ENTITY_0049)
+                .switchIfEmpty(Mono.error(new RuntimeException("FX_SIGNATURE_VALIDITY_DAYS no encontrado: ")))
+                .map(days -> {
+                    log.info("Dias encontrados: {} ",days);
+                    return Long.parseLong(days);
+                })
                 .onErrorResume(e -> {
-                    var errorMsg = "DFD calling error : " + e.getMessage();
-                    log.error(errorMsg);
-                    return Mono.just(666555L);
-                    //return Mono.error(CustomErrorException.ofArguments(INTERNAL_SERVER_ERROR, errorMsg));
-                });
+                            var errorMsg = "VARIABLE calling error : " + e.getMessage();
+                            log.error(errorMsg);
+                            return Mono.error(CustomErrorException.ofArguments(INTERNAL_SERVER_ERROR, errorMsg));
+                        }
+                );
     }
 
     private List<ExpedientRequest.Document> buildDocumentRequestList(
