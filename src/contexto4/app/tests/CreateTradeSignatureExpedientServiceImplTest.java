@@ -15,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -25,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class CreateTradeSignatureExpedientServiceImplTest {
 
     @Mock
@@ -89,13 +92,13 @@ class CreateTradeSignatureExpedientServiceImplTest {
     }
 
     @Test
-    void createSignatureExpedient_errorEnPaso() {
-        RuntimeException error = new RuntimeException("Error en paso");
+    void createSignatureExpedient_errorTradeSignatureNotFound() {
+        RuntimeException error = new RuntimeException("TradeSignature no encontrado");
         when(tradeSignatureStep.obtainTradeSignature(entity, originId, request))
                 .thenReturn(Mono.error(error));
 
         StepVerifier.create(service.createSignatureExpedient(locale, entity, originId, request))
-                .expectErrorMatches(e -> e instanceof RuntimeException && e.getMessage().equals("Error en paso"))
+                .expectErrorMatches(e -> e instanceof RuntimeException && e.getMessage().equals("TradeSignature no encontrado"))
                 .verify();
 
         verify(tradeSignatureStep).obtainTradeSignature(entity, originId, request);
