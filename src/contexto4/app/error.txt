@@ -1,0 +1,14 @@
+
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.acelera.fx.digitalsignature.application.service.CreateTradeSignatureExpedientServiceImplTest.setUp(CreateTradeSignatureExpedientServiceImplTest.java:68)
+  2. -> at com.acelera.fx.digitalsignature.application.service.CreateTradeSignatureExpedientServiceImplTest.setUp(CreateTradeSignatureExpedientServiceImplTest.java:72)
+  3. -> at com.acelera.fx.digitalsignature.application.service.CreateTradeSignatureExpedientServiceImplTest.setUp(CreateTradeSignatureExpedientServiceImplTest.java:76)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
