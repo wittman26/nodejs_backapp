@@ -13,6 +13,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+import static com.acelera.fx.digitalsignature.infrastructure.util.TradeSignatureConstants.ORIGIN_EVENT;
+import static com.acelera.fx.digitalsignature.infrastructure.util.TradeSignatureConstants.ORIGIN_TRADE;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -29,10 +32,10 @@ public class CreateExpedientGetDocumentNamesUseCaseImpl implements CreateExpedie
                     DocumentRequest request = DocumentRequest.builder()
                             .entityId(entity)
                             .documentTypeId(docType.getDocumentType())
-                            .operationId("TRADE".equals(origin) ? originId : null)
-                            .eventId("EVENT".equals(origin) ? originId : null)
+                            .operationId(ORIGIN_TRADE.equals(origin) ? originId : null)
+                            .eventId(ORIGIN_EVENT.equals(origin) ? originId : null)
                             .build();
-                    return "TRADE".equals(origin)
+                    return ORIGIN_TRADE.equals(origin)
                             ? documentSignatureRepositoryClient.findByEntityAndOperationAndDocumentType(request)
                             : documentSignatureRepositoryClient.findByEntityAndEventAndDocumentType(request);
                 })

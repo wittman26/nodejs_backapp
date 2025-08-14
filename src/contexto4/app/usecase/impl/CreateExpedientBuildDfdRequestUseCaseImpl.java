@@ -7,10 +7,11 @@ import com.acelera.broker.rest.dfd.domain.ExpedientRequest;
 import com.acelera.error.CustomErrorException;
 import com.acelera.fx.digitalsignature.application.usecase.port.CreateExpedientBuildDfdRequestUseCase;
 import com.acelera.fx.digitalsignature.domain.port.dto.TradeSignerDto;
-import com.acelera.fx.digitalsignature.infrastructure.util.TradeSignatureConstants;
 import com.acelera.fx.digitalsignature.infrastructure.adapter.rest.request.CreateExpedientRequest;
+import com.acelera.locale.LocaleConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
+import static com.acelera.fx.digitalsignature.infrastructure.util.TradeSignatureConstants.*;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
@@ -64,27 +66,25 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
 
         List<ExpedientRequest.Document> documents = buildDocumentRequestList(ownerName, ownerDocument, owner, documentSignatures, documentTypes, signers, request.getProductId(), origin, originId);
 
-        //documents = Collections.emptyList();
-        var sourceAppUrl = sourceAppUrlBasePath + "/v1/trades-signatures/expedients/{id}?status={status}";
+        var sourceAppUrl = sourceAppUrlBasePath + SOURCE_APP_URL;
         return ExpedientRequest.builder()
                 .sourceApp(ExpedientRequest.SourceApp.builder()
-                        .operCode("EVENT".equals(origin) ? "ACEV" : "ACE" + originId)
-                        .code(TradeSignatureConstants.ACELERA)
+                        .operCode(ORIGIN_EVENT.equals(origin) ? OPER_CODE_EVENT : OPER_CODE_TRADE + originId)
+                        .code(ACELERA)
                         .url(sourceAppUrl)
                         .build())
                 .startDate(LocalDateTime.now(ZoneOffset.UTC))
-                // + X días sobre startDate (en UTC), parámetro que se saca de ACELER_ENTIDADES.SAFE_VARIABLE.VALOR cuando ACELER_ENTIDADES.SAFE_VARIABLE.NOMBRE = "FX_SIGNATURE_VALIDITY_DAYS"
                 .endDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(validityDays))
                 .centre(center)
-                .typeReference(TradeSignatureConstants.DERIVADO_DIV)
-                .indicatorBusinnessMailBox(center.toUpperCase().startsWith("J")) //Si el cliente es una jurídica true
-                .indicatorParticularMailBox(!center.toUpperCase().startsWith("J")) //Si el cliente es una jurídica false
+                .typeReference(DERIVADO_DIV)
+                .indicatorBusinnessMailBox(isJuridic(center))
+                .indicatorParticularMailBox(!isJuridic(center))
                 .clauses(clauses)
-                .typeBox(TradeSignatureConstants.B092)
-                .catBox(TradeSignatureConstants.DIVISAS)
-                .productDesc(TradeSignatureConstants.DERIVADO_DIV)
-                .descExp(TradeSignatureConstants.CONT_DER_DIV)
-                .channel(TradeSignatureConstants.CHAN_OFI)
+                .typeBox(B092)
+                .catBox(DIVISAS)
+                .productDesc(DERIVADO_DIV)
+                .descExp(CONT_DER_DIV)
+                .channel(CHAN_OFI)
                 .docs(documents)
                 .customerId(owner)
                 .build();
@@ -155,10 +155,10 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
                             .identityDoc(signer.getDocument().getNumber())
                             .signingName(signer.getName())
                             .interventionType(signer.getInterventionType())
-                            .locationSign("")
+                            .locationSign(StringUtils.EMPTY)
                             .order(i + 1)
                             .represented(
-                                    titularCode.startsWith("J")
+                                    isJuridic(titularCode)
                                             ? List.of(ExpedientRequest.Document.Signer.Represented.builder()
                                             .representedCode(stripLeftZeros(titularCode))
                                             .representedName(titularName)
@@ -180,8 +180,9 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
             String origin,
             Long originId
     ) {
-        String titulo = isPrecontractual ? "Información Precontractual FX" : "Información Contractual FX";
-        String operacionId = ("EVENT".equals(origin) ? "ACEV" : "ACE") + originId;
+        String titulo = isPrecontractual ? TITULO_PRECONTRACTUAL : TITULO_CONTRACTUAL;
+        String operacionId = (ORIGIN_EVENT.equals(origin) ? OPER_CODE_EVENT : OPER_CODE_TRADE) + originId;
+
         LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
         LocalDateTime maxDate = LocalDateTime.parse("9999-12-31T23:59:59.999");
 
@@ -195,18 +196,22 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
                 .gnTitulo(titulo)
                 .numPersonaCli(List.of(stripLeftZeros(titularCode)))
                 .nomPlantilla(documentCode)
-                .idEntidad("0049")
+                .idEntidad(LocaleConstants.ENTITY_0049)
                 .operacionId(operacionId)
-                .claManuscrita("Y")
-                .contPartenon("")
+                .claManuscrita(CLAUSULA_MANUSCRITA)
+                .contPartenon(StringUtils.EMPTY)
                 .producto(productId)
                 .idOficialPers(List.of(titularDoc))
-                .digitalizador("OSP")
+                .digitalizador(DIGITALIZADOR)
                 .build();
     }
 
+    private boolean isJuridic(String center) {
+        return center.toUpperCase().startsWith("J");
+    }
+
     private static String stripLeftZeros(String value) {
-        return value == null ? null : value.charAt(0) + value.substring(1).replaceFirst("^0+(?!$)", "");
+        return value == null ? null : value.charAt(0) + value.substring(1).replaceFirst("^0+(?!$)", StringUtils.EMPTY);
     }
 
 }

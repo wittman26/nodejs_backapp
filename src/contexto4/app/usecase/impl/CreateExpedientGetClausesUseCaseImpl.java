@@ -39,7 +39,6 @@ public class CreateExpedientGetClausesUseCaseImpl implements CreateExpedientGetC
         } else {
             log.info("6.1 EVENT Obtener el listado en ACELER.ACE_OPERATION_DISCLAIMER ");
             return operationDisclaimerRepositoryClient.findByEntityAndTradeId(
-                            // TODO delete tradeID - 1425L
                             OperationDisclaimerRequest.builder().entity(entity).tradeId(originId).build()
                     ).switchIfEmpty(Mono.error(new RuntimeException("Disclaimer no encontrado en ACELER.ACE_OPERATION_DISCLAIMER: " + originId)))
                     .map(disclaimer -> List.of(
