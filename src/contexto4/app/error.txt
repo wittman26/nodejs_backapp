@@ -1,14 +1,28 @@
+14:56:27.597 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientDocumentStepImpl -- 3. Obteniendo tipos de documentos para producto=PROD1
+14:56:27.599 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientDocumentStepImpl -- Tipos de documento encontrados: 0
 
-org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
-Unnecessary stubbings detected.
-Clean & maintainable test code requires zero unnecessary code.
-Following stubbings are unnecessary (click to navigate to relevant line of code):
-  1. -> at com.acelera.fx.digitalsignature.application.service.CreateTradeSignatureExpedientServiceImplTest.setUp(CreateTradeSignatureExpedientServiceImplTest.java:68)
-  2. -> at com.acelera.fx.digitalsignature.application.service.CreateTradeSignatureExpedientServiceImplTest.setUp(CreateTradeSignatureExpedientServiceImplTest.java:72)
-  3. -> at com.acelera.fx.digitalsignature.application.service.CreateTradeSignatureExpedientServiceImplTest.setUp(CreateTradeSignatureExpedientServiceImplTest.java:76)
-Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+java.lang.AssertionError: expectation "expectErrorMatches" failed (expected: onError(); actual: onNext([]))
 
-	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at reactor.test.MessageFormatter.assertionError(MessageFormatter.java:115)
+	at reactor.test.MessageFormatter.failPrefix(MessageFormatter.java:104)
+	at reactor.test.MessageFormatter.fail(MessageFormatter.java:73)
+	at reactor.test.MessageFormatter.failOptional(MessageFormatter.java:88)
+	at reactor.test.DefaultStepVerifierBuilder.lambda$expectErrorMatches$8(DefaultStepVerifierBuilder.java:417)
+	at reactor.test.DefaultStepVerifierBuilder$SignalEvent.test(DefaultStepVerifierBuilder.java:2289)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSignal(DefaultStepVerifierBuilder.java:1529)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onExpectation(DefaultStepVerifierBuilder.java:1477)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onNext(DefaultStepVerifierBuilder.java:1146)
+	at reactor.core.publisher.FluxPeek$PeekSubscriber.onNext(FluxPeek.java:200)
+	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onNext(FluxSwitchIfEmpty.java:74)
+	at reactor.core.publisher.MonoCallable$MonoCallableSubscription.request(MonoCallable.java:156)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2366)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.onSubscribe(Operators.java:2240)
+	at reactor.core.publisher.MonoCallable.subscribe(MonoCallable.java:48)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.toVerifierAndSubscribe(DefaultStepVerifierBuilder.java:891)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:831)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:823)
+	at com.acelera.fx.digitalsignature.application.usecase.CreateExpedientDocumentStepImplTest.obtainDocumentTypes_empty(CreateExpedientDocumentStepImplTest.java:69)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-
