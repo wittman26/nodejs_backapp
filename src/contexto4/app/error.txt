@@ -1,28 +1,37 @@
-14:56:27.597 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientDocumentStepImpl -- 3. Obteniendo tipos de documentos para producto=PROD1
-14:56:27.599 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientDocumentStepImpl -- Tipos de documento encontrados: 0
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+15:41:13.696 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientGetTitleAndCenterUseCaseImpl -- 5. Obtener Datos titular y Centro
+15:41:13.703 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientGetTitleAndCenterUseCaseImpl -- 5.1 Buscando los datos en la BBDD, esquema ACELER - Tabla ACE_EVENTO
 
-java.lang.AssertionError: expectation "expectErrorMatches" failed (expected: onError(); actual: onNext([]))
+java.lang.AssertionError: expectation "expectError(Class)" failed (expected: onError(RuntimeException); actual: onComplete())
 
 	at reactor.test.MessageFormatter.assertionError(MessageFormatter.java:115)
 	at reactor.test.MessageFormatter.failPrefix(MessageFormatter.java:104)
 	at reactor.test.MessageFormatter.fail(MessageFormatter.java:73)
 	at reactor.test.MessageFormatter.failOptional(MessageFormatter.java:88)
-	at reactor.test.DefaultStepVerifierBuilder.lambda$expectErrorMatches$8(DefaultStepVerifierBuilder.java:417)
+	at reactor.test.DefaultStepVerifierBuilder.lambda$expectError$6(DefaultStepVerifierBuilder.java:374)
 	at reactor.test.DefaultStepVerifierBuilder$SignalEvent.test(DefaultStepVerifierBuilder.java:2289)
 	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSignal(DefaultStepVerifierBuilder.java:1529)
 	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onExpectation(DefaultStepVerifierBuilder.java:1477)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onNext(DefaultStepVerifierBuilder.java:1146)
-	at reactor.core.publisher.FluxPeek$PeekSubscriber.onNext(FluxPeek.java:200)
-	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onNext(FluxSwitchIfEmpty.java:74)
-	at reactor.core.publisher.MonoCallable$MonoCallableSubscription.request(MonoCallable.java:156)
-	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2366)
-	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.onSubscribe(Operators.java:2240)
-	at reactor.core.publisher.MonoCallable.subscribe(MonoCallable.java:48)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onComplete(DefaultStepVerifierBuilder.java:1117)
+	at reactor.core.publisher.MonoZip$ZipInner.onComplete(MonoZip.java:536)
+	at reactor.core.publisher.FluxMap$MapSubscriber.onComplete(FluxMap.java:144)
+	at reactor.core.publisher.Operators.complete(Operators.java:137)
+	at reactor.core.publisher.MonoEmpty.subscribe(MonoEmpty.java:46)
+	at reactor.core.publisher.InternalMonoOperator.subscribe(InternalMonoOperator.java:76)
+	at reactor.core.publisher.MonoZip$ZipCoordinator.request(MonoZip.java:220)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSubscribe(DefaultStepVerifierBuilder.java:1161)
+	at reactor.core.publisher.MonoZip.subscribe(MonoZip.java:129)
 	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
 	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.toVerifierAndSubscribe(DefaultStepVerifierBuilder.java:891)
 	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:831)
 	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:823)
-	at com.acelera.fx.digitalsignature.application.usecase.CreateExpedientDocumentStepImplTest.obtainDocumentTypes_empty(CreateExpedientDocumentStepImplTest.java:69)
+	at com.acelera.fx.digitalsignature.application.usecase.CreateExpedientGetTitleAndCenterUseCaseImplTest.obtainTitleAndCenterData_eventPath_notFound(CreateExpedientGetTitleAndCenterUseCaseImplTest.java:132)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
