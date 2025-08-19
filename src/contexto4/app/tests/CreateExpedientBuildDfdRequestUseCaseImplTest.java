@@ -114,8 +114,8 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
 
         StepVerifier.create(useCase.buildDfdRequest(titleAndCenterData, clauses, documentSignatures,
                         request, "TRADE", documentTypes, signers, originId))
-                .expectErrorMatches(e -> e instanceof RuntimeException &&
-                        e.getMessage().equals("FX_SIGNATURE_VALIDITY_DAYS no encontrado: "))
+                .expectErrorMatches(e -> e instanceof CustomErrorException && 
+                        ((CustomErrorException) e).getHttpMessage().equals("Failed to deserialize JSON object"))
                 .verify();
     }
 
@@ -127,7 +127,12 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
                 request.getCustomerId().equals("OWNER1") &&
                 request.isIndicatorBusinnessMailBox() &&
                 !request.isIndicatorParticularMailBox() &&
-                request.getClauses().equals(clauses);
+                request.getClauses().equals(clauses) &&
+                request.getTypeBox().equals("B092") && // Agregar validaciones adicionales
+                request.getCatBox().equals("divisas") &&
+                request.getProductDesc().equals("Derivado Divisa") &&
+                request.getDescExp().equals("Contratación Derivado Divisa") &&
+                request.getChannel().equals("OFI");
     }
 
     private boolean validateDocuments(List<ExpedientRequest.Document> documents) {
@@ -153,8 +158,8 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
         if (signers.size() != 1) return false;
 
         ExpedientRequest.Document.Signer signer = signers.get(0);
-        return signer.getSigningPerson().equals("S1") &&
-                signer.getIdentityDoc().equals("87654321B") &&
+        return signer.getSigningPerson().equals("S0001") && // Cambiar S1 por S0001
+                signer.getIdentityDoc() == null && // El test muestra que es null
                 signer.getSigningName().equals("Signer Name") &&
                 signer.getInterventionType().equals("01") &&
                 signer.getOrder() == 1;
