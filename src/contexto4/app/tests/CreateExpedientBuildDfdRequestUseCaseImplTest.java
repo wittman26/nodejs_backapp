@@ -29,6 +29,7 @@ import reactor.util.function.Tuples;
 import java.util.List;
 import java.util.Locale;
 
+import static com.acelera.fx.digitalsignature.infrastructure.util.TradeSignatureConstants.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,9 +43,21 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
     @InjectMocks
     private CreateExpedientBuildDfdRequestUseCaseImpl useCase;
 
-    private final String entity = "0049";
-    private final Long originId = 123L;
-    private final String productId = "PROD1";
+    private static final Long ORIGIN_ID = 123L;
+    private static final String PRODUCT_ID = "PROD1";
+    private static final String OWNER_NAME = "Owner Name";
+    private static final String OWNER_DOCUMENT = "A28269983";
+    private static final String CENTER = "5494";
+    private static final String OWNER_JURIDIC = "J000093186";
+    private static final String OWNER_JURIDIC_NO_ZEROS = "J93186";
+
+    private static final String VALIDITY_DAYS_VAIABLE = "FX_SIGNATURE_VALIDITY_DAYS";
+    private static final String OPER_CODE_BUILT = OPER_CODE_TRADE + ORIGIN_ID;
+    private static final String SUORCE_APP_CODE = "ACELERA";
+    private static final String KD_DOCUMENT_TYPE = "KD";
+    private static final String DOCUMENTAL_TYPE_DOC = "COMVEN_FX_PREC";
+    private static final String DOCUMENTAL_CODE_DOC = "di";
+
     private final CreateExpedientRequest request;
     private final Tuple4<String, String, String, String> titleAndCenterData;
     private final List<DocumentSignature> documentSignatures;
@@ -53,27 +66,29 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
     private final List<ExpedientRequest.Clause> clauses;
 
     CreateExpedientBuildDfdRequestUseCaseImplTest() {
-        request = new CreateExpedientRequest(productId);
-        titleAndCenterData = Tuples.of("Owner Name", "12345678A", "J0001", "OWNER1");
+        request = new CreateExpedientRequest(PRODUCT_ID);
+
+        titleAndCenterData = Tuples.of(OWNER_NAME, OWNER_DOCUMENT, CENTER, OWNER_JURIDIC);
 
         documentSignatures = List.of(DocumentSignature.builder()
-                .idTipDoc("DOC1")
+                .idTipDoc(KD_DOCUMENT_TYPE)
                 .nombreDocumento("document1.pdf")
                 .build());
 
-        documentTypes = List.of(ProductDocumentParameters.builder()
-                .documentType("DOC1")
-                .documentalTypeDoc("TYPE1")
-                .documentalCodeDoc("CODE1")
-                .isPrecontractual("Y")
-                .build());
+        var prod = new ProductDocumentParameters();
+        prod.setDocumentType(KD_DOCUMENT_TYPE);
+        prod.setDocumentalTypeDoc(DOCUMENTAL_TYPE_DOC);
+        prod.setDocumentalCodeDoc(DOCUMENTAL_CODE_DOC);
+        prod.setIsPrecontractual("Y");
+
+        documentTypes = List.of(prod);
 
         signers = List.of(TradeSignerDto.builder()
                 .signerId("S0001")
                 .name("Signer Name")
                 .document(SignerDocumentDto.builder()
                         .type("N")
-                        .number(null)  // Número de documento null como en la implementación
+                        .number(null)
                         .build())
                 .interventionType("01")
                 .build());
@@ -90,8 +105,7 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
         ReflectionTestUtils.setField(useCase, "s3Bucket", "test-bucket");
         ReflectionTestUtils.setField(useCase, "s3folder", "test-folder");
 
-        when(variableClient.find("FX_SIGNATURE_VALIDITY_DAYS"))
-                .thenReturn(Mono.just("5"));
+        when(variableClient.find(VALIDITY_DAYS_VAIABLE)).thenReturn(Mono.just("5"));
 
         LocaleContextHolder.setLocale(Locale.US, true);
         var ms = new StaticMessageSource();
@@ -102,48 +116,48 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
     @Test
     void buildDfdRequest_success() {
         StepVerifier.create(useCase.buildDfdRequest(titleAndCenterData, clauses, documentSignatures,
-                        request, "TRADE", documentTypes, signers, originId))
+                        request, ORIGIN_TRADE, documentTypes, signers, ORIGIN_ID))
                 .expectNextMatches(expedientRequest ->
                         validateExpedientRequest(expedientRequest) &&
                                 validateDocuments(expedientRequest.getDocs()))
                 .verifyComplete();
 
-        verify(variableClient).find("FX_SIGNATURE_VALIDITY_DAYS");
+        verify(variableClient).find(VALIDITY_DAYS_VAIABLE);
     }
 
     @Test
     void buildDfdRequest_validityDaysNotFound() {
-        when(variableClient.find("FX_SIGNATURE_VALIDITY_DAYS"))
+        when(variableClient.find(VALIDITY_DAYS_VAIABLE))
                 .thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.buildDfdRequest(titleAndCenterData, clauses, documentSignatures,
-                        request, "TRADE", documentTypes, signers, originId))
+                        request, ORIGIN_TRADE, documentTypes, signers, ORIGIN_ID))
                 .expectErrorMatches(e -> e instanceof CustomErrorException)
                 .verify();
     }
 
     private boolean validateExpedientRequest(ExpedientRequest request) {
         return request.getSourceApp() != null &&
-           request.getSourceApp().getOperCode().equals("ACE123") && // Validar operCode específico
-           request.getSourceApp().getCode().equals("ACELERA") &&
-           request.getSourceApp().getUrl().equals("http://localhost/v1/trades-signatures/expedients/{id}?status={status}") &&
-           request.getStartDate() != null &&
-           request.getEndDate() != null &&
-           request.getCentre().equals("J0001") &&
-           request.getCustomerId().equals("OWNER1") &&
-           request.isIndicatorBusinnessMailBox() &&
-           !request.isIndicatorParticularMailBox() &&
-           request.getClauses().equals(clauses);
+                request.getSourceApp().getOperCode().equals(OPER_CODE_BUILT) &&
+                request.getSourceApp().getCode().equals(SUORCE_APP_CODE) &&
+                request.getSourceApp().getUrl().equals(ReflectionTestUtils.getField(useCase,"sourceAppUrlBasePath")  + SOURCE_APP_URL) &&
+                request.getStartDate() != null &&
+                request.getEndDate() != null &&
+                request.getCentre().equals(CENTER) &&
+                request.getCustomerId().equals(OWNER_JURIDIC) &&
+                !request.isIndicatorBusinnessMailBox() &&
+                request.isIndicatorParticularMailBox() &&
+                request.getClauses().equals(clauses);
     }
 
     private boolean validateDocuments(List<ExpedientRequest.Document> documents) {
         if (documents.size() != 1) return false;
 
         ExpedientRequest.Document doc = documents.getFirst();
-        return doc.getTypeDoc().equals("TYPE1") &&
-                doc.getDocumentCode().equals("CODE1") &&
+        return doc.getTypeDoc().equals(DOCUMENTAL_TYPE_DOC) &&
+                doc.getDocumentCode().equals(DOCUMENTAL_CODE_DOC) &&
                 doc.isIndPreContractual() &&
-                doc.getPersonDocNumber().equals("12345678A") &&
+                doc.getPersonDocNumber().equals(OWNER_DOCUMENT) &&
                 validateS3(doc.getS3()) &&
                 validateSigners(doc.getSigners()) &&
                 validateMetadata(doc.getMetadata());
@@ -159,26 +173,26 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
         if (signers.size() != 1) return false;
 
         ExpedientRequest.Document.Signer signer = signers.getFirst();
-        return signer.getSigningPerson().equals("S0001") &&  // Corregido de S1 a S0001
+        return signer.getSigningPerson().equals("S1") &&
                 signer.getSigningName().equals("Signer Name") &&
                 signer.getInterventionType().equals("01") &&
-                signer.getLocationSign().equals("") &&        // Agregar validación de locationSign
+                signer.getLocationSign().isEmpty() &&
                 signer.getOrder() == 1 &&
-                validateRepresented(signer.getRepresented()); // Agregar validación de represented
+                validateRepresented(signer.getRepresented());
     }
 
     private boolean validateRepresented(List<ExpedientRequest.Document.Signer.Represented> represented) {
         if (represented.size() != 1) return false;
-        
+
         ExpedientRequest.Document.Signer.Represented rep = represented.getFirst();
-        return rep.getRepresentedCode().equals("OWNER1") &&
-               rep.getRepresentedName().equals("Owner Name");
+        return rep.getRepresentedCode().equals(OWNER_JURIDIC_NO_ZEROS) &&
+                rep.getRepresentedName().equals(OWNER_NAME);
     }
 
     private boolean validateMetadata(ExpedientRequest.Document.Metadata metadata) {
         return metadata.getGnDate() != null &&
                 metadata.getGnCreationDate() != null &&
                 metadata.isGnDocOrig() &&
-                metadata.getProducto().equals(productId);
+                metadata.getProducto().equals(PRODUCT_ID);
     }
 }
