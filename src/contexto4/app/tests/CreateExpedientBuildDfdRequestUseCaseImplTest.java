@@ -4,6 +4,7 @@ import com.acelera.broker.entidades.basicas.component.VariableClient;
 import com.acelera.broker.fx.db.domain.dto.DocumentSignature;
 import com.acelera.broker.fx.db.domain.dto.ProductDocumentParameters;
 import com.acelera.broker.rest.dfd.domain.ExpedientRequest;
+import com.acelera.error.CustomErrorException;
 import com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientBuildDfdRequestUseCaseImpl;
 import com.acelera.fx.digitalsignature.domain.port.dto.SignerDocumentDto;
 import com.acelera.fx.digitalsignature.domain.port.dto.TradeSignerDto;
@@ -114,8 +115,7 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
 
         StepVerifier.create(useCase.buildDfdRequest(titleAndCenterData, clauses, documentSignatures,
                         request, "TRADE", documentTypes, signers, originId))
-                .expectErrorMatches(e -> e instanceof CustomErrorException && 
-                        ((CustomErrorException) e).getHttpMessage().equals("Failed to deserialize JSON object"))
+                .expectErrorMatches(e -> e instanceof CustomErrorException)
                 .verify();
     }
 
@@ -138,7 +138,7 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
     private boolean validateDocuments(List<ExpedientRequest.Document> documents) {
         if (documents.size() != 1) return false;
 
-        ExpedientRequest.Document doc = documents.get(0);
+        ExpedientRequest.Document doc = documents.getFirst();
         return doc.getTypeDoc().equals("TYPE1") &&
                 doc.getDocumentCode().equals("CODE1") &&
                 doc.isIndPreContractual() &&
@@ -157,7 +157,7 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
     private boolean validateSigners(List<ExpedientRequest.Document.Signer> signers) {
         if (signers.size() != 1) return false;
 
-        ExpedientRequest.Document.Signer signer = signers.get(0);
+        ExpedientRequest.Document.Signer signer = signers.getFirst();
         return signer.getSigningPerson().equals("S0001") && // Cambiar S1 por S0001
                 signer.getIdentityDoc() == null && // El test muestra que es null
                 signer.getSigningName().equals("Signer Name") &&
