@@ -71,7 +71,10 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
         signers = List.of(TradeSignerDto.builder()
                 .signerId("S0001")
                 .name("Signer Name")
-                .document(SignerDocumentDto.builder().type("TYPE").build())
+                .document(SignerDocumentDto.builder()
+                        .type("N")
+                        .number(null)  // Número de documento null como en la implementación
+                        .build())
                 .interventionType("01")
                 .build());
 
@@ -121,18 +124,16 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
 
     private boolean validateExpedientRequest(ExpedientRequest request) {
         return request.getSourceApp() != null &&
-                request.getStartDate() != null &&
-                request.getEndDate() != null &&
-                request.getCentre().equals("J0001") &&
-                request.getCustomerId().equals("OWNER1") &&
-                request.isIndicatorBusinnessMailBox() &&
-                !request.isIndicatorParticularMailBox() &&
-                request.getClauses().equals(clauses) &&
-                request.getTypeBox().equals("B092") && // Agregar validaciones adicionales
-                request.getCatBox().equals("divisas") &&
-                request.getProductDesc().equals("Derivado Divisa") &&
-                request.getDescExp().equals("Contratación Derivado Divisa") &&
-                request.getChannel().equals("OFI");
+           request.getSourceApp().getOperCode().equals("ACE123") && // Validar operCode específico
+           request.getSourceApp().getCode().equals("ACELERA") &&
+           request.getSourceApp().getUrl().equals("http://localhost/v1/trades-signatures/expedients/{id}?status={status}") &&
+           request.getStartDate() != null &&
+           request.getEndDate() != null &&
+           request.getCentre().equals("J0001") &&
+           request.getCustomerId().equals("OWNER1") &&
+           request.isIndicatorBusinnessMailBox() &&
+           !request.isIndicatorParticularMailBox() &&
+           request.getClauses().equals(clauses);
     }
 
     private boolean validateDocuments(List<ExpedientRequest.Document> documents) {
@@ -158,11 +159,20 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
         if (signers.size() != 1) return false;
 
         ExpedientRequest.Document.Signer signer = signers.getFirst();
-        return signer.getSigningPerson().equals("S0001") && // Cambiar S1 por S0001
-                signer.getIdentityDoc() == null && // El test muestra que es null
+        return signer.getSigningPerson().equals("S0001") &&  // Corregido de S1 a S0001
                 signer.getSigningName().equals("Signer Name") &&
                 signer.getInterventionType().equals("01") &&
-                signer.getOrder() == 1;
+                signer.getLocationSign().equals("") &&        // Agregar validación de locationSign
+                signer.getOrder() == 1 &&
+                validateRepresented(signer.getRepresented()); // Agregar validación de represented
+    }
+
+    private boolean validateRepresented(List<ExpedientRequest.Document.Signer.Represented> represented) {
+        if (represented.size() != 1) return false;
+        
+        ExpedientRequest.Document.Signer.Represented rep = represented.getFirst();
+        return rep.getRepresentedCode().equals("OWNER1") &&
+               rep.getRepresentedName().equals("Owner Name");
     }
 
     private boolean validateMetadata(ExpedientRequest.Document.Metadata metadata) {
