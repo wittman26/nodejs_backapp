@@ -1,37 +1,84 @@
+C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\lib\idea_rt.jar=53808:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\bin" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file1955305353 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.fx.digitalsignature.application.usecase.CreateExpedientBuildDfdRequestUseCaseImplTest
 Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
 WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
 WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
 WARNING: Dynamic loading of agents will be disallowed by default in a future release
 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
-15:41:13.696 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientGetTitleAndCenterUseCaseImpl -- 5. Obtener Datos titular y Centro
-15:41:13.703 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientGetTitleAndCenterUseCaseImpl -- 5.1 Buscando los datos en la BBDD, esquema ACELER - Tabla ACE_EVENTO
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+09:16:49.466 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientBuildDfdRequestUseCaseImpl -- 7. Creando Request para llamado a DFD
+09:16:49.543 [main] ERROR com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientBuildDfdRequestUseCaseImpl -- VARIABLE calling error : FX_SIGNATURE_VALIDITY_DAYS no encontrado: 
 
-java.lang.AssertionError: expectation "expectError(Class)" failed (expected: onError(RuntimeException); actual: onComplete())
+java.lang.AssertionError: expectation "expectErrorMatches" failed (predicate failed on exception: com.acelera.error.CustomErrorException: 500 INTERNAL_SERVER_ERROR "Failed to deserialize JSON object")
 
 	at reactor.test.MessageFormatter.assertionError(MessageFormatter.java:115)
 	at reactor.test.MessageFormatter.failPrefix(MessageFormatter.java:104)
 	at reactor.test.MessageFormatter.fail(MessageFormatter.java:73)
 	at reactor.test.MessageFormatter.failOptional(MessageFormatter.java:88)
-	at reactor.test.DefaultStepVerifierBuilder.lambda$expectError$6(DefaultStepVerifierBuilder.java:374)
+	at reactor.test.DefaultStepVerifierBuilder.lambda$expectErrorMatches$8(DefaultStepVerifierBuilder.java:420)
 	at reactor.test.DefaultStepVerifierBuilder$SignalEvent.test(DefaultStepVerifierBuilder.java:2289)
 	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSignal(DefaultStepVerifierBuilder.java:1529)
 	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onExpectation(DefaultStepVerifierBuilder.java:1477)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onComplete(DefaultStepVerifierBuilder.java:1117)
-	at reactor.core.publisher.MonoZip$ZipInner.onComplete(MonoZip.java:536)
-	at reactor.core.publisher.FluxMap$MapSubscriber.onComplete(FluxMap.java:144)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onError(DefaultStepVerifierBuilder.java:1129)
+	at reactor.core.publisher.FluxMap$MapSubscriber.onError(FluxMap.java:134)
+	at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:106)
+	at reactor.core.publisher.Operators.error(Operators.java:198)
+	at reactor.core.publisher.MonoError.subscribe(MonoError.java:53)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
+	at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:103)
+	at reactor.core.publisher.FluxMap$MapSubscriber.onError(FluxMap.java:134)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.onError(Operators.java:2235)
+	at reactor.core.publisher.Operators.error(Operators.java:198)
+	at reactor.core.publisher.MonoError.subscribe(MonoError.java:53)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
+	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onComplete(FluxSwitchIfEmpty.java:82)
 	at reactor.core.publisher.Operators.complete(Operators.java:137)
 	at reactor.core.publisher.MonoEmpty.subscribe(MonoEmpty.java:46)
-	at reactor.core.publisher.InternalMonoOperator.subscribe(InternalMonoOperator.java:76)
-	at reactor.core.publisher.MonoZip$ZipCoordinator.request(MonoZip.java:220)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSubscribe(DefaultStepVerifierBuilder.java:1161)
-	at reactor.core.publisher.MonoZip.subscribe(MonoZip.java:129)
 	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
 	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.toVerifierAndSubscribe(DefaultStepVerifierBuilder.java:891)
 	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:831)
 	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:823)
-	at com.acelera.fx.digitalsignature.application.usecase.CreateExpedientGetTitleAndCenterUseCaseImplTest.obtainTitleAndCenterData_eventPath_notFound(CreateExpedientGetTitleAndCenterUseCaseImplTest.java:132)
+	at com.acelera.fx.digitalsignature.application.usecase.CreateExpedientBuildDfdRequestUseCaseImplTest.buildDfdRequest_validityDaysNotFound(CreateExpedientBuildDfdRequestUseCaseImplTest.java:119)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	Suppressed: com.acelera.error.CustomErrorException: 500 INTERNAL_SERVER_ERROR "Failed to deserialize JSON object"
+		at com.acelera.error.CustomErrorException.ofArguments(CustomErrorException.java:61)
+		at com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientBuildDfdRequestUseCaseImpl.lambda$getValidityDays$1(CreateExpedientBuildDfdRequestUseCaseImpl.java:99)
+		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:94)
+		... 16 more
+
+09:16:49.700 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientBuildDfdRequestUseCaseImpl -- 7. Creando Request para llamado a DFD
+09:16:49.704 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientBuildDfdRequestUseCaseImpl -- Validity Days: 5
+
+java.lang.AssertionError: expectation "expectNextMatches" failed (predicate failed on value: ExpedientRequest(sourceApp=ExpedientRequest.SourceApp(operCode=ACE123, code=ACELERA, url=http://localhost/v1/trades-signatures/expedients/{id}?status={status}), startDate=2025-08-19T07:16:49.722085200, endDate=2025-08-24T07:16:49.722085200, centre=J0001, typeReference=Derivado Divisa, indicatorBusinnessMailBox=true, indicatorParticularMailBox=false, clauses=[ExpedientRequest.Clause(idClause=CL1, clauseContent=Clause content)], customerId=OWNER1, typeBox=B092, catBox=divisas, productDesc=Derivado Divisa, descExp=Contratación Derivado Divisa, channel=OFI, docs=[ExpedientRequest.Document(s3=ExpedientRequest.Document.S3(bucket=test-bucket, folder=test-folder, key=document1.pdf), personDocNumber=OWNER1, indPreContractual=true, signers=[ExpedientRequest.Document.Signer(signingPerson=S1, identityDoc=null, signingName=Signer Name, interventionType=01, locationSign=, order=1, represented=[])], metadata=ExpedientRequest.Document.Metadata(gnDate=2025-08-19T07:16:49.714039500, gnCreationDate=2025-08-19T07:16:49.714039500, gnDocOrig=true, gnCaducityDate=9999-12-31T23:59:59.999, gnName=document1.pdf, gnValidityDate=9999-12-31T23:59:59.999, gnTitulo=Información Precontractual FX, documentTitle=null, numPersonaCli=[Owner Name], nomPlantilla=CODE1, verPlantilla=null, idSolicitud=null, idEntidad=0049, operacionId=ACE123, claManuscrita=Y, contPartenon=, producto=PROD1, subtipo=null, estandarRef=null, idOficialPers=[OWNER1], digitalizador=OSP), documentCode=CODE1, typeDoc=TYPE1)]))
+
+	at reactor.test.MessageFormatter.assertionError(MessageFormatter.java:115)
+	at reactor.test.MessageFormatter.failPrefix(MessageFormatter.java:104)
+	at reactor.test.MessageFormatter.fail(MessageFormatter.java:73)
+	at reactor.test.MessageFormatter.failOptional(MessageFormatter.java:88)
+	at reactor.test.DefaultStepVerifierBuilder.lambda$expectNextMatches$11(DefaultStepVerifierBuilder.java:559)
+	at reactor.test.DefaultStepVerifierBuilder$SignalEvent.test(DefaultStepVerifierBuilder.java:2289)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSignal(DefaultStepVerifierBuilder.java:1529)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onExpectation(DefaultStepVerifierBuilder.java:1477)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onNext(DefaultStepVerifierBuilder.java:1146)
+	at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122)
+	at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onNext(FluxOnErrorResume.java:79)
+	at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122)
+	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onNext(FluxSwitchIfEmpty.java:74)
+	at reactor.core.publisher.Operators$ScalarSubscription.request(Operators.java:2570)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2366)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.onSubscribe(Operators.java:2240)
+	at reactor.core.publisher.MonoJust.subscribe(MonoJust.java:55)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.toVerifierAndSubscribe(DefaultStepVerifierBuilder.java:891)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:831)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:823)
+	at reactor.test.DefaultStepVerifierBuilder.verifyComplete(DefaultStepVerifierBuilder.java:690)
+	at com.acelera.fx.digitalsignature.application.usecase.CreateExpedientBuildDfdRequestUseCaseImplTest.buildDfdRequest_success(CreateExpedientBuildDfdRequestUseCaseImplTest.java:105)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
 
+
+Process finished with exit code -1
