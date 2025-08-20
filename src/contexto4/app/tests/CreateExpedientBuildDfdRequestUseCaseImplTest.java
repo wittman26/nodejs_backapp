@@ -49,6 +49,7 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
     private static final String OWNER_DOCUMENT = "A28269983";
     private static final String CENTER = "5494";
     private static final String OWNER_JURIDIC = "J000093186";
+    private static final String OWNER_NON_JURIDIC = "P000012345";
     private static final String OWNER_JURIDIC_NO_ZEROS = "J93186";
 
     private static final String VALIDITY_DAYS_VAIABLE = "FX_SIGNATURE_VALIDITY_DAYS";
@@ -140,7 +141,7 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
     void buildDfdRequest_nonJuridicPerson_success() {
         // Change center to non-juridic
         Tuple4<String, String, String, String> nonJuridicData =
-                Tuples.of(OWNER_NAME, OWNER_DOCUMENT, "5494", "P123456");
+                Tuples.of(OWNER_NAME, OWNER_DOCUMENT, CENTER, OWNER_NON_JURIDIC);
 
         StepVerifier.create(useCase.buildDfdRequest(nonJuridicData, clauses, documentSignatures,
                         request, ORIGIN_TRADE, documentTypes, signers, ORIGIN_ID))
@@ -211,6 +212,18 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
                 validateRepresented(signer.getRepresented());
     }
 
+    private boolean validateSignersWithoutRepresented(List<ExpedientRequest.Document.Signer> signers) {
+        if (signers.size() != 1) return false;
+
+        ExpedientRequest.Document.Signer signer = signers.getFirst();
+        return signer.getSigningPerson().equals("S1") &&
+                signer.getSigningName().equals("Signer Name") &&
+                signer.getInterventionType().equals("01") &&
+                signer.getLocationSign().isEmpty() &&
+                signer.getOrder() == 1 &&
+                signer.getRepresented().isEmpty(); // Represented list should be empty for non-juridic
+    }
+
     private boolean validateRepresented(List<ExpedientRequest.Document.Signer.Represented> represented) {
         if (represented.size() != 1) return false;
 
@@ -224,17 +237,5 @@ class CreateExpedientBuildDfdRequestUseCaseImplTest {
                 metadata.getGnCreationDate() != null &&
                 metadata.isGnDocOrig() &&
                 metadata.getProducto().equals(PRODUCT_ID);
-    }
-
-    private boolean validateSignersWithoutRepresented(List<ExpedientRequest.Document.Signer> signers) {
-        if (signers.size() != 1) return false;
-
-        ExpedientRequest.Document.Signer signer = signers.getFirst();
-        return signer.getSigningPerson().equals("S1") &&
-                signer.getSigningName().equals("Signer Name") &&
-                signer.getInterventionType().equals("01") &&
-                signer.getLocationSign().isEmpty() &&
-                signer.getOrder() == 1 &&
-                signer.getRepresented().isEmpty(); // Represented list should be empty for non-juridic
     }
 }
