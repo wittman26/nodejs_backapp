@@ -23,7 +23,13 @@ public class CreateExpedientDocumentStepImpl implements CreateExpedientDocumentS
         log.info("3. Obteniendo tipos de documentos para producto={}", productId);
         return productDocumentsService.findProductDocumentType(entity, locale, productId)
                 .collectList()
-                .switchIfEmpty(Mono.error(new RuntimeException("No se encontraron tipos de documento para el producto: " + productId)))
-                .doOnNext(docs -> log.info("Tipos de documento encontrados: {}", docs.size()));
+                .flatMap(docs -> {
+                    if(docs.isEmpty()) {
+                        return Mono.error(new RuntimeException("No se encontraron tipos de documento para el producto: " + productId));
+                    }
+                    log.info("Tipos de documento encontrados: {}", docs.size());
+                    return Mono.just(docs);
+                });
+
     }
 }

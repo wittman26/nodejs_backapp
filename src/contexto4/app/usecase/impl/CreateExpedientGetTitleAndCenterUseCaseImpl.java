@@ -28,7 +28,8 @@ public class CreateExpedientGetTitleAndCenterUseCaseImpl implements CreateExpedi
         if (ORIGIN_EVENT.equals(origin)) {
             log.info("5.1 Buscando los datos en la BBDD, esquema ACELER - Tabla ACE_EVENTO");
             EventRequest eventRequest = EventRequest.builder().eventId(originId).entityId(entity).build();
-            Mono<Event> eventMono = eventRepositoryClient.findByEntityAndEvent(eventRequest);
+            Mono<Event> eventMono = eventRepositoryClient.findByEntityAndEvent(eventRequest)
+                    .switchIfEmpty(Mono.error(new RuntimeException("Evento no encontrado")));
             return Mono.zip(
                     eventMono.map(Event::getOwnerName), // NOMBRE_TITULAR
                     eventMono.map(Event::getOwnerDocument), //DOCUMENTO_TITULAR
@@ -38,7 +39,8 @@ public class CreateExpedientGetTitleAndCenterUseCaseImpl implements CreateExpedi
         } else {
             if(productId.equals("AC")){
                 log.info("5.1 Buscando los datos en la BBDD, esquema ACELER - tabla ACE_ACUM_CLIENTE y ACE_ACUM_OPERACION");
-                Mono<AcumClient> acumClient = acumClientRepositoryClient.findByOperationId(originId);
+                Mono<AcumClient> acumClient = acumClientRepositoryClient.findByOperationId(originId)
+                        .switchIfEmpty(Mono.error(new RuntimeException("Cliente no encontrado")));
                 Mono<AcumOperation> acumOperationMono = acumOperationRepositoryClient.findByOperationIdAndEntityId(
                         AcumOperationRequest.builder().operationId(originId).entityId(entity).build());
                 return Mono.zip(
@@ -51,7 +53,8 @@ public class CreateExpedientGetTitleAndCenterUseCaseImpl implements CreateExpedi
             log.info("5.1 Buscando los datos en la BBDD, esquema ACELER - tabla ACE_OPERACION y ACE_OPERACION_TITULARES");
             // TRADE: obtener desde ACE_OPERACION y ACE_OPERACION_TITULARES - Caso Si productId != AC
             Mono<Operation> operationMono = operationRepositoryClient.findByOperationIdAndEntityId(
-                    OperationRequest.builder().operationId(originId).entityId(entity).build());
+                    OperationRequest.builder().operationId(originId).entityId(entity).build())
+                    .switchIfEmpty(Mono.error(new RuntimeException("Operación no encontrada")));
             Mono<HeadlineOperation> headlineMono = headlineOperationRepositoryClient.findByOperationIdAndEntityId(
                     HeadlineOperationRequest.builder().operationId(originId).entityId(entity).build());
             return Mono.zip(

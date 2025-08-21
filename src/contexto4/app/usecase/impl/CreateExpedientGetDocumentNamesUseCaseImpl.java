@@ -26,7 +26,6 @@ public class CreateExpedientGetDocumentNamesUseCaseImpl implements CreateExpedie
     public Mono<List<DocumentSignature>> obtainDocumentSignatures(List<ProductDocumentParameters> documentTypes,
             String entity, Long originId, String origin) {
         log.info("4. Obtener Nombre Documentos");
-        //TODO cambiar originId quemado -> final long originIdTemp = 106365L;
         List<Mono<DocumentSignature>> monos = documentTypes.stream()
                 .map(docType -> {
                     DocumentRequest request = DocumentRequest.builder()

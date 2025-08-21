@@ -64,7 +64,7 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
         String center = titleAndCenterData.getT3();
         String owner = titleAndCenterData.getT4();
 
-        List<ExpedientRequest.Document> documents = buildDocumentRequestList(ownerName, ownerDocument, owner, documentSignatures, documentTypes, signers, request.getProductId(), origin, originId);
+        List<ExpedientRequest.Document> documents = buildDocumentRequestList(owner, ownerName, ownerDocument, documentSignatures, documentTypes, signers, request.getProductId(), origin, originId);
 
         var sourceAppUrl = sourceAppUrlBasePath + SOURCE_APP_URL;
         return ExpedientRequest.builder()
@@ -101,7 +101,7 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
     }
 
     private List<ExpedientRequest.Document> buildDocumentRequestList(
-            String titularCode,String titularName,String titularDoc, List<DocumentSignature> documentSignatures, List<ProductDocumentParameters> documentTypes, List<TradeSignerDto> signers, String productId, String origin, Long originId
+            String owner, String ownerName, String ownerDocument, List<DocumentSignature> documentSignatures, List<ProductDocumentParameters> documentTypes, List<TradeSignerDto> signers, String productId, String origin, Long originId
     ) {
 
         return documentTypes.stream()
@@ -111,7 +111,7 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
                             .findFirst()
                             .orElseThrow(() -> new RuntimeException("Document signature not found for type " + docType.getDocumentType()));
 
-                    List<ExpedientRequest.Document.Signer> docSigners = buildSignerList(signers, titularCode, titularName);
+                    List<ExpedientRequest.Document.Signer> docSigners = buildSignerList(signers, owner, ownerName);
 
                     boolean isPrecontractual = "Y".equalsIgnoreCase(docType.getIsPrecontractual());
 
@@ -119,7 +119,7 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
                             .typeDoc(docType.getDocumentalTypeDoc())
                             .documentCode(docType.getDocumentalCodeDoc())
                             .indPreContractual(isPrecontractual)
-                            .personDocNumber(titularDoc)
+                            .personDocNumber(ownerDocument)
                             .s3(ExpedientRequest.Document.S3.builder()
                                     .bucket(s3Bucket) // configurable por entorno
                                     .folder(s3folder)
@@ -131,8 +131,8 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
                                     docType.getDocumentalCodeDoc(),
                                     isPrecontractual,
                                     productId,
-                                    titularCode,
-                                    titularDoc,
+                                    owner,
+                                    ownerDocument,
                                     origin,
                                     originId
                             ))
@@ -143,8 +143,8 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
 
     private List<ExpedientRequest.Document.Signer> buildSignerList(
             List<TradeSignerDto> signers,
-            String titularCode,
-            String titularName
+            String owner,
+            String ownerName
     ) {
         return IntStream.range(0, signers.size())
                 .mapToObj(i -> {
@@ -158,10 +158,10 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
                             .locationSign(StringUtils.EMPTY)
                             .order(i + 1)
                             .represented(
-                                    isJuridic(titularCode)
+                                    isJuridic(owner)
                                             ? List.of(ExpedientRequest.Document.Signer.Represented.builder()
-                                            .representedCode(stripLeftZeros(titularCode))
-                                            .representedName(titularName)
+                                            .representedCode(stripLeftZeros(owner))
+                                            .representedName(ownerName)
                                             .build())
                                             : List.of()
                             )
@@ -175,8 +175,8 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
             String documentCode,
             boolean isPrecontractual,
             String productId,
-            String titularCode,
-            String titularDoc,
+            String owner,
+            String ownerDocument,
             String origin,
             Long originId
     ) {
@@ -194,14 +194,14 @@ public class CreateExpedientBuildDfdRequestUseCaseImpl implements CreateExpedien
                 .gnName(documentName)
                 .gnValidityDate(maxDate)
                 .gnTitulo(titulo)
-                .numPersonaCli(List.of(stripLeftZeros(titularCode)))
+                .numPersonaCli(List.of(stripLeftZeros(owner)))
                 .nomPlantilla(documentCode)
                 .idEntidad(LocaleConstants.ENTITY_0049)
                 .operacionId(operacionId)
                 .claManuscrita(CLAUSULA_MANUSCRITA)
                 .contPartenon(StringUtils.EMPTY)
                 .producto(productId)
-                .idOficialPers(List.of(titularDoc))
+                .idOficialPers(List.of(ownerDocument))
                 .digitalizador(DIGITALIZADOR)
                 .build();
     }
