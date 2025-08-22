@@ -5,6 +5,7 @@ import lombok.*;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,12 +26,15 @@ public class ViewTradeSignerDocumentStatusModel {
     @Column(name = "EXPEDIENT_ID")
     private Long expedientId;
 
+    @Id
     @Column(name = "SIGNER_ID")
     private String signerId;
 
+    @Id
     @Column(name = "DOCUMENT_TYPE")
     private String documentType;
 
+    @Id
     @Column(name = "DOCUMENT_NUMBER")
     private String documentNumber;
 
@@ -43,16 +47,19 @@ public class ViewTradeSignerDocumentStatusModel {
     @Column(name = "INTERVENTION_TYPE")
     private String interventionType;
 
+    @Id
     @Column(name = "GN_ID")
     private String gnId;
 
     @Column(name = "DOCUMENTAL_TYPE_DOC")
     private String documentalTypeDoc;
 
-    @Column(name = "INDICATOR_PRECONTRACTUAL", columnDefinition = "CHAR(1)")
+    @Size(max = 1)
+    @Column(name = "INDICATOR_PRECONTRACTUAL", length = 1, columnDefinition = "CHAR(1)")
     private String indicatorPrecontractual;
 
-    @Column(name = "SIGNED_DOC", columnDefinition = "CHAR(1)")
+    @Size(max = 1)
+    @Column(name = "SIGNED_DOC", length = 1, columnDefinition = "CHAR(1)")
     private String signedDoc;
 
     @Column(name = "SIGN_DATE")
