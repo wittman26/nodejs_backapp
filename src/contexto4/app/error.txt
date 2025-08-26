@@ -1,4 +1,4 @@
-  SELECT
+SELECT
     TS.TRADE_SIGNATURE_ID,
     TS.EXPEDIENT_ID,
     SG.SIGNER_ID,
@@ -22,8 +22,15 @@ FROM ACELER_FX.FX_TRADE_SIGNATURE TS
               ON DED.EXPEDIENT_ID = DE.ID
          LEFT JOIN ACELER_DFD.DFD_DOCUMENT DD
               ON DED.DOCUMENT_ID = DD.ID
-         LEFT JOIN ACELER_DFD.DFD_SIGNER DS
-              ON DD.ID = DS.DOCUMENT_ID;
+         LEFT JOIN (
+    SELECT *
+    FROM (
+        SELECT DS.*,
+               ROW_NUMBER() OVER (PARTITION BY DS.DOCUMENT_ID ORDER BY DS.SIGN_DATE DESC) AS RN
+        FROM ACELER_DFD.DFD_SIGNER DS
+    )
+    WHERE RN = 1
+) DS ON DD.ID = DS.DOCUMENT_ID;
 
 -------------------------
 
@@ -66,5 +73,5 @@ TRADE_SIGNATURE_ID EXPEDIENT_ID SIGNER_ID  D DOCUMENT_NUMBER      NAME          
                 22       111111 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                 24       111112 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
-30 filas seleccionadas. 
+30 filas seleccionadas.
 

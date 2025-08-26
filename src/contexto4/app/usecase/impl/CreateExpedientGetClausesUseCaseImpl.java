@@ -29,7 +29,10 @@ public class CreateExpedientGetClausesUseCaseImpl implements CreateExpedientGetC
             log.info("6.1 EVENT Obtener el listado en ACELER.ACE_EVENT_DISCLAIMER ");
             return eventDisclaimerRepositoryClient.findByEntityAndEventId(
                             EventDisclaimerRequest.builder().entity(entity).eventId(originId).build()
-                    ).switchIfEmpty(Mono.error(new RuntimeException("Disclaimer no encontrado en ACELER.ACE_EVENT_DISCLAIMER: " + originId)))
+                    ).switchIfEmpty(Mono.defer(() -> {
+                        log.warn("Disclaimer no encontrado en ACELER.ACE_EVENT_DISCLAIMER: {}", originId);
+                        return Mono.just(List.of());
+                    }))
                     .map(disclaimer -> List.of(
                             ExpedientRequest.Clause.builder()
                                     .idClause(disclaimer.getName())
