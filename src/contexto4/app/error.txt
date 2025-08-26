@@ -1,46 +1,70 @@
-C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:61622,suspend=y,server=n -ea -Didea.test.cyclic.buffer.size=1048576 -javaagent:C:\Users\x612243\AppData\Local\JetBrains\IdeaIC2024.2\captureAgent\debugger-agent.jar=file:/C:/Users/x612243/AppData/Local/Temp/capture.props -Dkotlinx.coroutines.debug.enable.creation.stack.trace=false -Ddebugger.agent.enable.coroutines=true -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file401685281 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.fx.digitalsignature.application.usecase.CreateExpedientBuildDfdRequestUseCaseImplTest
-Connected to the target VM, address: '127.0.0.1:61622', transport: 'socket'
-Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
-WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
-WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
-WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
-WARNING: Dynamic loading of agents will be disallowed by default in a future release
-OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
-Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
-11:07:26.231 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientBuildDfdRequestUseCaseImpl -- 7. Creando Request para llamado a DFD
-11:07:26.321 [main] ERROR com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientBuildDfdRequestUseCaseImpl -- VARIABLE calling error : FX_SIGNATURE_VALIDITY_DAYS no encontrado: 
-11:07:26.400 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientBuildDfdRequestUseCaseImpl -- 7. Creando Request para llamado a DFD
-11:07:29.114 [main] INFO com.acelera.fx.digitalsignature.application.usecase.impl.CreateExpedientBuildDfdRequestUseCaseImpl -- Validity Days: 5
+  SELECT
+    TS.TRADE_SIGNATURE_ID,
+    TS.EXPEDIENT_ID,
+    SG.SIGNER_ID,
+    SG.DOCUMENT_TYPE,
+    SG.DOCUMENT_NUMBER,
+    SG.NAME,
+    SG.IS_CLIENT,
+    SG.INTERVENTION_TYPE,
+    COALESCE(DD.GN_ID, '-') AS GN_ID,
+    DD.TYPE_DOC AS DOCUMENTAL_TYPE_DOC,
+    DD.INDICATOR_PRECONTRACTUAL,
+    DS.SIGNED_DOC,
+    DS.SIGN_DATE
+FROM ACELER_FX.FX_TRADE_SIGNATURE TS
+         LEFT JOIN ACELER_FX.FX_TRADE_SIGNER SG
+                   ON TS.TRADE_SIGNATURE_ID = SG.TRADE_SIGNATURE_ID
+         LEFT JOIN ACELER_DFD.DFD_EXPEDIENT DE
+                   ON TS.EXPEDIENT_ID = DE.ID_EXP_SEC
+         LEFT JOIN ACELER_DFD.DFD_EXPEDIENT_DOCUMENT DED
+              ON DED.EXPEDIENT_ID = DE.ID
+         LEFT JOIN ACELER_DFD.DFD_DOCUMENT DD
+              ON DED.DOCUMENT_ID = DD.ID
+         LEFT JOIN ACELER_DFD.DFD_SIGNER DS
+              ON DD.ID = DS.DOCUMENT_ID;
 
-java.lang.AssertionError: expectation "expectNextMatches" failed (predicate failed on value: ExpedientRequest(sourceApp=ExpedientRequest.SourceApp(operCode=ACE123, code=ACELERA, url=http://localhost/v1/trades-signatures/expedients/{id}?status={status}), startDate=2025-08-19T09:07:29.135340500, endDate=2025-08-24T09:07:29.135340500, centre=J0001, typeReference=Derivado Divisa, indicatorBusinnessMailBox=true, indicatorParticularMailBox=false, clauses=[ExpedientRequest.Clause(idClause=CL1, clauseContent=Clause content)], customerId=OWNER1, typeBox=B092, catBox=divisas, productDesc=Derivado Divisa, descExp=Contratación Derivado Divisa, channel=OFI, docs=[ExpedientRequest.Document(s3=ExpedientRequest.Document.S3(bucket=test-bucket, folder=test-folder, key=document1.pdf), personDocNumber=OWNER1, indPreContractual=true, signers=[ExpedientRequest.Document.Signer(signingPerson=S1, identityDoc=null, signingName=Signer Name, interventionType=01, locationSign=, order=1, represented=[])], metadata=ExpedientRequest.Document.Metadata(gnDate=2025-08-19T09:07:29.129344400, gnCreationDate=2025-08-19T09:07:29.129344400, gnDocOrig=true, gnCaducityDate=9999-12-31T23:59:59.999, gnName=document1.pdf, gnValidityDate=9999-12-31T23:59:59.999, gnTitulo=Información Precontractual FX, documentTitle=null, numPersonaCli=[Owner Name], nomPlantilla=CODE1, verPlantilla=null, idSolicitud=null, idEntidad=0049, operacionId=ACE123, claManuscrita=Y, contPartenon=, producto=PROD1, subtipo=null, estandarRef=null, idOficialPers=[OWNER1], digitalizador=OSP), documentCode=CODE1, typeDoc=TYPE1)]))
+-------------------------
 
-	at reactor.test.MessageFormatter.assertionError(MessageFormatter.java:115)
-	at reactor.test.MessageFormatter.failPrefix(MessageFormatter.java:104)
-	at reactor.test.MessageFormatter.fail(MessageFormatter.java:73)
-	at reactor.test.MessageFormatter.failOptional(MessageFormatter.java:88)
-	at reactor.test.DefaultStepVerifierBuilder.lambda$expectNextMatches$11(DefaultStepVerifierBuilder.java:559)
-	at reactor.test.DefaultStepVerifierBuilder$SignalEvent.test(DefaultStepVerifierBuilder.java:2289)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSignal(DefaultStepVerifierBuilder.java:1529)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onExpectation(DefaultStepVerifierBuilder.java:1477)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onNext(DefaultStepVerifierBuilder.java:1146)
-	at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122)
-	at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onNext(FluxOnErrorResume.java:79)
-	at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:122)
-	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onNext(FluxSwitchIfEmpty.java:74)
-	at reactor.core.publisher.Operators$ScalarSubscription.request(Operators.java:2570)
-	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2366)
-	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.onSubscribe(Operators.java:2240)
-	at reactor.core.publisher.MonoJust.subscribe(MonoJust.java:55)
-	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.toVerifierAndSubscribe(DefaultStepVerifierBuilder.java:891)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:831)
-	at reactor.test.DefaultStepVerifierBuilder$DefaultStepVerifier.verify(DefaultStepVerifierBuilder.java:823)
-	at reactor.test.DefaultStepVerifierBuilder.verifyComplete(DefaultStepVerifierBuilder.java:690)
-	at com.acelera.fx.digitalsignature.application.usecase.CreateExpedientBuildDfdRequestUseCaseImplTest.buildDfdRequest_success(CreateExpedientBuildDfdRequestUseCaseImplTest.java:106)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
 
-Disconnected from the target VM, address: '127.0.0.1:61622', transport: 'socket'
+TRADE_SIGNATURE_ID EXPEDIENT_ID SIGNER_ID  D DOCUMENT_NUMBER      NAME                                                                                                                                                                                                     I IN GN_ID                                    DOCUMENTAL_TYPE_DOC            I S SIGN_DATE                  
+------------------ ------------ ---------- - -------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- - -- ---------------------------------------- ------------------------------ - - ---------------------------
+                 2       953926 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 b5569d5347f64d069485d081856e6eea         GARANTIZ_CONT                  N Y                            
+                 2       953926 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 10d19d0d88424ebd97e2fb65169db4cd         GARANTIZ_PREC                  Y Y                            
+                 1       951362 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 5531608eef5f43ada8990e067da5d49c         GARANTIZ_CONT                  N Y 14/07/25 14:17:31,802000000
+                 1       951362 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 a7fb65548d364ed5abd561acbe72b448         GARANTIZ_PREC                  Y Y 14/07/25 14:16:43,671000000
+                40       957537 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 257f03a3ec914b6b9f8fe15293e441ee         OPCIONYCOB_PREC                Y Y 22/07/25 13:51:56,746797000
+                39       964710 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 1707eb86126145ba83cd07a7390bcd5c         COMVEN_FX_CONT                 N                              
+                39       964710 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 25010bf8d9a544ab8eaeeeb8ef5ddd19         COMVEN_FX_PREC                 Y                              
+                41       965763 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 267ad1590ee04f2e85eefa0dcb229be1         COMVEN_FX_CONT                 N                              
+                61       965811 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 2a45f72a1ad04e8cbe33e8c6b7b2b41a         COMVEN_FX_CONT                 N                              
+                61       965811 F000000014 N X6088039P            Balaj Garcia De Los Mariscales Paçuita                                                                                                                                                                   Y 01 2a45f72a1ad04e8cbe33e8c6b7b2b41a         COMVEN_FX_CONT                 N                              
+                61       965811 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 2a45f72a1ad04e8cbe33e8c6b7b2b41a         COMVEN_FX_CONT                 N                              
 
-Process finished with exit code -1
+TRADE_SIGNATURE_ID EXPEDIENT_ID SIGNER_ID  D DOCUMENT_NUMBER      NAME                                                                                                                                                                                                     I IN GN_ID                                    DOCUMENTAL_TYPE_DOC            I S SIGN_DATE                  
+------------------ ------------ ---------- - -------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- - -- ---------------------------------------- ------------------------------ - - ---------------------------
+                61       965811 F000000014 N X6088039P            Balaj Garcia De Los Mariscales Paçuita                                                                                                                                                                   Y 01 2a45f72a1ad04e8cbe33e8c6b7b2b41a         COMVEN_FX_CONT                 N                              
+                35              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                22       111111 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                23              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                33              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                24       111112 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                36              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                29              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                34              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                21              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                31              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+
+TRADE_SIGNATURE_ID EXPEDIENT_ID SIGNER_ID  D DOCUMENT_NUMBER      NAME                                                                                                                                                                                                     I IN GN_ID                                    DOCUMENTAL_TYPE_DOC            I S SIGN_DATE                  
+------------------ ------------ ---------- - -------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- - -- ---------------------------------------- ------------------------------ - - ---------------------------
+                37              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                25              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                32              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                27              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                38       111113 F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                30              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                26              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+                28              F000000583 N 12345678R            RMV VALORES OLC SAN CLIENTE NO SPB                                                                                                                                                                       Y 01 -                                                                                                      
+
+30 filas seleccionadas. 
+
