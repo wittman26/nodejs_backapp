@@ -19,6 +19,7 @@ import reactor.test.StepVerifier;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,7 +69,24 @@ class MicrolitoCallerImplTest {
 
     @Test
     void testGenerateDocumentLpa_ok() throws Exception {
-        DocumentLpaResponse response = PODAM_FACTORY.manufacturePojo(DocumentLpaResponse.class);
+        // Create response manually
+        DocumentLpaResponse response = DocumentLpaResponse.builder()
+                .idOperacion(1)
+                .idOrden(1)
+                .idEvento(1)
+                .entidad("0049")
+                .nombreDocumento("test.pdf")
+                .descripcionDocumento("Test Document")
+                .sentido("E")
+                .idDocumentoLpa("DOC1")
+                .idLpa(1)
+                .datos("test data")
+                .tipoDocumento(new DocumentLpaResponse.ComboBean("DESC1", "es", "TYPE1", "1", null))
+                .tipoProducto(new DocumentLpaResponse.ComboBean("PROD1", "es", "TYPE1", "1", null))
+                .alta(new DocumentLpaResponse.ComboUsuarioFecha("USER1", new Timestamp(System.currentTimeMillis())))
+                .modif(new DocumentLpaResponse.ComboUsuarioFecha("USER2", new Timestamp(System.currentTimeMillis())))
+                .build();
+
         enqueueMockResponse(response);
 
         DocumentLpaCreateRequest request = new DocumentLpaCreateRequest();
