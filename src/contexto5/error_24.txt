@@ -1,0 +1,35 @@
+13:40:01.070 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboBean.setDescripcion(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
+13:40:01.076 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboBean.setIdioma(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
+13:40:01.077 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboBean.setTipo(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
+13:40:01.078 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboBean.setValorAntiguo(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
+13:40:01.078 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboBean.setId(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
+13:40:01.083 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboUsuarioFecha.setUsuario(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
+
+uk.co.jemos.podam.exceptions.PodamMockeryException
+	at uk.co.jemos.podam.api.PodamFactoryImpl.doManufacturePojo(PodamFactoryImpl.java:424)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.manufacturePojo(PodamFactoryImpl.java:146)
+	at com.acelera.rest.microlito.infrastructure.MicrolitoCallerImplTest.testGenerateDocumentLpa_ok(MicrolitoCallerImplTest.java:71)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:118)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.populateReadWriteField(PodamFactoryImpl.java:818)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.populatePojoInternal(PodamFactoryImpl.java:595)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.manufacturePojoInternal(PodamFactoryImpl.java:508)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.manufactureAttributeValue(PodamFactoryImpl.java:938)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.populateReadWriteField(PodamFactoryImpl.java:811)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.populatePojoInternal(PodamFactoryImpl.java:595)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.manufacturePojoInternal(PodamFactoryImpl.java:508)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.manufactureAttributeValue(PodamFactoryImpl.java:938)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.populateReadWriteField(PodamFactoryImpl.java:811)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.populatePojoInternal(PodamFactoryImpl.java:595)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.manufacturePojoInternal(PodamFactoryImpl.java:508)
+	at uk.co.jemos.podam.api.PodamFactoryImpl.doManufacturePojo(PodamFactoryImpl.java:417)
+	... 5 more
+Caused by: java.lang.IllegalArgumentException: nanos > 999999999 or < 0
+	at java.sql/java.sql.Timestamp.setNanos(Timestamp.java:336)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	... 18 more
+
