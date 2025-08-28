@@ -2,7 +2,7 @@
 {
     "origin": "local",
     "type": "request",
-    "correlation": "eae79f37a7189505",
+    "correlation": "b6d87c7dee841e16",
     "protocol": "HTTP/1.1",
     "remote": "localhost",
     "method": "POST",
@@ -22,25 +22,25 @@
             "application/json"
         ],
         "traceparent": [
-            "00-cdf4ea5292686ca24ec729d9e4f24c15-e47271ec954f2519-01"
+            "00-8c49faae605a38685ab41636e924030e-600dd61f1bc1bc77-01"
         ],
         "X-B3-Sampled": [
             "1"
         ],
         "X-B3-SpanId": [
-            "e47271ec954f2519"
+            "600dd61f1bc1bc77"
         ],
         "X-B3-TraceId": [
-            "cdf4ea5292686ca24ec729d9e4f24c15"
+            "8c49faae605a38685ab41636e924030e"
         ]
     },
     "body": {
-        "locale": null,
+        "locale": "es_ES",
         "originId": 106365,
-        "token": "Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1NjM2Njk1OCwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzU2MzcwNTYzLCJpYXQiOjE3NTYzNjY5NjMsImp0aSI6ImE2YWIwNzFmLWQ0NWQtNDA3My05ODE1LTFmMzFkYWZjZWUxYyIsInNpZCI6IjBBNzUxMDJGNUVDRkU3MEVFRkZBQTA0RCJ9.oygQzxWOYx3bqCZiVuGEUHbyJTYoQV-Ymez9qRg6sDwUWJqZCdAcpKY9SM95f9qLtg8drGr2U6GUPv9hE56i9dZp_jFkF5KwhpR_Yogixaflj7EreRMhLwwT1Pe2GIwR9A2TdGLVK4LOuhfWbH_ZnJ8nqV6Bo6FU3S4Pdgj_na_G7M_OrFFiSiNKxAjfI4xtkSTE67dGApJL6IXT7ZUuUr_4s3sfdaQpM5iJiNnf4ovaOV36wl1w8jucU-riKtOX3eld5w7qb_G1Ab-kdRMODYAx0Lvv5fXg12Nl0csUPq_nn03YpOZQVWt78rkDHAfl2l4eShlkRRzE2Tfe8r3I3w",
-        "operationId": null,
-        "entity": null,
-        "language": null,
+        "token": "Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1NjM3NDQ1MSwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzU2Mzc4MDU2LCJpYXQiOjE3NTYzNzQ0NTYsImp0aSI6IjE4ZTYyYjI3LTA1ZDktNDViZC1iNjM1LTFhZjdmNTNhMWE3YiIsInNpZCI6IjBBNzUxMDJGNUVDRjFEMTBGMDUwMTNDQSJ9.ZaxIBaSebkVhtfgZHKDJnxXkbt4aD2xQan4q41dYIKRltewCuVhBr3qHBAUAIPDOwFc8qcqCbaJPFYwUSrMJ2S2VMZRKr8rmzxJRON9pkBxfhd1olSGlfkJEJyhJt_QOs8ZIA-1PCkntILpeWmVDXIF34rBIfZhV1dlE1c5atIozV_SCETAoUMQDCkltvLBd2GfU0Xy6c6y5E4FHL4TbmsioExkxnBoEDaktyfhN81rZilp6AIELKoRGPnCklYD5NuN-_BfRVoLVIrg-kA0eJ1QowbkPswzWszEB1zTNo3i4vzDvVc7MuDlKdmtzAQPwFRRu21yKnrHn5QgDHHLefQ",
+        "operationId": 0,
+        "entity": "0049",
+        "language": "xx",
         "type": "KD",
         "productId": "FW"
     }
@@ -51,16 +51,19 @@
 {
     "origin": "remote",
     "type": "response",
-    "correlation": "cc5e8788b532fa4a",
-    "duration": 510,
+    "correlation": "b6d87c7dee841e16",
+    "duration": 198,
     "protocol": "HTTP/1.1",
     "status": 400,
     "headers": {
+        "Cache-Control": [
+            ": max-age=1728000"
+        ],
         "content-type": [
             "application/json"
         ],
         "set-cookie": [
-            "2a870fb6ac2a5c58bda90ea2b577c40b=b7d7eb522e39f1ab543560d05e047938; path=/; HttpOnly; Secure; SameSite=None"
+            "2a870fb6ac2a5c58bda90ea2b577c40b=c1ebf9d3f281612f1701774e82a16ff0; path=/; HttpOnly; Secure; SameSite=None"
         ],
         "transfer-encoding": [
             "chunked"
