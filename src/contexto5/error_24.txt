@@ -1,35 +1,74 @@
-13:40:01.070 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboBean.setDescripcion(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
-13:40:01.076 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboBean.setIdioma(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
-13:40:01.077 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboBean.setTipo(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
-13:40:01.078 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboBean.setValorAntiguo(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
-13:40:01.078 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboBean.setId(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
-13:40:01.083 [main] WARN uk.co.jemos.podam.api.PodamFactoryImpl -- public void com.acelera.broker.microlito.domain.dto.response.DocumentLpaResponse$ComboUsuarioFecha.setUsuario(java.lang.String) is not accessible. Setting it to accessible. However this is a security hack and your code should really adhere to JavaBeans standards.
+//REQUEST
+{
+    "origin": "local",
+    "type": "request",
+    "correlation": "eae79f37a7189505",
+    "protocol": "HTTP/1.1",
+    "remote": "localhost",
+    "method": "POST",
+    "uri": "https://acelera.scib.dev.corp/acelera-api/fx/v1/micro/trades-signatures/106365/documents",
+    "host": "acelera.scib.dev.corp",
+    "path": "/acelera-api/fx/v1/micro/trades-signatures/106365/documents",
+    "scheme": "https",
+    "port": null,
+    "headers": {
+        "Accept": [
+            "application/json"
+        ],
+        "Authorization": [
+            "XXX"
+        ],
+        "Content-Type": [
+            "application/json"
+        ],
+        "traceparent": [
+            "00-cdf4ea5292686ca24ec729d9e4f24c15-e47271ec954f2519-01"
+        ],
+        "X-B3-Sampled": [
+            "1"
+        ],
+        "X-B3-SpanId": [
+            "e47271ec954f2519"
+        ],
+        "X-B3-TraceId": [
+            "cdf4ea5292686ca24ec729d9e4f24c15"
+        ]
+    },
+    "body": {
+        "locale": null,
+        "originId": 106365,
+        "token": "Bearer eyJraWQiOiJTVFNHQ0JpbnRyYW5ldERldiIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJ4MTEwMzg3OCIsIm5iZiI6MTc1NjM2Njk1OCwiaXNzIjoiQ29ycEludHJhbmV0IiwiZXhwIjoxNzU2MzcwNTYzLCJpYXQiOjE3NTYzNjY5NjMsImp0aSI6ImE2YWIwNzFmLWQ0NWQtNDA3My05ODE1LTFmMzFkYWZjZWUxYyIsInNpZCI6IjBBNzUxMDJGNUVDRkU3MEVFRkZBQTA0RCJ9.oygQzxWOYx3bqCZiVuGEUHbyJTYoQV-Ymez9qRg6sDwUWJqZCdAcpKY9SM95f9qLtg8drGr2U6GUPv9hE56i9dZp_jFkF5KwhpR_Yogixaflj7EreRMhLwwT1Pe2GIwR9A2TdGLVK4LOuhfWbH_ZnJ8nqV6Bo6FU3S4Pdgj_na_G7M_OrFFiSiNKxAjfI4xtkSTE67dGApJL6IXT7ZUuUr_4s3sfdaQpM5iJiNnf4ovaOV36wl1w8jucU-riKtOX3eld5w7qb_G1Ab-kdRMODYAx0Lvv5fXg12Nl0csUPq_nn03YpOZQVWt78rkDHAfl2l4eShlkRRzE2Tfe8r3I3w",
+        "operationId": null,
+        "entity": null,
+        "language": null,
+        "type": "KD",
+        "productId": "FW"
+    }
+}
 
-uk.co.jemos.podam.exceptions.PodamMockeryException
-	at uk.co.jemos.podam.api.PodamFactoryImpl.doManufacturePojo(PodamFactoryImpl.java:424)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.manufacturePojo(PodamFactoryImpl.java:146)
-	at com.acelera.rest.microlito.infrastructure.MicrolitoCallerImplTest.testGenerateDocumentLpa_ok(MicrolitoCallerImplTest.java:71)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-Caused by: java.lang.reflect.InvocationTargetException
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:118)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.populateReadWriteField(PodamFactoryImpl.java:818)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.populatePojoInternal(PodamFactoryImpl.java:595)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.manufacturePojoInternal(PodamFactoryImpl.java:508)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.manufactureAttributeValue(PodamFactoryImpl.java:938)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.populateReadWriteField(PodamFactoryImpl.java:811)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.populatePojoInternal(PodamFactoryImpl.java:595)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.manufacturePojoInternal(PodamFactoryImpl.java:508)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.manufactureAttributeValue(PodamFactoryImpl.java:938)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.populateReadWriteField(PodamFactoryImpl.java:811)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.populatePojoInternal(PodamFactoryImpl.java:595)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.manufacturePojoInternal(PodamFactoryImpl.java:508)
-	at uk.co.jemos.podam.api.PodamFactoryImpl.doManufacturePojo(PodamFactoryImpl.java:417)
-	... 5 more
-Caused by: java.lang.IllegalArgumentException: nanos > 999999999 or < 0
-	at java.sql/java.sql.Timestamp.setNanos(Timestamp.java:336)
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-	... 18 more
+//RESPONSE
 
+{
+    "origin": "remote",
+    "type": "response",
+    "correlation": "873648c1eed97e99",
+    "duration": 502,
+    "protocol": "HTTP/1.1",
+    "status": 400,
+    "headers": {
+        "content-type": [
+            "application/json"
+        ],
+        "set-cookie": [
+            "2a870fb6ac2a5c58bda90ea2b577c40b=b7d7eb522e39f1ab543560d05e047938; path=/; HttpOnly; Secure; SameSite=None"
+        ],
+        "transfer-encoding": [
+            "chunked"
+        ],
+        "vary": [
+            "Origin",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers"
+        ]
+    }
+}
