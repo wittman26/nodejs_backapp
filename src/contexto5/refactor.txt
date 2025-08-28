@@ -1,0 +1,51 @@
+@Override
+public Mono<StartSignatureResponseDto> startSignatureWorkflow(String entity, Locale locale, Long originId,
+                                                              StartSignatureRequestDto dto) {
+    String productId = dto.getProductId();
+
+    return productDocumentsService.findProductDocumentType(entity, locale, productId)
+            .switchIfEmpty(Mono.error(CustomErrorException.ofArguments(
+                    NOT_FOUND, CODIGO_ERROR_FIND_PRODUCT_DOCUMENT, productId)))
+            .collectList()
+            .map(this::ordenarDocumentos)
+            .flatMap(sortedDocs -> generarTodosLosDocumentos(sortedDocs, originId, productId))
+            .flatMap(__ -> generarExpediente(entity, locale, originId, productId))
+            .map(this::mapToResponse)
+            .onErrorResume(this::handleError);
+}
+
+
+private List<ProductDocumentParameters> ordenarDocumentos(List<ProductDocumentParameters> documentos) {
+    return documentos.stream()
+            .sorted(Comparator.comparing(
+                    doc -> !"Y".equals(doc.getIsPrecontractual()))) // "Y" primero
+            .toList();
+}
+
+private Mono<List<DocumentName>> generarTodosLosDocumentos(List<ProductDocumentParameters> docs,
+                                                           Long originId,
+                                                           String productId) {
+    return Flux.fromIterable(docs)
+            .flatMap(doc -> {
+                log.info("Procesando documento {} (precontractual: {})",
+                        doc.getDocumentType(), doc.getIsPrecontractual());
+                return generarDocumentos(doc, originId, productId);
+            })
+            .collectList()
+            .doOnNext(list -> log.info("Documentos generados: {}", list.size()));
+}
+
+private StartSignatureResponseDto mapToResponse(Expedient expedient) {
+    log.info("Expediente con id: {}", expedient.getExpedientId());
+    return StartSignatureResponseDto.builder()
+            .expedientId(expedient.getExpedientId())
+            .build();
+}
+
+private <T> Mono<T> handleError(Throwable e) {
+    if (e instanceof CustomErrorException) {
+        return Mono.error(e);
+    }
+    log.error("Error en generación de flujo de firma: {}", e.getMessage(), e);
+    return Mono.error(CustomErrorException.ofArguments(INTERNAL_SERVER_ERROR, e.getMessage()));
+}
