@@ -51,8 +51,8 @@
 {
     "origin": "remote",
     "type": "response",
-    "correlation": "873648c1eed97e99",
-    "duration": 502,
+    "correlation": "cc5e8788b532fa4a",
+    "duration": 510,
     "protocol": "HTTP/1.1",
     "status": 400,
     "headers": {
@@ -70,5 +70,11 @@
             "Access-Control-Request-Method",
             "Access-Control-Request-Headers"
         ]
+    },
+    "body": {
+        "code": 400,
+        "message": "Bad Request",
+        "level": "info",
+        "description": "Sanitization errors"
     }
 }
