@@ -1,0 +1,18 @@
+
+java.lang.NullPointerException: Cannot invoke "reactor.core.publisher.Mono.map(java.util.function.Function)" because the return value of "com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureServicePost.startSignatureWorkflow(String, java.util.Locale, java.lang.Long, com.acelera.fx.digitalsignature.domain.port.dto.StartSignatureRequestDto, org.springframework.http.server.reactive.ServerHttpRequest)" is null
+
+	at com.acelera.fx.digitalsignature.infrastructure.adapter.rest.controller.TradeSignatureRestController.postStartSignatureWorkflow(TradeSignatureRestController.java:72)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.validation.beanvalidation.MethodValidationInterceptor.invoke(MethodValidationInterceptor.java:174)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728)
+	at com.acelera.fx.digitalsignature.infrastructure.adapter.rest.controller.TradeSignatureRestController$$SpringCGLIB$$0.postStartSignatureWorkflow(<generated>)
+	at com.acelera.fx.digitalsignature.infrastructure.adapter.rest.controller.TradeSignatureRestControllerTest.testPostStartSignatureWorkflow_NullRequest(TradeSignatureRestControllerTest.java:299)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
