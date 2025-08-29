@@ -1,0 +1,79 @@
+@ExtendWith(MockitoExtension.class)
+@WebFluxTest(controllers = TradeSignatureRestController.class)
+class TradeSignatureRestControllerTest {
+
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @MockBean
+    private TradeSignatureService tradeSignatureService;
+
+    private static final String BASE_URL = "/v1/trades-signatures";
+
+    private StartSignatureRequestDto defaultRequestDto() {
+        return StartSignatureRequestDto.builder()
+                .productId("PROD1")
+                .build();
+    }
+
+    private StartSignatureResponseDto defaultResponseDto() {
+        return StartSignatureResponseDto.builder()
+                .expedientId(12345L)
+                .build();
+    }
+
+    private WebTestClient.ResponseSpec performPost(String url, Object body) {
+        return webTestClient.post()
+                .uri(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(body)
+                .exchange();
+    }
+
+    @BeforeEach
+    void setUp() {
+        // Stub común para el flujo feliz
+        when(tradeSignatureService.startSignatureWorkflow(anyString(), any(), anyLong(), any(StartSignatureRequestDto.class)))
+                .thenReturn(Mono.just(defaultResponseDto()));
+    }
+
+    @Test
+    void shouldReturn200_whenStartSignatureWorkflowSucceeds() {
+        // given
+        var request = defaultRequestDto();
+
+        // when
+        var response = performPost(BASE_URL + "/{originId}/signatures", request);
+
+        // then
+        response.expectStatus().isOk()
+                .expectBody(StartSignatureResponseDto.class)
+                .isEqualTo(defaultResponseDto());
+    }
+
+    @Test
+    void shouldReturn404_whenNoDocumentsFound() {
+        // given
+        when(tradeSignatureService.startSignatureWorkflow(anyString(), any(), anyLong(), any()))
+                .thenReturn(Mono.error(new CustomErrorException(HttpStatus.NOT_FOUND, "No docs found")));
+
+        // when
+        var response = performPost(BASE_URL + "/{originId}/signatures", defaultRequestDto());
+
+        // then
+        response.expectStatus().isNotFound();
+    }
+
+    @Test
+    void shouldReturn500_whenUnexpectedErrorOccurs() {
+        // given
+        when(tradeSignatureService.startSignatureWorkflow(anyString(), any(), anyLong(), any()))
+                .thenReturn(Mono.error(new RuntimeException("Unexpected error")));
+
+        // when
+        var response = performPost(BASE_URL + "/{originId}/signatures", defaultRequestDto());
+
+        // then
+        response.expectStatus().is5xxServerError();
+    }
+}
