@@ -1,18 +1,54 @@
+C:\Users\x612243\.jdks\jbr-21.0.7\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\lib\idea_rt.jar=54414:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition\bin" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 @C:\Users\x612243\AppData\Local\Temp\idea_arg_file1124524762 com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\x612243\.m2\repository\net\bytebuddy\byte-buddy-agent\1.15.11\byte-buddy-agent-1.15.11.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
 
-java.lang.NullPointerException: Cannot invoke "reactor.core.publisher.Mono.map(java.util.function.Function)" because the return value of "com.acelera.fx.digitalsignature.domain.port.service.TradeSignatureServicePost.startSignatureWorkflow(String, java.util.Locale, java.lang.Long, com.acelera.fx.digitalsignature.domain.port.dto.StartSignatureRequestDto, org.springframework.http.server.reactive.ServerHttpRequest)" is null
+java.lang.NullPointerException: Cannot invoke "org.springframework.http.HttpHeaders.getFirst(String)" because the return value of "org.springframework.http.server.reactive.ServerHttpRequest.getHeaders()" is null
 
-	at com.acelera.fx.digitalsignature.infrastructure.adapter.rest.controller.TradeSignatureRestController.postStartSignatureWorkflow(TradeSignatureRestController.java:72)
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
-	at org.springframework.validation.beanvalidation.MethodValidationInterceptor.invoke(MethodValidationInterceptor.java:174)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728)
-	at com.acelera.fx.digitalsignature.infrastructure.adapter.rest.controller.TradeSignatureRestController$$SpringCGLIB$$0.postStartSignatureWorkflow(<generated>)
-	at com.acelera.fx.digitalsignature.infrastructure.adapter.rest.controller.TradeSignatureRestControllerTest.testPostStartSignatureWorkflow_NullRequest(TradeSignatureRestControllerTest.java:299)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.extractToken(TradeSignatureServicePostImpl.java:146)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.startSignatureWorkflow(TradeSignatureServicePostImpl.java:51)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest.executeWorkflow(TradeSignatureServicePostImplTest.java:76)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest.testStartSignatureWorkflow_error_generacionExpediente(TradeSignatureServicePostImplTest.java:129)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
 
+
+java.lang.NullPointerException: Cannot invoke "org.springframework.http.HttpHeaders.getFirst(String)" because the return value of "org.springframework.http.server.reactive.ServerHttpRequest.getHeaders()" is null
+
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.extractToken(TradeSignatureServicePostImpl.java:146)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.startSignatureWorkflow(TradeSignatureServicePostImpl.java:51)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest.executeWorkflow(TradeSignatureServicePostImplTest.java:76)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest.testStartSignatureWorkflow_ok(TradeSignatureServicePostImplTest.java:109)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+
+java.lang.NullPointerException: Cannot invoke "org.springframework.http.HttpHeaders.getFirst(String)" because the return value of "org.springframework.http.server.reactive.ServerHttpRequest.getHeaders()" is null
+
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.extractToken(TradeSignatureServicePostImpl.java:146)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.startSignatureWorkflow(TradeSignatureServicePostImpl.java:51)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest.executeWorkflow(TradeSignatureServicePostImplTest.java:76)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest.testStartSignatureWorkflow_error_productDocument_NotFound(TradeSignatureServicePostImplTest.java:141)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+
+java.lang.NullPointerException: Cannot invoke "org.springframework.http.HttpHeaders.getFirst(String)" because the return value of "org.springframework.http.server.reactive.ServerHttpRequest.getHeaders()" is null
+
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.extractToken(TradeSignatureServicePostImpl.java:146)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImpl.startSignatureWorkflow(TradeSignatureServicePostImpl.java:51)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest.executeWorkflow(TradeSignatureServicePostImplTest.java:76)
+	at com.acelera.fx.digitalsignature.application.service.TradeSignatureServicePostImplTest.testStartSignatureWorkflow_error_generacionDocumentacion(TradeSignatureServicePostImplTest.java:118)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+
+Process finished with exit code -1
