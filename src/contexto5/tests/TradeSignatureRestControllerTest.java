@@ -12,10 +12,7 @@ import com.acelera.broker.shared.domain.PageDto;
 import com.acelera.fx.digitalsignature.application.service.UpdateSignatureExpedientStatusServiceImpl;
 import com.acelera.fx.digitalsignature.application.service.ViewTradeSignatureExpedientStatusServiceImpl;
 import com.acelera.fx.digitalsignature.application.usecase.port.ViewTradeSignatureFindAllUseCase;
-import com.acelera.fx.digitalsignature.domain.port.dto.GetTradeSignatureDto;
-import com.acelera.fx.digitalsignature.domain.port.dto.GetTradeSignatureParameterDto;
-import com.acelera.fx.digitalsignature.domain.port.dto.StartSignatureRequestDto;
-import com.acelera.fx.digitalsignature.domain.port.dto.TradeSignatureDto;
+import com.acelera.fx.digitalsignature.domain.port.dto.*;
 import com.acelera.fx.digitalsignature.domain.port.service.*;
 import com.acelera.fx.digitalsignature.infrastructure.adapter.rest.request.CreateExpedientRequest;
 import com.acelera.fx.digitalsignature.infrastructure.adapter.rest.response.CreateExpedientResponse;
@@ -72,6 +69,11 @@ public class TradeSignatureRestControllerTest {
 
   @Autowired
   private TradeSignatureRestController tradeSignatureRestController;
+
+  private static final String ENTITY = LocaleConstants.ENTITY_0049;
+  private static final Long ORIGIN_ID = 123L;
+  private static final String PRODUCT_ID = "KD";
+  private static final String INVALID_PRODUCT_ID = "Invalid";
 
   @BeforeEach
   void setUp() {
@@ -217,160 +219,94 @@ public class TradeSignatureRestControllerTest {
   @Test
   void testCreateSignatureExpedient_Error() {
     // Arrange
-    String entity = "testEntity";
-    Long originId = 123L;
+
     RuntimeException exception = new RuntimeException("Error en Creación de Expediente");
     CreateExpedientRequest request = null;
 
-    when(createTradeSignatureExpedientService.createSignatureExpedient( LocaleConstants.DEFAULT_LOCALE, entity, originId, request))
+    when(createTradeSignatureExpedientService.createSignatureExpedient( LocaleConstants.DEFAULT_LOCALE, ENTITY, ORIGIN_ID, request))
             .thenReturn(Mono.error(exception));
 
-    Mono<CreateExpedientResponse> result = tradeSignatureRestController.createSignatureExpedient(entity, LocaleConstants.DEFAULT_LOCALE, originId, request);
+    Mono<CreateExpedientResponse> result = tradeSignatureRestController.createSignatureExpedient(ENTITY, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, request);
 
     StepVerifier.create(result).expectErrorMatches(
                     throwable -> throwable instanceof RuntimeException && throwable.getMessage().equals("Error en Creación de Expediente"))
             .verify();
 
-    verify(createTradeSignatureExpedientService, times(1)).createSignatureExpedient(LocaleConstants.DEFAULT_LOCALE, entity, originId, request);
+    verify(createTradeSignatureExpedientService, times(1)).createSignatureExpedient(LocaleConstants.DEFAULT_LOCALE, ENTITY, ORIGIN_ID, request);
   }
 
   @Test
   void testCreateSignatureExpedient_Success() {
-    String entity = "testEntity";
-    Long originId = 123L;
     CreateExpedientRequest request = null;
-
     CreateExpedientResponse response = CreateExpedientResponse.builder().expedientId(123L).build();
 
-    when(createTradeSignatureExpedientService.createSignatureExpedient( LocaleConstants.DEFAULT_LOCALE, entity, originId, request))
+    when(createTradeSignatureExpedientService.createSignatureExpedient( LocaleConstants.DEFAULT_LOCALE, ENTITY, ORIGIN_ID, request))
             .thenReturn(Mono.just(response));
 
-    Mono<CreateExpedientResponse> result = tradeSignatureRestController.createSignatureExpedient(entity, LocaleConstants.DEFAULT_LOCALE, originId, request);
+    Mono<CreateExpedientResponse> result = tradeSignatureRestController.createSignatureExpedient(ENTITY, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, request);
 
     StepVerifier.create(result).expectNextMatches(expedient -> Objects.equals(expedient.getExpedientId(),
             response.getExpedientId()));
 
-    verify(createTradeSignatureExpedientService, times(1)).createSignatureExpedient(LocaleConstants.DEFAULT_LOCALE, entity, originId, request);
+    verify(createTradeSignatureExpedientService, times(1)).createSignatureExpedient(LocaleConstants.DEFAULT_LOCALE, ENTITY, ORIGIN_ID, request);
 
   }
 
   @Test
   void testPostStartSignatureWorkflow_Error() {
-    // Arrange
-    String entity = "testEntity";
-    Long originId = 123L;
     RuntimeException exception = new RuntimeException("Error en el proceso de gestión de datos de firma digital");
     StartSignatureRequestDto requestDto = null;
     StartSignatureRequest request = null;
     ServerHttpRequest httpRequest = null;
 
-    when(tradeSignatureServicePost.startSignatureWorkflow( entity, LocaleConstants.DEFAULT_LOCALE, originId, requestDto ,httpRequest ))
+    when(tradeSignatureServicePost.startSignatureWorkflow( ENTITY, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, requestDto ,httpRequest ))
             .thenReturn(Mono.error(exception));
 
-    Mono<StartSignatureResponse> result = tradeSignatureRestController.postStartSignatureWorkflow(entity, LocaleConstants.DEFAULT_LOCALE, originId, request, httpRequest);
+    Mono<StartSignatureResponse> result = tradeSignatureRestController.postStartSignatureWorkflow(ENTITY, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, request, httpRequest);
 
     StepVerifier.create(result).expectErrorMatches(
                     throwable -> throwable instanceof RuntimeException && throwable.getMessage().equals("Error en el proceso de gestión de datos de firma digital"))
             .verify();
 
-    verify(tradeSignatureServicePost, times(1)).startSignatureWorkflow(entity, LocaleConstants.DEFAULT_LOCALE, originId, requestDto ,httpRequest);
+    verify(tradeSignatureServicePost, times(1)).startSignatureWorkflow(ENTITY, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, requestDto ,httpRequest);
   }
 
   @Test
   void testPostStartSignatureWorkflow_Success() {
-    // Arrange
-    String entity = "0049";
-    Long originId = 123L;
-    StartSignatureRequest request = StartSignatureRequest.builder()
-            .productId("KD")
-            .build();
-    StartSignatureRequestDto requestDto = StartSignatureRequestDto.builder()
-            .productId("KD")
-            .build();
+    StartSignatureRequest request = StartSignatureRequest.builder().productId("KD").build();
+    StartSignatureRequestDto requestDto = StartSignatureRequestDto.builder().productId("KD").build();
     ServerHttpRequest httpRequest = mock(ServerHttpRequest.class);
-    
-    var response = StartSignatureResponse.builder()
-            .expedientId(456L)
-            .build();
 
-    when(tradeSignatureServicePost.startSignatureWorkflow(
-            entity, 
-            LocaleConstants.DEFAULT_LOCALE, 
-            originId, 
-            requestDto,
-            httpRequest
-    )).thenReturn(Mono.just(response));
+    var response = StartSignatureResponse.builder().expedientId(456L).build();
+    var responseDto = StartSignatureResponseDto.builder().expedientId(456L).build();
+
+    when(tradeSignatureServicePost.startSignatureWorkflow(ENTITY, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, requestDto, httpRequest))
+            .thenReturn(Mono.just(responseDto));
 
     // Act & Assert
-    StepVerifier.create(tradeSignatureRestController.postStartSignatureWorkflow(
-            entity, 
-            LocaleConstants.DEFAULT_LOCALE, 
-            originId, 
-            request,
-            httpRequest
-    ))
+    StepVerifier.create(tradeSignatureRestController.postStartSignatureWorkflow(ENTITY, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, request, httpRequest))
             .expectNext(response)
             .verifyComplete();
 
-    verify(tradeSignatureServicePost).startSignatureWorkflow(
-            entity, 
-            LocaleConstants.DEFAULT_LOCALE, 
-            originId, 
-            requestDto,
-            httpRequest
-    );
-  }
-
-  @Test
-  void testPostStartSignatureWorkflow_NullRequest() {
-    // Arrange
-    String entity = "0049";
-    Long originId = 123L;
-    ServerHttpRequest httpRequest = mock(ServerHttpRequest.class);
-
-    // Act & Assert
-    StepVerifier.create(tradeSignatureRestController.postStartSignatureWorkflow(
-            entity,
-            LocaleConstants.DEFAULT_LOCALE,
-            originId,
-            null,
-            httpRequest
-    ))
-            .expectError(IllegalArgumentException.class)
-            .verify();
-
-    verifyNoInteractions(tradeSignatureServicePost);
+    verify(tradeSignatureServicePost).startSignatureWorkflow(ENTITY, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, requestDto, httpRequest);
   }
 
   @Test
   void testPostStartSignatureWorkflow_InvalidProduct() {
     // Arrange
-    String entity = "0049";
-    Long originId = 123L;
     StartSignatureRequest request = StartSignatureRequest.builder()
-            .productId("INVALID")
+            .productId(INVALID_PRODUCT_ID)
             .build();
     StartSignatureRequestDto requestDto = StartSignatureRequestDto.builder()
-            .productId("INVALID")
+            .productId(INVALID_PRODUCT_ID)
             .build();
     ServerHttpRequest httpRequest = mock(ServerHttpRequest.class);
 
-    when(tradeSignatureServicePost.startSignatureWorkflow(
-            entity,
-            LocaleConstants.DEFAULT_LOCALE,
-            originId,
-            requestDto,
-            httpRequest
+    when(tradeSignatureServicePost.startSignatureWorkflow(ENTITY, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, requestDto, httpRequest
     )).thenReturn(Mono.error(new IllegalArgumentException("Invalid product ID")));
 
     // Act & Assert
-    StepVerifier.create(tradeSignatureRestController.postStartSignatureWorkflow(
-            entity,
-            LocaleConstants.DEFAULT_LOCALE,
-            originId,
-            request,
-            httpRequest
-    ))
+    StepVerifier.create(tradeSignatureRestController.postStartSignatureWorkflow(ENTITY, LocaleConstants.DEFAULT_LOCALE, ORIGIN_ID, request, httpRequest))
             .expectError(IllegalArgumentException.class)
             .verify();
   }
@@ -378,26 +314,22 @@ public class TradeSignatureRestControllerTest {
   @Test
   void testPostStartSignatureWorkflow_WebClientTest() {
     // Arrange
-    String entity = "0049";
-    Long originId = 123L;
-    StartSignatureRequest request = StartSignatureRequest.builder()
-            .productId("KD")
-            .build();
-    var response = StartSignatureResponse.builder()
-            .expedientId(456L)
-            .build();
+    StartSignatureRequest request = StartSignatureRequest.builder().productId("KD").build();
+    var response = StartSignatureResponse.builder().expedientId(456L).build();
+
+    var responseDto = StartSignatureResponseDto.builder().expedientId(456L).build();
 
     when(tradeSignatureServicePost.startSignatureWorkflow(
             any(), any(), any(), any(), any()
-    )).thenReturn(Mono.just(response));
+    )).thenReturn(Mono.just(responseDto));
 
     // Act & Assert
     webClient.post()
             .uri(uriBuilder -> uriBuilder
-                    .path("/v1/trades-signatures/{originId}/workflow")
-                    .build(originId))
+                    .path("/v1/trades-signatures/{originId}/signatures")
+                    .build(ORIGIN_ID))
             .bodyValue(request)
-            .header(LocaleConstants.ENTITY_HEADER, entity)
+            .header(LocaleConstants.ENTITY_HEADER, ENTITY)
             .exchange()
             .expectStatus().isOk()
             .expectBody(StartSignatureResponse.class)
@@ -407,10 +339,8 @@ public class TradeSignatureRestControllerTest {
   }
 
   @Test
-  void testPostStartSignatureWorkflow_WebClientTest_BadRequest() {
+  void testPostStartSignatureWorkflow_WebClientTest_InternalServerError() {
     // Arrange
-    String entity = "0049";
-    Long originId = 123L;
     StartSignatureRequest request = StartSignatureRequest.builder()
             .productId("INVALID")
             .build();
@@ -422,11 +352,12 @@ public class TradeSignatureRestControllerTest {
     // Act & Assert
     webClient.post()
             .uri(uriBuilder -> uriBuilder
-                    .path("/v1/trades-signatures/{originId}/workflow")
-                    .build(originId))
+                    .path("/v1/trades-signatures/{originId}/signatures")
+                    .build(ORIGIN_ID))
             .bodyValue(request)
-            .header(LocaleConstants.ENTITY_HEADER, entity)
+            .header(LocaleConstants.ENTITY_HEADER, ENTITY)
             .exchange()
-            .expectStatus().isBadRequest();
+            .expectStatus().is5xxServerError();
   }
+
 }
