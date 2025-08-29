@@ -276,4 +276,157 @@ public class TradeSignatureRestControllerTest {
     verify(tradeSignatureServicePost, times(1)).startSignatureWorkflow(entity, LocaleConstants.DEFAULT_LOCALE, originId, requestDto ,httpRequest);
   }
 
+  @Test
+  void testPostStartSignatureWorkflow_Success() {
+    // Arrange
+    String entity = "0049";
+    Long originId = 123L;
+    StartSignatureRequest request = StartSignatureRequest.builder()
+            .productId("KD")
+            .build();
+    StartSignatureRequestDto requestDto = StartSignatureRequestDto.builder()
+            .productId("KD")
+            .build();
+    ServerHttpRequest httpRequest = mock(ServerHttpRequest.class);
+    
+    var response = StartSignatureResponse.builder()
+            .expedientId(456L)
+            .build();
+
+    when(tradeSignatureServicePost.startSignatureWorkflow(
+            entity, 
+            LocaleConstants.DEFAULT_LOCALE, 
+            originId, 
+            requestDto,
+            httpRequest
+    )).thenReturn(Mono.just(response));
+
+    // Act & Assert
+    StepVerifier.create(tradeSignatureRestController.postStartSignatureWorkflow(
+            entity, 
+            LocaleConstants.DEFAULT_LOCALE, 
+            originId, 
+            request,
+            httpRequest
+    ))
+            .expectNext(response)
+            .verifyComplete();
+
+    verify(tradeSignatureServicePost).startSignatureWorkflow(
+            entity, 
+            LocaleConstants.DEFAULT_LOCALE, 
+            originId, 
+            requestDto,
+            httpRequest
+    );
+  }
+
+  @Test
+  void testPostStartSignatureWorkflow_NullRequest() {
+    // Arrange
+    String entity = "0049";
+    Long originId = 123L;
+    ServerHttpRequest httpRequest = mock(ServerHttpRequest.class);
+
+    // Act & Assert
+    StepVerifier.create(tradeSignatureRestController.postStartSignatureWorkflow(
+            entity,
+            LocaleConstants.DEFAULT_LOCALE,
+            originId,
+            null,
+            httpRequest
+    ))
+            .expectError(IllegalArgumentException.class)
+            .verify();
+
+    verifyNoInteractions(tradeSignatureServicePost);
+  }
+
+  @Test
+  void testPostStartSignatureWorkflow_InvalidProduct() {
+    // Arrange
+    String entity = "0049";
+    Long originId = 123L;
+    StartSignatureRequest request = StartSignatureRequest.builder()
+            .productId("INVALID")
+            .build();
+    StartSignatureRequestDto requestDto = StartSignatureRequestDto.builder()
+            .productId("INVALID")
+            .build();
+    ServerHttpRequest httpRequest = mock(ServerHttpRequest.class);
+
+    when(tradeSignatureServicePost.startSignatureWorkflow(
+            entity,
+            LocaleConstants.DEFAULT_LOCALE,
+            originId,
+            requestDto,
+            httpRequest
+    )).thenReturn(Mono.error(new IllegalArgumentException("Invalid product ID")));
+
+    // Act & Assert
+    StepVerifier.create(tradeSignatureRestController.postStartSignatureWorkflow(
+            entity,
+            LocaleConstants.DEFAULT_LOCALE,
+            originId,
+            request,
+            httpRequest
+    ))
+            .expectError(IllegalArgumentException.class)
+            .verify();
+  }
+
+  @Test
+  void testPostStartSignatureWorkflow_WebClientTest() {
+    // Arrange
+    String entity = "0049";
+    Long originId = 123L;
+    StartSignatureRequest request = StartSignatureRequest.builder()
+            .productId("KD")
+            .build();
+    var response = StartSignatureResponse.builder()
+            .expedientId(456L)
+            .build();
+
+    when(tradeSignatureServicePost.startSignatureWorkflow(
+            any(), any(), any(), any(), any()
+    )).thenReturn(Mono.just(response));
+
+    // Act & Assert
+    webClient.post()
+            .uri(uriBuilder -> uriBuilder
+                    .path("/v1/trades-signatures/{originId}/workflow")
+                    .build(originId))
+            .bodyValue(request)
+            .header(LocaleConstants.ENTITY_HEADER, entity)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(StartSignatureResponse.class)
+            .value(resp -> assertThat(resp)
+                    .usingRecursiveComparison()
+                    .isEqualTo(response));
+  }
+
+  @Test
+  void testPostStartSignatureWorkflow_WebClientTest_BadRequest() {
+    // Arrange
+    String entity = "0049";
+    Long originId = 123L;
+    StartSignatureRequest request = StartSignatureRequest.builder()
+            .productId("INVALID")
+            .build();
+
+    when(tradeSignatureServicePost.startSignatureWorkflow(
+            any(), any(), any(), any(), any()
+    )).thenReturn(Mono.error(new IllegalArgumentException("Invalid product ID")));
+
+    // Act & Assert
+    webClient.post()
+            .uri(uriBuilder -> uriBuilder
+                    .path("/v1/trades-signatures/{originId}/workflow")
+                    .build(originId))
+            .bodyValue(request)
+            .header(LocaleConstants.ENTITY_HEADER, entity)
+            .exchange()
+            .expectStatus().isBadRequest();
+  }
 }
