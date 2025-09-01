@@ -1,6 +1,9 @@
 package com.acelera.fx.digitalsignature.application.service;
 
 import com.acelera.broker.fx.db.domain.dto.ProductDocumentParameters;
+import com.acelera.broker.gateway.domain.dto.response.DocumentLpaResponse;
+import com.acelera.broker.gateway.domain.port.DocumentLpaClient;
+import com.acelera.fx.digitalsignature.application.helper.TradeSignerHelper;
 import com.acelera.fx.digitalsignature.domain.port.dto.StartSignatureRequestDto;
 import com.acelera.fx.digitalsignature.domain.port.dto.StartSignatureResponseDto;
 import com.acelera.fx.digitalsignature.domain.port.service.ProductDocumentsService;
@@ -17,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.StaticMessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -40,6 +44,9 @@ public class TradeSignatureServicePostImplTest {
 
     private @Mock ServerHttpRequest serverHttpRequest;
 
+    private @Mock TradeSignerHelper tradeSignerHelper;
+    private @Mock DocumentLpaClient documentLpaClient;
+
     @InjectMocks
     TradeSignatureServicePostImpl impl;
 
@@ -49,6 +56,7 @@ public class TradeSignatureServicePostImplTest {
     private static final String ERROR_DOCUMENTATION_MESSAGE = "Error de generación de documentación";
     private static final String ERROR_EXPEDIENT_MESSAGE = "Error de generación de expediente";
     private static final String ERROR_FIND_PRODUCT_DOCUMENT = "Id no encontrado";
+    private static final String ERROR_POST_CONTRATACION = "Error en Post contratacion";
 
     @BeforeAll
     static void prepareMessages() {
@@ -58,6 +66,7 @@ public class TradeSignatureServicePostImplTest {
         ms.addMessage("error.fx.product.document.id.notFound", LocaleConstants.DEFAULT_LOCALE, ERROR_FIND_PRODUCT_DOCUMENT);
         ms.addMessage("error.fx.tradesignature.generacion.documentos", LocaleConstants.DEFAULT_LOCALE, ERROR_DOCUMENTATION_MESSAGE);
         ms.addMessage("error.fx.tradesignature.generacion.expediente", LocaleConstants.DEFAULT_LOCALE, ERROR_EXPEDIENT_MESSAGE);
+        ms.addMessage("error.fx.tradesignature.post-contratacion", LocaleConstants.DEFAULT_LOCALE, ERROR_POST_CONTRATACION);
         MessageSourceHolder.setMessageSource(ms);
     }
 
@@ -66,6 +75,10 @@ public class TradeSignatureServicePostImplTest {
         ProductDocumentParameters doc = PODAM_FACTORY.manufacturePojo(ProductDocumentParameters.class);
         when(productDocumentsService.findProductDocumentType(any(), any(), any()))
                 .thenReturn(Flux.just(doc));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer test-token");
+        when(serverHttpRequest.getHeaders()).thenReturn(headers);
     }
 
     private StartSignatureRequestDto createTestRequest() {
@@ -90,6 +103,10 @@ public class TradeSignatureServicePostImplTest {
                 .thenReturn(Mono.just(response));
     }
 
+    private void mockCreateDocument(DocumentLpaResponse document) {
+        when(documentLpaClient.generateDocumentLpa(any())).thenReturn(Mono.just(document));
+    }
+
     private void mockCreateExpedientError() {
         when(createTradeSignatureExpedientService.createSignatureExpedient(
                 any(Locale.class),
@@ -105,15 +122,25 @@ public class TradeSignatureServicePostImplTest {
         CreateExpedientResponse expedient = PODAM_FACTORY.manufacturePojo(CreateExpedientResponse.class);
         mockCreateExpedient(expedient);
 
+        DocumentLpaResponse document = DocumentLpaResponse.builder().build();
+        mockCreateDocument(document);
+
         // When/Then
+        when(tradeSignerHelper.isEventProduct(any())).thenReturn(true);
+        when(documentLpaClient.generateDocumentLpa(any())).thenReturn(Mono.just(document));
+
         StepVerifier.create(executeWorkflow(ORIGIN_ID))
                 .expectNextMatches(resp -> resp.getExpedientId() != null)
                 .verifyComplete();
     }
 
 
+
     @Test
-    void testStartSignatureWorkflow_error_generacionDocumentacion() {
+    void testStartSignatureWorkflow_error_generateDocumentLpa() {
+        when(documentLpaClient.generateDocumentLpa(any()))
+                .thenReturn(Mono.error(new RuntimeException(ERROR_DOCUMENTATION_MESSAGE)));
+
         // When/Then
         StepVerifier.create(executeWorkflow(301L))
                 .expectErrorMatches(e -> e.getMessage().contains(ERROR_DOCUMENTATION_MESSAGE))
@@ -121,8 +148,10 @@ public class TradeSignatureServicePostImplTest {
     }
 
     @Test
-    void testStartSignatureWorkflow_error_generacionExpediente() {
+    void testStartSignatureWorkflow_error_createSignatureExpedient() {
         // Given
+        DocumentLpaResponse document = DocumentLpaResponse.builder().build();
+        mockCreateDocument(document);
         mockCreateExpedientError();
 
         // When/Then
