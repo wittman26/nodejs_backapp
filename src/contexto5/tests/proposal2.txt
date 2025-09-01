@@ -1,0 +1,107 @@
+@ExtendWith(MockitoExtension.class)
+class TradeSignatureServicePostImplTest {
+
+    @Mock
+    private ProductDocumentsService productDocumentsService;
+    @Mock
+    private CreateTradeSignatureExpedientServiceImpl createTradeSignatureExpedientService;
+    @Mock
+    private ServerHttpRequest serverHttpRequest;
+    @Mock
+    private TradeSignerHelper tradeSignerHelper;
+    @Mock
+    private DocumentLpaClient documentLpaClient;
+
+    @InjectMocks
+    private TradeSignatureServicePostImpl impl;
+
+    private static final PodamFactory PODAM_FACTORY = new PodamFactoryImpl();
+    private static final Long ORIGIN_ID = 1L;
+    private static final String TOKEN = "test-token";
+
+    private static final String DOC_TYPE = "DOC1";
+    private static final String DOC_FILE = "doc1.pdf";
+
+    @BeforeEach
+    void setUp() {
+        var doc = PODAM_FACTORY.manufacturePojo(ProductDocumentParameters.class);
+        when(productDocumentsService.findProductDocumentType(any(), any(), any()))
+                .thenReturn(Flux.just(doc));
+
+        var headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + TOKEN);
+        when(serverHttpRequest.getHeaders()).thenReturn(headers);
+    }
+
+    // === Helpers ===
+    private StartSignatureRequestDto anyRequest() {
+        return PODAM_FACTORY.manufacturePojo(StartSignatureRequestDto.class);
+    }
+
+    private DocumentLpaResponse documentResponse(String fileName) {
+        return DocumentLpaResponse.builder().nombreDocumento(fileName).build();
+    }
+
+    private void mockExpedient(CreateExpedientResponse response, boolean shouldError) {
+        if (shouldError) {
+            when(createTradeSignatureExpedientService.createSignatureExpedient(any(), any(), any(), any()))
+                    .thenReturn(Mono.error(new RuntimeException("Error expediente")));
+        } else {
+            when(createTradeSignatureExpedientService.createSignatureExpedient(any(), any(), any(), any()))
+                    .thenReturn(Mono.just(response));
+        }
+    }
+
+    // === Tests ===
+    @Nested
+    class DocumentGenerationTests {
+        @Test
+        void shouldGenerateDocumentsSuccessfully() {
+            var doc = ProductDocumentParameters.builder()
+                    .documentType(DOC_TYPE)
+                    .isPrecontractual("Y")
+                    .build();
+            var expected = documentResponse(DOC_FILE);
+
+            when(documentLpaClient.generateDocumentLpa(any())).thenReturn(Mono.just(expected));
+            when(tradeSignerHelper.isEventProduct(any())).thenReturn(false);
+
+            StepVerifier.create(impl.generateDocuments(doc, ORIGIN_ID, "KD", TOKEN))
+                    .expectNext(expected)
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldReturnError_whenDocumentServiceReturnsEmpty() {
+            var doc = ProductDocumentParameters.builder().documentType(DOC_TYPE).build();
+
+            when(documentLpaClient.generateDocumentLpa(any())).thenReturn(Mono.empty());
+
+            StepVerifier.create(impl.generateDocuments(doc, ORIGIN_ID, "KD", TOKEN))
+                    .expectErrorMatches(e -> e.getMessage().contains("no devolvió documentId"))
+                    .verify();
+        }
+    }
+
+    @Nested
+    class ExpedientGenerationTests {
+        @Test
+        void shouldGenerateExpedientSuccessfully() {
+            var response = CreateExpedientResponse.builder().expedientId(123L).build();
+            mockExpedient(response, false);
+
+            StepVerifier.create(impl.generateExpedient("ENTITY", Locale.getDefault(), ORIGIN_ID, "KD"))
+                    .expectNext(response)
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldReturnError_whenExpedientFails() {
+            mockExpedient(null, true);
+
+            StepVerifier.create(impl.generateExpedient("ENTITY", Locale.getDefault(), ORIGIN_ID, "KD"))
+                    .expectErrorMatches(e -> e.getMessage().contains("Error expediente"))
+                    .verify();
+        }
+    }
+}

@@ -28,6 +28,7 @@ import reactor.test.StepVerifier;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
+import java.util.List;
 import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -170,5 +171,139 @@ public class TradeSignatureServicePostImplTest {
         StepVerifier.create(executeWorkflow(ORIGIN_ID))
                 .expectErrorMatches(e -> e.getMessage().contains(ERROR_FIND_PRODUCT_DOCUMENT))
                 .verify();
+    }
+
+    @Test
+    void testSortDocuments() {
+        // Given
+        List<ProductDocumentParameters> unsortedDocs = List.of(
+            ProductDocumentParameters.builder()
+                .documentType("DOC1")
+                .isPrecontractual("N")
+                .build(),
+            ProductDocumentParameters.builder()
+                .documentType("DOC2")
+                .isPrecontractual("Y")
+                .build(),
+            ProductDocumentParameters.builder()
+                .documentType("DOC3")
+                .isPrecontractual("N")
+                .build()
+        );
+
+        // When
+        List<ProductDocumentParameters> sortedDocs = impl.sortDocuments(unsortedDocs);
+
+        // Then
+        assertThat(sortedDocs).hasSize(3);
+        assertThat(sortedDocs.get(0).getDocumentType()).isEqualTo("DOC2"); // Precontractual first
+        assertThat(sortedDocs.get(1).getDocumentType()).isIn("DOC1", "DOC3");
+        assertThat(sortedDocs.get(2).getDocumentType()).isIn("DOC1", "DOC3");
+    }
+
+    @Test
+    void testGenerateAllDocuments() {
+        // Given
+        List<ProductDocumentParameters> docs = List.of(
+            ProductDocumentParameters.builder()
+                .documentType("DOC1")
+                .isPrecontractual("Y")
+                .build(),
+            ProductDocumentParameters.builder()
+                .documentType("DOC2")
+                .isPrecontractual("N")
+                .build()
+        );
+
+        DocumentLpaResponse doc1Response = DocumentLpaResponse.builder()
+            .nombreDocumento("doc1.pdf")
+            .build();
+        DocumentLpaResponse doc2Response = DocumentLpaResponse.builder()
+            .nombreDocumento("doc2.pdf")
+            .build();
+
+        when(documentLpaClient.generateDocumentLpa(any()))
+            .thenReturn(Mono.just(doc1Response))
+            .thenReturn(Mono.just(doc2Response));
+
+        // When/Then
+        StepVerifier.create(impl.generateAllDocuments(docs, ORIGIN_ID, "KD", "test-token"))
+            .expectNextMatches(responses -> 
+                responses.size() == 2 &&
+                responses.get(0).getNombreDocumento().equals("doc1.pdf") &&
+                responses.get(1).getNombreDocumento().equals("doc2.pdf"))
+            .verifyComplete();
+    }
+
+    @Test
+    void testGenerateDocuments() {
+        // Given
+        ProductDocumentParameters document = ProductDocumentParameters.builder()
+            .documentType("DOC1")
+            .documentalTypeDoc("TYPE1")
+            .isPrecontractual("Y")
+            .build();
+
+        DocumentLpaResponse expectedResponse = DocumentLpaResponse.builder()
+            .nombreDocumento("doc1.pdf")
+            .build();
+
+        when(documentLpaClient.generateDocumentLpa(any()))
+            .thenReturn(Mono.just(expectedResponse));
+        when(tradeSignerHelper.isEventProduct(any())).thenReturn(false);
+
+        // When/Then
+        StepVerifier.create(impl.generateDocuments(document, ORIGIN_ID, "KD", "test-token"))
+            .expectNext(expectedResponse)
+            .verifyComplete();
+    }
+
+    @Test
+    void testGenerateExpedient() {
+        // Given
+        CreateExpedientResponse expectedResponse = CreateExpedientResponse.builder()
+            .expedientId(123L)
+            .build();
+        mockCreateExpedient(expectedResponse);
+
+        // When/Then
+        StepVerifier.create(impl.generateExpedient(
+                LocaleConstants.ENTITY_0049, 
+                LocaleConstants.DEFAULT_LOCALE, 
+                ORIGIN_ID, 
+                "KD"))
+            .expectNext(expectedResponse)
+            .verifyComplete();
+    }
+
+    @Test
+    void testGenerateDocuments_EmptyResponse() {
+        // Given
+        ProductDocumentParameters document = ProductDocumentParameters.builder()
+            .documentType("DOC1")
+            .build();
+
+        when(documentLpaClient.generateDocumentLpa(any()))
+            .thenReturn(Mono.empty());
+
+        // When/Then
+        StepVerifier.create(impl.generateDocuments(document, ORIGIN_ID, "KD", "test-token"))
+            .expectErrorMatches(e -> e.getMessage().equals("Generate Document Lpa Service no devolvió documentId"))
+            .verify();
+    }
+
+    @Test
+    void testGenerateExpedient_Error() {
+        // Given
+        mockCreateExpedientError();
+
+        // When/Then
+        StepVerifier.create(impl.generateExpedient(
+                LocaleConstants.ENTITY_0049, 
+                LocaleConstants.DEFAULT_LOCALE, 
+                ORIGIN_ID, 
+                "KD"))
+            .expectErrorMatches(e -> e.getMessage().contains(ERROR_EXPEDIENT_MESSAGE))
+            .verify();
     }
 }
